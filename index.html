@@ -67,16 +67,14 @@
         .btn-main { width: 100%; padding: 16px; background: linear-gradient(90deg, #00ff88, #00d4ff); border: none; border-radius: 12px; font-weight: bold; cursor: pointer; color: black; margin-top: 10px; }
         .btn-sec { background: none; border: 1px solid #333; color: #888; width: 100%; padding: 12px; border-radius: 12px; margin-top: 10px; cursor: pointer; }
 
-        /* REAÇÕES (Verde Removido) */
+        /* REAÇÕES DISCRETAS (Sem Verde) */
         .reaction-bar { display: flex; gap: 8px; margin-top: 5px; }
         .btn-reaction { background: rgba(255,255,255,0.1); border: none; color: white; font-size: 10px; padding: 4px 8px; border-radius: 6px; cursor: pointer; transition: 0.2s; }
         .btn-reaction:active { transform: scale(0.9); background: rgba(255,255,255,0.2); }
 
         /* ADMIN */
         .admin-card { background: #080808; padding: 20px; border-radius: 20px; border: 1px solid #222; margin-bottom: 15px; text-align: left; }
-        .insta-btn { display: inline-block; background: #E1306C; color: white; padding: 5px 10px; border-radius: 8px; font-size: 10px; text-decoration: none; font-weight: bold; margin-top: 5px; }
         .btn-save { background: #00ff88; color: black; border: none; width: 100%; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        .btn-delete { background: none; border: none; color: #ff4444; font-size: 11px; margin-top: 15px; cursor: pointer; width: 100%; font-weight: bold; text-transform: uppercase; }
         .btn-reset-votos { background: #441111; color: #ff8888; border: 1px solid #662222; padding: 4px 8px; border-radius: 6px; font-size: 9px; cursor: pointer; margin-top: 10px; }
 
         /* CHAT */
@@ -164,6 +162,19 @@
         let slideIndex = 0;
         let eVisitante = false;
 
+        // --- FUNÇÃO DE AUTO-PREENCHIMENTO (RESTAURADA) ---
+        window.onload = () => {
+            const salvo = JSON.parse(localStorage.getItem('rank_user'));
+            if(salvo) {
+                document.getElementById('reg-turma').value = salvo.turma || '';
+                document.getElementById('reg-serie').value = salvo.serie || '';
+                document.getElementById('reg-escola').value = salvo.escola || '';
+                document.getElementById('reg-insta').value = salvo.insta || '';
+                document.getElementById('reg-pass').value = salvo.pass || '';
+                document.getElementById('reg-power').value = salvo.power || 'power-fogo';
+            }
+        };
+
         function entrarComoVisitante() {
             eVisitante = true;
             logadoComo = "visitante_" + Math.floor(Math.random() * 1000);
@@ -183,10 +194,14 @@
             
             database.ref('ranking/' + t).once('value').then((snap) => {
                 if (snap.exists()) {
-                    if (snap.val().pass === p) database.ref('ranking/'+t).update({turma:t, serie:s, escola:e, insta:i, power:pw}).then(() => entrarNoSistema({turma:t}));
-                    else alert("Senha incorreta!");
+                    if (snap.val().pass === p) {
+                        // Salva os dados localmente ao logar
+                        localStorage.setItem('rank_user', JSON.stringify({turma:t, serie:s, escola:e, insta:i, pass:p, power:pw}));
+                        database.ref('ranking/'+t).update({turma:t, serie:s, escola:e, insta:i, power:pw}).then(() => entrarNoSistema({turma:t}));
+                    } else alert("Senha incorreta!");
                 } else {
                     const nova = { turma:t, pass:p, serie:s, escola:e, insta:i, power:pw, seguidores:0, videos:0, pontos:0, online:true, likes:0, dislikes:0 };
+                    localStorage.setItem('rank_user', JSON.stringify({turma:t, serie:s, escola:e, insta:i, pass:p, power:pw}));
                     database.ref('ranking/' + t).set(nova).then(() => entrarNoSistema(nova));
                 }
             });
@@ -291,9 +306,9 @@
                                 <input type="number" id="v-${t.turma}" value="${t.videos}" placeholder="Vids">
                             </div>
                             <button onclick="salvarPontos('${t.turma}')" class="btn-save">ATUALIZAR PONTOS</button>
-                            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top:10px;">
                                 <button onclick="zerarVotos('${t.turma}')" class="btn-reset-votos">🗑 ZERAR VOTOS (L/D)</button>
-                                <button onclick="deletarTurma('${t.turma}')" class="btn-delete">✖ EXCLUIR TURMA</button>
+                                <button onclick="deletarTurma('${t.turma}')" class="btn-delete" style="color:red; background:none; border:none; font-size:10px; cursor:pointer;">✖ EXCLUIR</button>
                             </div>
                         </div>`;
                 });

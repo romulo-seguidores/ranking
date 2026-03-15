@@ -1,92 +1,89 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Rank Classe - Elite Regional</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Rank Classe - Elite Regional</title>
 
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
 
-    body { margin: 0; background: #020202; color: white; font-family: 'Poppins', sans-serif; display: flex; justify-content: center; overflow-x: hidden; }
-    #app { width: 100%; max-width: 420px; padding: 20px; }
+        body { margin: 0; background: #020202; color: white; font-family: 'Poppins', sans-serif; display: flex; justify-content: center; overflow-x: hidden; }
+        #app { width: 100%; max-width: 420px; padding: 20px; }
 
-    .glass, .glass-large { 
-        background: rgba(255,255,255,0.03); backdrop-filter: blur(20px); 
-        border: 1px solid rgba(255,255,255,0.1); border-radius: 30px; 
-        padding: 25px; text-align: center; margin-top: 20px; 
-    }
+        .glass, .glass-large { 
+            background: rgba(255,255,255,0.03); backdrop-filter: blur(20px); 
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 30px; 
+            padding: 25px; text-align: center; margin-top: 20px; 
+        }
 
-    /* STATUS ONLINE */
-    .status-dot { height: 8px; width: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
-    .online { background: #00ff88; box-shadow: 0 0 8px #00ff88; }
-    .offline { background: #ff4444; }
+        /* STATUS ONLINE */
+        .status-dot { height: 8px; width: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+        .online { background: #00ff88; box-shadow: 0 0 8px #00ff88; }
+        .offline { background: #ff4444; }
 
-    /* RANK REGIONAL ESTILO FREE FIRE (TOP GLOBAL) */
-    .regional-box { 
-        background: linear-gradient(180deg, rgba(255,215,0,0.2) 0%, rgba(0,0,0,1) 100%); 
-        border: 2px solid #ffd700; border-radius: 20px; padding: 20px; margin-bottom: 25px; 
-        position: relative; box-shadow: 0 0 20px rgba(255,215,0,0.2);
-    }
-    .regional-box .label { font-size: 10px; color: #ffd700; font-weight: bold; letter-spacing: 2px; }
-    #topo-nome { 
-        font-size: 1.8rem; font-weight: 800; color: #fff; text-shadow: 0 0 15px #ffd700; 
-        margin: 5px 0; text-transform: uppercase; 
-    }
-    .globe-icon { font-size: 1.2rem; vertical-align: middle; animation: spin 4s linear infinite; display: inline-block; }
-    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        /* ANIMACAO DE TEXTO LOGIN */
+        .text-anim {
+            font-size: 14px; color: #ffd700; font-weight: bold; margin-bottom: 15px;
+            animation: pulseText 2s infinite; display: block;
+        }
+        @keyframes pulseText {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.05); color: #fff; }
+        }
 
-    /* SISTEMA DE COLETA E MISSÕES */
-    .task-area { background: rgba(255,215,0,0.05); border: 1px dashed rgba(255,215,0,0.3); border-radius: 15px; padding: 15px; margin: 15px 0; font-size: 12px; }
-    .btn-collect { background: #ffd700; color: black; border: none; padding: 12px; border-radius: 10px; font-weight: bold; width: 100%; cursor: pointer; margin-top: 10px; }
-    .btn-collect:disabled { background: #333; color: #666; cursor: not-allowed; }
-    
-    /* ANIMAÇÃO DE COLETA (SUMIR SOZINHA) */
-    .collect-anim { 
-        position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-        background: linear-gradient(45deg, #ffd700, #fff); color: black; 
-        padding: 20px 40px; border-radius: 50px; font-weight: 800; z-index: 10000; 
-        box-shadow: 0 0 30px #ffd700; pointer-events: none;
-        animation: collectPop 2s forwards; 
-    }
-    @keyframes collectPop { 
-        0% { opacity: 0; scale: 0.5; } 20% { opacity: 1; scale: 1.2; } 
-        80% { opacity: 1; transform: translate(-50%, -100%); } 100% { opacity: 0; transform: translate(-50%, -200%); } 
-    }
+        /* CARROSSEL TOP REGIONAL */
+        .regional-box { 
+            background: linear-gradient(180deg, rgba(255,215,0,0.2) 0%, rgba(0,0,0,1) 100%); 
+            border: 2px solid #ffd700; border-radius: 20px; padding: 20px; margin-bottom: 25px; 
+            position: relative; box-shadow: 0 0 20px rgba(255,215,0,0.2); overflow: hidden;
+            height: 80px; display: flex; flex-direction: column; justify-content: center;
+        }
+        .regional-box .label { font-size: 10px; color: #ffd700; font-weight: bold; letter-spacing: 2px; margin-bottom: 5px;}
+        
+        #carousel-container { position: relative; height: 30px; }
+        .rank-slide {
+            position: absolute; width: 100%; font-size: 1.4rem; font-weight: 800;
+            opacity: 0; transform: translateY(20px); transition: 0.5s;
+        }
+        .rank-slide.active { opacity: 1; transform: translateY(0); }
 
-    /* PODERES */
-    .power-fogo { color: #ff4d00; text-shadow: 0 0 10px #ff4d00; animation: burn 1.5s infinite alternate; }
-    @keyframes burn { to { transform: translateY(-3px); } }
-    .power-gelo { color: #00d4ff; text-shadow: 0 0 10px #00d4ff; }
-    .power-floresta { color: #00ff88; text-shadow: 0 0 10px #00ff88; }
-    .power-vazio { color: #a855f7; text-shadow: 0 0 15px #6b21a8; }
-    .power-eletrico { color: #eab308; text-shadow: 0 0 10px #eab308; animation: flash 0.1s infinite; }
-    @keyframes flash { 50% { opacity: 0.7; } }
+        /* SISTEMA DE MISSÕES */
+        .mission-btn { background: rgba(255,255,255,0.1); border: 1px solid #ffd700; color: #ffd700; padding: 5px 10px; border-radius: 8px; font-size: 10px; cursor: pointer; margin-bottom: 10px; }
+        .task-area { background: rgba(255,215,0,0.05); border: 1px dashed rgba(255,215,0,0.3); border-radius: 15px; padding: 15px; margin: 15px 0; font-size: 12px; }
+        .btn-analise { background: #00d4ff; color: black; border: none; padding: 8px; border-radius: 8px; font-weight: bold; width: 100%; cursor: pointer; margin-top: 10px; font-size: 11px; }
 
-    /* FORM & LIST */
-    input, select { width: 100%; padding: 14px; margin: 8px 0; border-radius: 12px; border: none; background: rgba(255,255,255,0.08); color: white; box-sizing: border-box; }
-    .btn-main { width: 100%; padding: 16px; background: linear-gradient(90deg, #00ff88, #00d4ff); border: none; border-radius: 12px; font-weight: bold; cursor: pointer; color: black; }
-    .btn-sec { background: none; border: 1px solid #333; color: #888; width: 100%; padding: 12px; border-radius: 12px; margin-top: 10px; cursor: pointer; }
-    .btn-admin-link { background: none; border: none; color: #111; font-size: 10px; margin-top: 20px; cursor: pointer; }
-    
-    .rank-card { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); padding: 18px; border-radius: 20px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.05); }
-    .escola-info { font-size: 9px; color: #666; font-style: italic; }
+        /* FEEDBACK ADMIN VERDE */
+        .admin-card.updated { border: 2px solid #00ff88 !important; box-shadow: 0 0 15px rgba(0,255,136,0.3); transition: 0.3s; }
+        .notif-pendente { background: #ffd700; color: black; font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: bold; margin-left: 5px; }
 
-    /* ADMIN */
-    .admin-card { background: #080808; padding: 20px; border-radius: 20px; border: 1px solid #222; margin-bottom: 15px; text-align: left; }
-    .admin-card.salvo { border-color: #00ff88; }
-    .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0; }
-    .btn-save { background: #00ff88; color: black; border: none; width: 100%; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-    .btn-delete { background: none; border: none; color: #ff4444; font-size: 10px; margin-top: 15px; cursor: pointer; text-decoration: underline; width: 100%; text-align: center; }
+        /* PODERES & RANK */
+        .power-fogo { color: #ff4d00; text-shadow: 0 0 10px #ff4d00; }
+        .power-gelo { color: #00d4ff; text-shadow: 0 0 10px #00d4ff; }
+        .power-vazio { color: #a855f7; text-shadow: 0 0 15px #6b21a8; }
+        
+        .rank-card { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); padding: 18px; border-radius: 20px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.05); }
+        
+        input, select { width: 100%; padding: 14px; margin: 8px 0; border-radius: 12px; border: none; background: rgba(255,255,255,0.08); color: white; box-sizing: border-box; }
+        .btn-main { width: 100%; padding: 16px; background: linear-gradient(90deg, #00ff88, #00d4ff); border: none; border-radius: 12px; font-weight: bold; cursor: pointer; color: black; }
+        .btn-sec { background: none; border: 1px solid #333; color: #888; width: 100%; padding: 12px; border-radius: 12px; margin-top: 10px; cursor: pointer; }
 
-    .hidden { display: none !important; }
-  </style>
+        .hidden { display: none !important; }
+
+        .collect-anim { 
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+            background: #ffd700; color: black; padding: 20px; border-radius: 50px; font-weight: 800; z-index: 10000;
+            animation: collectPop 2s forwards; 
+        }
+        @keyframes collectPop { 0% {opacity:0} 20% {opacity:1} 100% {opacity:0; transform: translate(-50%, -150%)} }
+    </style>
 </head>
 <body>
 
     <div id="app">
         <section id="auth-screen" class="glass">
             <h1 class="logo">RANK<span>CLASSE</span></h1>
+            <span class="text-anim">👑 ROUBE A COROA DAS TURMAS E SEJA A MELHOR!</span>
             <div class="input-group">
                 <input type="text" id="reg-turma" placeholder="Nome da Turma">
                 <input type="text" id="reg-serie" placeholder="Série/Ano">
@@ -102,23 +99,23 @@
                 </select>
                 <button onclick="logarOuCadastrar()" class="btn-main">ENTRAR NO RANKING</button>
             </div>
-            <button onclick="mostrarLoginAdmin()" class="btn-admin-link">SISTEMA CENTRAL</button>
+            <button onclick="mostrarLoginAdmin()" class="btn-admin-link" style="background:none; border:none; color:#333; font-size:10px; margin-top:10px;">SISTEMA CENTRAL</button>
         </section>
 
         <section id="rank-screen" class="hidden glass-large">
             <div class="regional-box">
-                <div class="label"><span class="globe-icon">🌎</span> TOP GLOBAL REGIONAL</div>
-                <div id="topo-nome">AGUARDANDO...</div>
+                <div class="label">🌎 TOP REGIONAL</div>
+                <div id="carousel-container">
+                    </div>
             </div>
 
-            <div id="user-header">
-                <h1 id="nome-turma-topo" style="font-size: 1.1rem;">---</h1>
-            </div>
+            <button class="mission-btn" onclick="document.getElementById('task-box').classList.toggle('hidden')">🎯 VER MISSÕES</button>
 
-            <div class="task-area">
+            <div id="task-box" class="task-area hidden">
                 <div id="status-bonus" style="font-weight: bold; color: #ffd700;">🎁 BÔNUS DE LOGIN ATIVO</div>
                 <div style="margin-top:10px; padding-top:10px; border-top: 1px solid rgba(255,255,255,0.1);">
-                    <strong>🎯 MISSÃO:</strong> <span id="label-missao">...</span>
+                    <strong>MISSÃO:</strong> <span id="label-missao">...</span>
+                    <button id="btn-enviar-analise" onclick="enviarParaAnalise()" class="btn-analise">ENVIAR PARA ANÁLISE</button>
                 </div>
             </div>
 
@@ -156,26 +153,14 @@
 
         let logadoComo = null;
         const missoes = ["Postar 1 Story da turma", "Gritar o grito de guerra", "Fazer 1 vídeo de 15s", "Seguir o insta oficial"];
+        let slideIndex = 0;
 
-        // AO CARREGAR: Recuperar dados salvos
-        window.onload = () => {
-            const salvo = JSON.parse(localStorage.getItem('rank_user'));
-            if(salvo) {
-                document.getElementById('reg-turma').value = salvo.turma || '';
-                document.getElementById('reg-serie').value = salvo.serie || '';
-                document.getElementById('reg-escola').value = salvo.escola || '';
-                document.getElementById('reg-insta').value = salvo.insta || '';
-                document.getElementById('reg-pass').value = salvo.pass || '';
-                document.getElementById('reg-power').value = salvo.power || 'power-fogo';
-            }
-        };
-
+        // LOGIN / CADASTRO
         function logarOuCadastrar() {
             const turma = document.getElementById('reg-turma').value.trim();
             const pass = document.getElementById('reg-pass').value;
-            if (!turma || !pass) return alert("Preencha os campos!");
+            if (!turma || !pass) return alert("Preencha!");
 
-            // Salvar no navegador para não ter que digitar de novo
             const dadosSalvar = {
                 turma, pass,
                 serie: document.getElementById('reg-serie').value,
@@ -191,7 +176,7 @@
                     if (dados.pass === pass) entrarNoSistema(dados);
                     else alert("Senha incorreta!");
                 } else {
-                    const novaTurma = { ...dadosSalvar, seguidores: 0, videos: 0, pontos: 0, online: true, lastBonus: 0 };
+                    const novaTurma = { ...dadosSalvar, seguidores: 0, videos: 0, pontos: 0, online: true, analise: false };
                     database.ref('ranking/' + turma).set(novaTurma).then(() => entrarNoSistema(novaTurma));
                 }
             });
@@ -199,56 +184,41 @@
 
         function entrarNoSistema(dados) {
             logadoComo = dados.turma;
-            document.getElementById('nome-turma-topo').innerText = `${dados.turma} - ${dados.escola}`;
-            document.getElementById('nome-turma-topo').className = dados.power;
             document.getElementById('label-missao').innerText = missoes[new Date().getDate() % missoes.length];
-            
             database.ref('ranking/' + logadoComo).update({ online: true });
             database.ref('ranking/' + logadoComo).onDisconnect().update({ online: false });
-
-            // COLETA AUTOMÁTICA DE BÔNUS NO LOGIN
-            verificarEColetarAutomatico(dados.lastBonus);
-
             esconderTudo();
             document.getElementById('rank-screen').classList.remove('hidden');
         }
 
-        function verificarEColetarAutomatico(last) {
-            const agora = Date.now();
-            const vinteQuatroHoras = 24 * 60 * 60 * 1000;
-            
-            if (agora - last >= vinteQuatroHoras) {
-                database.ref('ranking/' + logadoComo).once('value').then(snap => {
-                    const d = snap.val();
-                    database.ref('ranking/' + logadoComo).update({
-                        pontos: (d.pontos || 0) + 1,
-                        lastBonus: agora
-                    });
-                    
-                    // Mostrar animação que some sozinha
-                    const msg = document.createElement('div');
-                    msg.className = 'collect-anim';
-                    msg.innerText = '🔥 BÔNUS DIÁRIO COLETADO! +1 PONTO';
-                    document.body.appendChild(msg);
-                    setTimeout(() => msg.remove(), 2000);
-                });
-            }
+        function enviarParaAnalise() {
+            database.ref('ranking/' + logadoComo).update({ analise: true });
+            alert("Enviado para os jurados!");
+            document.getElementById('btn-enviar-analise').innerText = "AGUARDANDO APROVAÇÃO...";
+            document.getElementById('btn-enviar-analise').disabled = true;
         }
 
-        // RANKING GLOBAL E LÍDER
+        // RANKING E CARROSSEL
         database.ref('ranking').on('value', (snapshot) => {
             const lista = document.getElementById('lista-ranking');
+            const carrossel = document.getElementById('carousel-container');
             const dadosBD = snapshot.val();
             if (!dadosBD) return;
 
             let array = Object.keys(dadosBD).map(id => dadosBD[id]);
             array.sort((a, b) => (b.pontos || 0) - (a.pontos || 0));
 
-            // Atualiza o Top Global (Free Fire Style)
-            if(array[0]) {
-                document.getElementById('topo-nome').innerText = array[0].turma;
-            }
+            // Atualiza Carrossel (Top 3)
+            carrossel.innerHTML = "";
+            [0,1,2].forEach(i => {
+                if(array[i]) {
+                    const coroas = i === 0 ? "👑" : "";
+                    carrossel.innerHTML += `<div class="rank-slide ${array[i].power}">${coroas} TOP ${i+1}: ${array[i].turma}</div>`;
+                }
+            });
+            iniciarCarrossel();
 
+            // Lista Ranking
             lista.innerHTML = "";
             array.forEach((t, i) => {
                 let medal = i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : "🔹";
@@ -258,7 +228,7 @@
                         <div style="text-align:left">
                             <span class="status-dot ${status}"></span>
                             <span class="${t.power}" style="font-weight:bold">${t.turma}</span><br>
-                            <small class="escola-info">${t.escola}</small>
+                            <small style="font-size:9px; color:#666">${t.escola}</small>
                         </div>
                         <div style="text-align:right">
                             <span style="color:#ffd700; font-weight:bold;">${medal} ${t.pontos || 0} pts</span>
@@ -267,7 +237,16 @@
             });
         });
 
-        // ADMIN (SEM ALTERAÇÕES)
+        function iniciarCarrossel() {
+            const slides = document.querySelectorAll('.rank-slide');
+            if(slides.length === 0) return;
+            slides.forEach(s => s.classList.remove('active'));
+            slideIndex = (slideIndex + 1) % slides.length;
+            slides[slideIndex].classList.add('active');
+            setTimeout(iniciarCarrossel, 3000);
+        }
+
+        // ADMIN
         function loginAdmin() {
             if (document.getElementById('admin-user').value === "admin" && document.getElementById('admin-pass').value === "admin123") {
                 esconderTudo();
@@ -284,38 +263,56 @@
                 if(!dados) return;
                 Object.keys(dados).forEach(id => {
                     const t = dados[id];
+                    const notif = t.analise ? '<span class="notif-pendente">MISSÃO PENDENTE</span>' : '';
                     container.innerHTML += `
                         <div class="admin-card" id="card-${t.turma}">
-                            <strong>${t.turma}</strong><br>
-                            <div class="admin-grid">
-                                <input type="number" id="s-${t.turma}" value="${t.seguidores}">
-                                <input type="number" id="v-${t.turma}" value="${t.videos}">
+                            <strong>${t.turma} ${notif}</strong>
+                            <div class="admin-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:5px; margin:10px 0;">
+                                <input type="number" id="s-${t.turma}" value="${t.seguidores}" placeholder="Seguidores">
+                                <input type="number" id="v-${t.turma}" value="${t.videos}" placeholder="Videos">
                             </div>
-                            <button onclick="salvarPontos('${t.turma}')" class="btn-save">ATUALIZAR</button>
-                            <button onclick="deletarTurma('${t.turma}')" class="btn-delete">Excluir</button>
+                            <div style="display:flex; gap:5px;">
+                                <button onclick="salvarPontos('${t.turma}', true)" style="background:#00ff88; flex:1; border:none; padding:8px; border-radius:5px; font-weight:bold;">APROVAR ✅</button>
+                                <button onclick="salvarPontos('${t.turma}', false)" style="background:#ff4444; flex:1; border:none; padding:8px; border-radius:5px; font-weight:bold;">RECUSAR ❌</button>
+                            </div>
+                            <button onclick="deletarTurma('${t.turma}')" class="btn-delete" style="color:red; background:none; border:none; width:100%; margin-top:10px; font-size:10px;">Excluir</button>
                         </div>`;
                 });
             });
         }
 
-        function salvarPontos(nome) {
+        function salvarPontos(nome, aprovar) {
             const s = parseInt(document.getElementById(`s-${nome}`).value) || 0;
             const v = parseInt(document.getElementById(`v-${nome}`).value) || 0;
-            const total = (Math.floor(s / 100) * 2) + (v * 1);
-            database.ref('ranking/' + nome).update({ seguidores: s, videos: v, pontos: total });
+            // Se aprovar missão, ganha +5 pontos de bônus além do cálculo normal
+            let pontosBase = (Math.floor(s / 100) * 2) + (v * 1);
+            if(aprovar) pontosBase += 5;
+
+            database.ref('ranking/' + nome).update({ 
+                seguidores: s, 
+                videos: v, 
+                pontos: pontosBase,
+                analise: false 
+            }).then(() => {
+                const card = document.getElementById(`card-${nome}`);
+                card.classList.add('updated');
+                setTimeout(() => card.classList.remove('updated'), 2000);
+            });
         }
 
         function deletarTurma(nome) { if(confirm("Excluir?")) database.ref('ranking/' + nome).remove(); }
         function esconderTudo() { ["auth-screen", "admin-login-screen", "rank-screen", "admin-panel"].forEach(id => document.getElementById(id).classList.add('hidden')); }
         function voltar() { esconderTudo(); document.getElementById('auth-screen').classList.remove('hidden'); }
         function mostrarLoginAdmin() { esconderTudo(); document.getElementById('admin-login-screen').classList.remove('hidden'); }
-        
-        function sairDaConta() { 
-            if(logadoComo) database.ref('ranking/'+logadoComo).update({online:false});
-            // Esconde a tela de rank e volta pra auth, mas o localStorage mantém os inputs preenchidos
-            esconderTudo();
-            document.getElementById('auth-screen').classList.remove('hidden');
-        }
+        function sairDaConta() { if(logadoComo) database.ref('ranking/'+logadoComo).update({online:false}); voltar(); }
+
+        window.onload = () => {
+            const salvo = JSON.parse(localStorage.getItem('rank_user'));
+            if(salvo) {
+                document.getElementById('reg-turma').value = salvo.turma || '';
+                document.getElementById('reg-pass').value = salvo.pass || '';
+            }
+        };
     </script>
 </body>
 </html>

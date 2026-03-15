@@ -67,9 +67,16 @@
         .btn-main { width: 100%; padding: 16px; background: linear-gradient(90deg, #00ff88, #00d4ff); border: none; border-radius: 12px; font-weight: bold; cursor: pointer; color: black; margin-top: 10px; }
         .btn-sec { background: none; border: 1px solid #333; color: #888; width: 100%; padding: 12px; border-radius: 12px; margin-top: 10px; cursor: pointer; }
 
-        /* REAÇÕES (LIKE/DISLIKE) */
+        /* REAÇÕES */
         .reaction-bar { display: flex; gap: 8px; margin-top: 5px; }
         .btn-reaction { background: rgba(255,255,255,0.1); border: none; color: white; font-size: 10px; padding: 3px 7px; border-radius: 6px; cursor: pointer; }
+        .btn-reaction.active { background: #00ff88; color: black; }
+
+        /* ADMIN */
+        .admin-card { background: #080808; padding: 20px; border-radius: 20px; border: 1px solid #222; margin-bottom: 15px; text-align: left; transition: 0.3s; }
+        .insta-btn { display: inline-block; background: #E1306C; color: white; padding: 5px 10px; border-radius: 8px; font-size: 10px; text-decoration: none; font-weight: bold; margin-top: 5px; }
+        .btn-save { background: #00ff88; color: black; border: none; width: 100%; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .btn-delete { background: none; border: none; color: #ff4444; font-size: 11px; margin-top: 15px; cursor: pointer; width: 100%; font-weight: bold; text-transform: uppercase; }
 
         /* CHAT */
         #chat-container { 
@@ -81,9 +88,7 @@
         #chat-input-box { display: flex; border-top: 1px solid #222; padding: 5px; }
         #chat-input-box input { margin: 0; padding: 6px; font-size: 10px; border-radius: 8px; }
 
-        /* ASSINATURA */
         .criador-tag { position: fixed; bottom: 10px; left: 15px; color: #00ff88; font-weight: bold; font-size: 11px; text-shadow: 0 0 5px #00ff88; z-index: 1000; }
-
         .hidden { display: none !important; }
     </style>
 </head>
@@ -107,7 +112,7 @@
                     <option value="power-eletrico">⚡ Amarelo Elétrico</option>
                 </select>
                 <button onclick="logarOuCadastrar()" class="btn-main">ENTRAR NO RANKING</button>
-                <button onclick="entrarComoVisitante()" class="btn-sec" style="color: #00ff88; border-color: #00ff88;">VER TURMAS (SEM CONTA)</button>
+                <button onclick="entrarComoVisitante()" class="btn-sec" style="color: #00ff88; border-color: #00ff88;">ENTRAR PARA VER A TURMA</button>
             </div>
             <button onclick="mostrarLoginAdmin()" style="background:none; border:none; color:#181818; font-size:10px; margin-top:20px; cursor:pointer;">SISTEMA CENTRAL</button>
         </section>
@@ -150,12 +155,7 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <script>
-        const firebaseConfig = {
-            apiKey: "SUA_API_KEY",
-            databaseURL: "https://gincanaescola-d4f8c-default-rtdb.firebaseio.com/",
-            projectId: "gincanaescola-d4f8c",
-        };
-
+        const firebaseConfig = { apiKey: "SUA_API_KEY", databaseURL: "https://gincanaescola-d4f8c-default-rtdb.firebaseio.com/", projectId: "gincanaescola-d4f8c" };
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
@@ -177,7 +177,7 @@
 
         function entrarComoVisitante() {
             eVisitante = true;
-            logadoComo = "Visitante";
+            logadoComo = "visitante_" + Math.floor(Math.random() * 1000);
             document.getElementById('auth-screen').classList.add('hidden');
             document.getElementById('rank-screen').classList.remove('hidden');
             document.getElementById('chat-container').classList.remove('hidden');
@@ -190,19 +190,15 @@
             const i = document.getElementById('reg-insta').value.trim();
             const p = document.getElementById('reg-pass').value;
             const pw = document.getElementById('reg-power').value;
-
-            if (!t || !s || !e || !i || !p) return alert("⚠️ ERRO: Preencha todos os campos!");
+            if (!t || !s || !e || !i || !p) return alert("⚠️ Preencha tudo!");
             
             eVisitante = false;
-            const dadosSalvar = { turma: t, pass: p, serie: s, escola: e, insta: i, power: pw };
-            localStorage.setItem('rank_user', JSON.stringify(dadosSalvar));
-
             database.ref('ranking/' + t).once('value').then((snap) => {
                 if (snap.exists()) {
-                    if (snap.val().pass === p) database.ref('ranking/'+t).update(dadosSalvar).then(() => entrarNoSistema(snap.val()));
+                    if (snap.val().pass === p) database.ref('ranking/'+t).update({turma:t, serie:s, escola:e, insta:i, power:pw}).then(() => entrarNoSistema({turma:t}));
                     else alert("Senha incorreta!");
                 } else {
-                    const nova = { ...dadosSalvar, seguidores: 0, videos: 0, pontos: 0, online: true, likes: 0, dislikes: 0 };
+                    const nova = { turma:t, pass:p, serie:s, escola:e, insta:i, power:pw, seguidores:0, videos:0, pontos:0, online:true, likes:0, dislikes:0 };
                     database.ref('ranking/' + t).set(nova).then(() => entrarNoSistema(nova));
                 }
             });
@@ -222,23 +218,16 @@
             const carrossel = document.getElementById('carousel-container');
             const dadosBD = snap.val();
             if (!dadosBD) return;
-
             let array = Object.keys(dadosBD).map(id => dadosBD[id]).filter(t => t.turma).sort((a,b) => (b.pontos || 0) - (a.pontos || 0));
 
-            // Carrossel Original
             carrossel.innerHTML = "";
-            [0,1,2].forEach(i => {
-                if(array[i]) {
-                    const crown = i === 0 ? "👑 " : "";
-                    carrossel.innerHTML += `<div class="rank-slide ${array[i].power}">${crown}${i+1} ${array[i].turma}</div>`;
-                }
-            });
+            [0,1,2].forEach(i => { if(array[i]) carrossel.innerHTML += `<div class="rank-slide ${array[i].power}">${i===0?"👑 ":""}${i+1} ${array[i].turma}</div>`; });
             iniciarCarrossel();
 
-            // Lista Original + Reações
             lista.innerHTML = "";
             array.forEach((t, i) => {
                 let medal = i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : "🔹";
+                const meuVoto = localStorage.getItem('voto_' + t.turma);
                 lista.innerHTML += `
                 <div class="rank-card">
                     <div style="text-align:left">
@@ -246,66 +235,91 @@
                         <span class="${t.power}" style="font-weight:bold">${t.turma}</span><br>
                         <small class="escola-info">${t.escola}</small>
                         <div class="reaction-bar">
-                            <button class="btn-reaction" onclick="reagir('${t.turma}', 'likes')">👍 ${t.likes || 0}</button>
-                            <button class="btn-reaction" onclick="reagir('${t.turma}', 'dislikes')">👎 ${t.dislikes || 0}</button>
+                            <button class="btn-reaction ${meuVoto==='like'?'active':''}" onclick="reagir('${t.turma}', 'like')">👍 ${t.likes || 0}</button>
+                            <button class="btn-reaction ${meuVoto==='dislike'?'active':''}" onclick="reagir('${t.turma}', 'dislike')">👎 ${t.dislikes || 0}</button>
                         </div>
                     </div>
-                    <div style="text-align:right">
-                        <span style="color:#ffd700; font-weight:bold;">${medal} ${t.pontos || 0} pts</span>
-                    </div>
+                    <div style="text-align:right"><span style="color:#ffd700; font-weight:bold;">${medal} ${t.pontos || 0} pts</span></div>
                 </div>`;
             });
         });
 
         function reagir(turma, tipo) {
-            database.ref(`ranking/${turma}/${tipo}`).transaction(c => (c || 0) + 1);
+            const key = 'voto_' + turma;
+            const votoAntigo = localStorage.getItem(key);
+            if (votoAntigo === tipo) return;
+
+            database.ref(`ranking/${turma}`).transaction(t => {
+                if (t) {
+                    if (votoAntigo) t[votoAntigo + 's'] = (t[votoAntigo + 's'] || 1) - 1;
+                    t[tipo + 's'] = (t[tipo + 's'] || 0) + 1;
+                }
+                return t;
+            });
+            localStorage.setItem(key, tipo);
         }
 
-        // CHAT PERMANENTE
         function enviarMensagem() {
-            if(eVisitante) return alert("Visitantes não podem enviar mensagens!");
+            if(eVisitante) return alert("Logue para falar!");
             const inp = document.getElementById('msg-input');
             if(!inp.value.trim()) return;
-            database.ref('mensagens_chat').push({
-                user: logadoComo,
-                text: inp.value,
-                timestamp: Date.now()
-            });
+            database.ref('mensagens_chat').push({ user: logadoComo, text: inp.value, timestamp: Date.now() });
             inp.value = "";
         }
 
         database.ref('mensagens_chat').limitToLast(20).on('value', snap => {
-            const box = document.getElementById('chat-messages');
-            box.innerHTML = "";
-            snap.forEach(d => {
-                const m = d.val();
-                box.innerHTML += `<div><b style="color:#00ff88">${m.user}:</b> ${m.text}</div>`;
-            });
+            const box = document.getElementById('chat-messages'); box.innerHTML = "";
+            snap.forEach(d => { box.innerHTML += `<div><b style="color:#00ff88">${d.val().user}:</b> ${d.val().text}</div>`; });
             box.scrollTop = box.scrollHeight;
         });
 
         function iniciarCarrossel() {
-            const slides = document.querySelectorAll('.rank-slide');
-            if(slides.length === 0) return;
+            const slides = document.querySelectorAll('.rank-slide'); if(slides.length === 0) return;
             slides.forEach(s => s.classList.remove('active'));
-            slideIndex = (slideIndex + 1) % slides.length;
-            slides[slideIndex].classList.add('active');
-            if(window.carrosselTimer) clearTimeout(window.carrosselTimer);
-            window.carrosselTimer = setTimeout(iniciarCarrossel, 3000);
+            slideIndex = (slideIndex + 1) % slides.length; slides[slideIndex].classList.add('active');
+            if(window.carrosselTimer) clearTimeout(window.carrosselTimer); window.carrosselTimer = setTimeout(iniciarCarrossel, 3000);
         }
 
-        function sairDaConta() { location.reload(); }
-        function mostrarLoginAdmin() { document.getElementById('auth-screen').classList.add('hidden'); document.getElementById('admin-login-screen').classList.remove('hidden'); }
-        function voltar() { location.reload(); }
-
-        // Mantenha suas funções de Admin abaixo aqui...
+        // PAINEL ADMIN VOLTANDO AO ORIGINAL
         function loginAdmin() {
             if (document.getElementById('admin-user').value === "admin" && document.getElementById('admin-pass').value === "admin123") {
-                document.getElementById('admin-login-screen').classList.add('hidden');
-                document.getElementById('admin-panel').classList.remove('hidden');
-                carregarPainelAdmin();
+                esconderTudo(); document.getElementById('admin-panel').classList.remove('hidden'); carregarPainelAdmin();
             }
         }
+
+        function carregarPainelAdmin() {
+            database.ref('ranking').on('value', snap => {
+                const container = document.getElementById('lista-admin'); container.innerHTML = "";
+                const dados = snap.val(); if(!dados) return;
+                Object.keys(dados).forEach(id => {
+                    const t = dados[id]; if(!t.turma) return;
+                    container.innerHTML += `
+                        <div class="admin-card">
+                            <strong>${t.turma}</strong><br>
+                            <a href="${t.insta}" target="_blank" class="insta-btn">📸 INSTAGRAM</a>
+                            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0;">
+                                <input type="number" id="s-${t.turma}" value="${t.seguidores}" placeholder="Segs">
+                                <input type="number" id="v-${t.turma}" value="${t.videos}" placeholder="Vids">
+                            </div>
+                            <button onclick="salvarPontos('${t.turma}')" class="btn-save">ATUALIZAR</button>
+                            <button onclick="deletarTurma('${t.turma}')" class="btn-delete">✖ EXCLUIR TURMA</button>
+                        </div>`;
+                });
+            });
+        }
+
+        function salvarPontos(nome) {
+            const s = parseInt(document.getElementById(`s-${nome}`).value) || 0;
+            const v = parseInt(document.getElementById(`v-${nome}`).value) || 0;
+            const pts = (s * 10) + (v * 50);
+            database.ref('ranking/' + nome).update({ seguidores: s, videos: v, pontos: pts });
+        }
+
+        function deletarTurma(nome) { if(confirm("Excluir "+nome+"?")) database.ref('ranking/'+nome).remove(); }
+        function esconderTudo() { document.querySelectorAll('section').forEach(s => s.classList.add('hidden')); }
+        function sairDaConta() { location.reload(); }
+        function mostrarLoginAdmin() { esconderTudo(); document.getElementById('admin-login-screen').classList.remove('hidden'); }
+        function voltar() { location.reload(); }
     </script>
 </body>
 </html>

@@ -34,7 +34,7 @@
             50% { transform: translateY(-3px); opacity: 0.7; }
         }
 
-        /* CARROSSEL COMPACTO (SEM #) */
+        /* CARROSSEL COMPACTO */
         .regional-box { 
             background: linear-gradient(180deg, rgba(255,215,0,0.1) 0%, rgba(0,0,0,1) 100%); 
             border: 1px solid rgba(255,215,0,0.3); border-radius: 20px; padding: 8px 15px; margin-bottom: 25px; 
@@ -67,12 +67,12 @@
         .btn-main { width: 100%; padding: 16px; background: linear-gradient(90deg, #00ff88, #00d4ff); border: none; border-radius: 12px; font-weight: bold; cursor: pointer; color: black; margin-top: 10px; }
         .btn-sec { background: none; border: 1px solid #333; color: #888; width: 100%; padding: 12px; border-radius: 12px; margin-top: 10px; cursor: pointer; }
 
-        /* ADMIN MELHORADO */
+        /* ADMIN */
         .admin-card { background: #080808; padding: 20px; border-radius: 20px; border: 1px solid #222; margin-bottom: 15px; text-align: left; transition: 0.3s; }
         .admin-card.salvo { border-color: #00ff88 !important; background: rgba(0, 255, 136, 0.05); box-shadow: 0 0 15px rgba(0,255,136,0.3); }
         .insta-btn { display: inline-block; background: #E1306C; color: white; padding: 5px 10px; border-radius: 8px; font-size: 10px; text-decoration: none; font-weight: bold; margin-top: 5px; }
         .btn-save { background: #00ff88; color: black; border: none; width: 100%; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        .btn-delete { background: none; border: none; color: #ff4444; font-size: 10px; margin-top: 15px; cursor: pointer; width: 100%; }
+        .btn-delete { background: none; border: none; color: #ff4444; font-size: 11px; margin-top: 15px; cursor: pointer; width: 100%; font-weight: bold; text-transform: uppercase; }
 
         .hidden { display: none !important; }
     </style>
@@ -154,29 +154,25 @@
         };
 
         function logarOuCadastrar() {
-            const turma = document.getElementById('reg-turma').value.trim();
-            const serie = document.getElementById('reg-serie').value.trim();
-            const escola = document.getElementById('reg-escola').value.trim();
-            const insta = document.getElementById('reg-insta').value.trim();
-            const pass = document.getElementById('reg-pass').value;
-            const power = document.getElementById('reg-power').value;
+            const t = document.getElementById('reg-turma').value.trim();
+            const s = document.getElementById('reg-serie').value.trim();
+            const e = document.getElementById('reg-escola').value.trim();
+            const i = document.getElementById('reg-insta').value.trim();
+            const p = document.getElementById('reg-pass').value;
+            const pw = document.getElementById('reg-power').value;
 
-            if (!turma || !serie || !escola || !insta || !pass) {
-                return alert("⚠️ ERRO: Preencha todos os campos!");
-            }
+            if (!t || !s || !e || !i || !p) return alert("⚠️ ERRO: Preencha todos os campos!");
 
-            const dadosSalvar = { turma, pass, serie, escola, insta, power };
+            const dadosSalvar = { turma: t, pass: p, serie: s, escola: e, insta: i, power: pw };
             localStorage.setItem('rank_user', JSON.stringify(dadosSalvar));
 
-            database.ref('ranking/' + turma).once('value').then((snapshot) => {
-                if (snapshot.exists()) {
-                    const dados = snapshot.val();
-                    if (dados.pass === pass) {
-                        database.ref('ranking/' + turma).update(dadosSalvar).then(() => entrarNoSistema(dados));
-                    } else alert("Senha incorreta!");
+            database.ref('ranking/' + t).once('value').then((snap) => {
+                if (snap.exists()) {
+                    if (snap.val().pass === p) database.ref('ranking/'+t).update(dadosSalvar).then(() => entrarNoSistema(snap.val()));
+                    else alert("Senha incorreta!");
                 } else {
-                    const novaTurma = { ...dadosSalvar, seguidores: 0, videos: 0, pontos: 0, online: true };
-                    database.ref('ranking/' + turma).set(novaTurma).then(() => entrarNoSistema(novaTurma));
+                    const nova = { ...dadosSalvar, seguidores: 0, videos: 0, pontos: 0, online: true };
+                    database.ref('ranking/' + t).set(nova).then(() => entrarNoSistema(nova));
                 }
             });
         }
@@ -189,18 +185,14 @@
             document.getElementById('rank-screen').classList.remove('hidden');
         }
 
-        database.ref('ranking').on('value', (snapshot) => {
+        database.ref('ranking').on('value', (snap) => {
             const lista = document.getElementById('lista-ranking');
             const carrossel = document.getElementById('carousel-container');
-            const dadosBD = snapshot.val();
-            if (!dadosBD) return;
+            const dadosBD = snap.val();
+            if (!dadosBD) { lista.innerHTML = ""; carrossel.innerHTML = ""; return; }
 
-            let array = Object.keys(dadosBD)
-                .map(id => dadosBD[id])
-                .filter(t => t.turma !== undefined) // Evita o erro "undefined"
-                .sort((a, b) => (b.pontos || 0) - (a.pontos || 0));
+            let array = Object.keys(dadosBD).map(id => dadosBD[id]).filter(t => t.turma).sort((a,b) => (b.pontos || 0) - (a.pontos || 0));
 
-            // Carrossel sem #
             carrossel.innerHTML = "";
             [0,1,2].forEach(i => {
                 if(array[i]) {
@@ -213,17 +205,7 @@
             lista.innerHTML = "";
             array.forEach((t, i) => {
                 let medal = i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : "🔹";
-                lista.innerHTML += `
-                    <div class="rank-card">
-                        <div style="text-align:left">
-                            <span class="status-dot ${t.online ? 'online' : 'offline'}"></span>
-                            <span class="${t.power}" style="font-weight:bold">${t.turma}</span><br>
-                            <small class="escola-info">${t.escola}</small>
-                        </div>
-                        <div style="text-align:right">
-                            <span style="color:#ffd700; font-weight:bold;">${medal} ${t.pontos || 0} pts</span>
-                        </div>
-                    </div>`;
+                lista.innerHTML += `<div class="rank-card"><div style="text-align:left"><span class="status-dot ${t.online?'online':'offline'}"></span><span class="${t.power}" style="font-weight:bold">${t.turma}</span><br><small class="escola-info">${t.escola}</small></div><div style="text-align:right"><span style="color:#ffd700; font-weight:bold;">${medal} ${t.pontos || 0} pts</span></div></div>`;
             });
         });
 
@@ -246,25 +228,25 @@
         }
 
         function carregarPainelAdmin() {
-            database.ref('ranking').once('value', snapshot => {
+            // MUDANÇA PARA TEMPO REAL (.on)
+            database.ref('ranking').on('value', snap => {
                 const container = document.getElementById('lista-admin');
                 container.innerHTML = "";
-                const dados = snapshot.val();
+                const dados = snap.val();
                 if(!dados) return;
                 Object.keys(dados).forEach(id => {
                     const t = dados[id];
                     if(!t.turma) return;
-                    
                     container.innerHTML += `
                         <div class="admin-card" id="card-${t.turma}">
                             <strong>${t.turma}</strong><br>
-                            <a href="${t.insta}" target="_blank" class="insta-btn">📸 ABRIR INSTAGRAM</a>
+                            <a href="${t.insta}" target="_blank" class="insta-btn">📸 INSTAGRAM</a>
                             <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0;">
                                 <input type="number" id="s-${t.turma}" value="${t.seguidores}" placeholder="Segs">
                                 <input type="number" id="v-${t.turma}" value="${t.videos}" placeholder="Vids">
                             </div>
                             <button onclick="salvarPontos('${t.turma}')" class="btn-save">ATUALIZAR</button>
-                            <button onclick="deletarTurma('${t.turma}')" class="btn-delete">Remover Turma</button>
+                            <button onclick="deletarTurma('${t.turma}')" class="btn-delete">✖ EXCLUIR TURMA</button>
                         </div>`;
                 });
             });
@@ -274,14 +256,17 @@
             const s = parseInt(document.getElementById(`s-${nome}`).value) || 0;
             const v = parseInt(document.getElementById(`v-${nome}`).value) || 0;
             const total = (Math.floor(s / 100) * 2) + (v * 1);
-            
             database.ref('ranking/' + nome).update({ seguidores: s, videos: v, pontos: total }).then(() => {
-                const card = document.getElementById(`card-${nome}`);
-                card.classList.add('salvo'); // Fica verde permanentemente nesta sessão
+                document.getElementById(`card-${nome}`).classList.add('salvo');
             });
         }
 
-        function deletarTurma(nome) { if(confirm("Excluir?")) database.ref('ranking/' + nome).remove(); }
+        function deletarTurma(nome) { 
+            if(confirm("Deseja realmente excluir a turma " + nome + "?")) {
+                database.ref('ranking/' + nome).remove(); 
+            }
+        }
+
         function esconderTudo() { ["auth-screen", "admin-login-screen", "rank-screen", "admin-panel"].forEach(id => document.getElementById(id).classList.add('hidden')); }
         function voltar() { esconderTudo(); document.getElementById('auth-screen').classList.remove('hidden'); }
         function mostrarLoginAdmin() { esconderTudo(); document.getElementById('admin-login-screen').classList.remove('hidden'); }

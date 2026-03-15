@@ -34,7 +34,7 @@
             50% { transform: translateY(-3px); opacity: 0.7; }
         }
 
-        /* CARROSSEL COMPACTO (TOP REGIONAL) */
+        /* CARROSSEL COMPACTO (SEM #) */
         .regional-box { 
             background: linear-gradient(180deg, rgba(255,215,0,0.1) 0%, rgba(0,0,0,1) 100%); 
             border: 1px solid rgba(255,215,0,0.3); border-radius: 20px; padding: 8px 15px; margin-bottom: 25px; 
@@ -67,9 +67,10 @@
         .btn-main { width: 100%; padding: 16px; background: linear-gradient(90deg, #00ff88, #00d4ff); border: none; border-radius: 12px; font-weight: bold; cursor: pointer; color: black; margin-top: 10px; }
         .btn-sec { background: none; border: 1px solid #333; color: #888; width: 100%; padding: 12px; border-radius: 12px; margin-top: 10px; cursor: pointer; }
 
-        /* ADMIN */
-        .admin-card { background: #080808; padding: 20px; border-radius: 20px; border: 1px solid #222; margin-bottom: 15px; text-align: left; }
-        .admin-card.salvo { border-color: #00ff88; box-shadow: 0 0 15px rgba(0,255,136,0.2); }
+        /* ADMIN MELHORADO */
+        .admin-card { background: #080808; padding: 20px; border-radius: 20px; border: 1px solid #222; margin-bottom: 15px; text-align: left; transition: 0.3s; }
+        .admin-card.salvo { border-color: #00ff88 !important; background: rgba(0, 255, 136, 0.05); box-shadow: 0 0 15px rgba(0,255,136,0.3); }
+        .insta-btn { display: inline-block; background: #E1306C; color: white; padding: 5px 10px; border-radius: 8px; font-size: 10px; text-decoration: none; font-weight: bold; margin-top: 5px; }
         .btn-save { background: #00ff88; color: black; border: none; width: 100%; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; }
         .btn-delete { background: none; border: none; color: #ff4444; font-size: 10px; margin-top: 15px; cursor: pointer; width: 100%; }
 
@@ -140,7 +141,6 @@
         let logadoComo = null;
         let slideIndex = 0;
 
-        // Recuperar dados ao carregar
         window.onload = () => {
             const salvo = JSON.parse(localStorage.getItem('rank_user'));
             if(salvo) {
@@ -161,9 +161,8 @@
             const pass = document.getElementById('reg-pass').value;
             const power = document.getElementById('reg-power').value;
 
-            // VALIDAÇÃO: Bloqueia se qualquer campo estiver vazio
             if (!turma || !serie || !escola || !insta || !pass) {
-                return alert("⚠️ ERRO: Todos os campos devem estar preenchidos para continuar!");
+                return alert("⚠️ ERRO: Preencha todos os campos!");
             }
 
             const dadosSalvar = { turma, pass, serie, escola, insta, power };
@@ -173,11 +172,8 @@
                 if (snapshot.exists()) {
                     const dados = snapshot.val();
                     if (dados.pass === pass) {
-                        // Atualiza os dados no banco caso o usuário tenha mudado algo no login
                         database.ref('ranking/' + turma).update(dadosSalvar).then(() => entrarNoSistema(dados));
-                    } else {
-                        alert("Senha incorreta!");
-                    }
+                    } else alert("Senha incorreta!");
                 } else {
                     const novaTurma = { ...dadosSalvar, seguidores: 0, videos: 0, pontos: 0, online: true };
                     database.ref('ranking/' + turma).set(novaTurma).then(() => entrarNoSistema(novaTurma));
@@ -193,16 +189,18 @@
             document.getElementById('rank-screen').classList.remove('hidden');
         }
 
-        // RANKING E CARROSSEL COMPACTO
         database.ref('ranking').on('value', (snapshot) => {
             const lista = document.getElementById('lista-ranking');
             const carrossel = document.getElementById('carousel-container');
             const dadosBD = snapshot.val();
             if (!dadosBD) return;
 
-            let array = Object.keys(dadosBD).map(id => dadosBD[id]).sort((a, b) => (b.pontos || 0) - (a.pontos || 0));
+            let array = Object.keys(dadosBD)
+                .map(id => dadosBD[id])
+                .filter(t => t.turma !== undefined) // Evita o erro "undefined"
+                .sort((a, b) => (b.pontos || 0) - (a.pontos || 0));
 
-            // Carrossel sem a # e menor
+            // Carrossel sem #
             carrossel.innerHTML = "";
             [0,1,2].forEach(i => {
                 if(array[i]) {
@@ -239,7 +237,6 @@
             window.carrosselTimer = setTimeout(iniciarCarrossel, 3000);
         }
 
-        // ADMIN
         function loginAdmin() {
             if (document.getElementById('admin-user').value === "admin" && document.getElementById('admin-pass').value === "admin123") {
                 esconderTudo();
@@ -249,23 +246,25 @@
         }
 
         function carregarPainelAdmin() {
-            database.ref('ranking').on('value', snapshot => {
+            database.ref('ranking').once('value', snapshot => {
                 const container = document.getElementById('lista-admin');
                 container.innerHTML = "";
                 const dados = snapshot.val();
                 if(!dados) return;
                 Object.keys(dados).forEach(id => {
                     const t = dados[id];
+                    if(!t.turma) return;
+                    
                     container.innerHTML += `
                         <div class="admin-card" id="card-${t.turma}">
                             <strong>${t.turma}</strong><br>
-                            <small style="color:#444">IG: ${t.insta}</small>
+                            <a href="${t.insta}" target="_blank" class="insta-btn">📸 ABRIR INSTAGRAM</a>
                             <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0;">
                                 <input type="number" id="s-${t.turma}" value="${t.seguidores}" placeholder="Segs">
                                 <input type="number" id="v-${t.turma}" value="${t.videos}" placeholder="Vids">
                             </div>
-                            <button onclick="salvarPontos('${t.turma}')" class="btn-save">SALVAR</button>
-                            <button onclick="deletarTurma('${t.turma}')" class="btn-delete">Excluir</button>
+                            <button onclick="salvarPontos('${t.turma}')" class="btn-save">ATUALIZAR</button>
+                            <button onclick="deletarTurma('${t.turma}')" class="btn-delete">Remover Turma</button>
                         </div>`;
                 });
             });
@@ -275,10 +274,10 @@
             const s = parseInt(document.getElementById(`s-${nome}`).value) || 0;
             const v = parseInt(document.getElementById(`v-${nome}`).value) || 0;
             const total = (Math.floor(s / 100) * 2) + (v * 1);
+            
             database.ref('ranking/' + nome).update({ seguidores: s, videos: v, pontos: total }).then(() => {
                 const card = document.getElementById(`card-${nome}`);
-                card.classList.add('salvo');
-                setTimeout(() => card.classList.remove('salvo'), 2000);
+                card.classList.add('salvo'); // Fica verde permanentemente nesta sessão
             });
         }
 

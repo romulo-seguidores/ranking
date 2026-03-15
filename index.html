@@ -1,99 +1,95 @@
 <!DOCTYPE html>
-<html>
-
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>JSFiddle xpL2jr9y</title>
-
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
-
-body { margin: 0; background: #020202; color: white; font-family: 'Poppins', sans-serif; display: flex; justify-content: center; }
-#app { width: 100%; max-width: 420px; padding: 20px; }
-
-.glass, .glass-large { 
-    background: rgba(255,255,255,0.03); backdrop-filter: blur(20px); 
-    border: 1px solid rgba(255,255,255,0.1); border-radius: 30px; 
-    padding: 25px; text-align: center; margin-top: 20px; 
-}
-
-/* PODERES */
-.power-fogo { color: #ff4d00; text-shadow: 0 0 10px #ff4d00; animation: burn 1.5s infinite alternate; }
-@keyframes burn { to { transform: translateY(-3px); } }
-.power-gelo { color: #00d4ff; text-shadow: 0 0 10px #00d4ff; }
-.power-floresta { color: #00ff88; text-shadow: 0 0 10px #00ff88; }
-.power-vazio { color: #a855f7; text-shadow: 0 0 15px #6b21a8; }
-.power-eletrico { color: #eab308; text-shadow: 0 0 10px #eab308; animation: flash 0.1s infinite; }
-@keyframes flash { 50% { opacity: 0.7; } }
-
-/* FORM */
-input, select { width: 100%; padding: 14px; margin: 8px 0; border-radius: 12px; border: none; background: rgba(255,255,255,0.08); color: white; box-sizing: border-box; }
-.btn-main { width: 100%; padding: 16px; background: linear-gradient(90deg, #00ff88, #00d4ff); border: none; border-radius: 12px; font-weight: bold; cursor: pointer; color: black; }
-.btn-sec { background: none; border: 1px solid #333; color: #888; width: 100%; padding: 12px; border-radius: 12px; margin-top: 10px; cursor: pointer; }
-.btn-admin-link { background: none; border: none; color: #111; font-size: 10px; margin-top: 20px; cursor: pointer; }
-
-/* RANK CARD */
-.rank-card { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); padding: 18px; border-radius: 20px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.05); }
-.stats-info { font-size: 10px; color: #aaa; margin-top: 5px; display: block; }
-.escola-info { font-size: 9px; color: #666; font-style: italic; }
-.divider { height: 1px; background: rgba(255,255,255,0.1); margin: 20px 0; }
-
-/* ADMIN */
-.admin-card { background: #080808; padding: 20px; border-radius: 20px; border: 1px solid #222; margin-bottom: 15px; text-align: left; }
-.admin-card.salvo { border-color: #00ff88; }
-.admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0; }
-.btn-save { background: #00ff88; color: black; border: none; width: 100%; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-.btn-insta-admin { display: inline-block; padding: 5px 10px; background: #e1306c; color: white; text-decoration: none; font-size: 10px; border-radius: 5px; margin-bottom: 10px; font-weight: bold; }
-.btn-delete { background: none; border: none; color: #ff4444; font-size: 10px; margin-top: 15px; cursor: pointer; text-decoration: underline; width: 100%; text-align: center; }
-
-.hidden { display: none !important; }
-  </style>
-
-  
-</head>
-<body>
-  <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rank Classe - Versão Final</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Rank Classe - Regional Gold</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
+
+        body { margin: 0; background: #020202; color: white; font-family: 'Poppins', sans-serif; display: flex; justify-content: center; }
+        #app { width: 100%; max-width: 420px; padding: 20px; }
+
+        .glass, .glass-large { 
+            background: rgba(255,255,255,0.03); backdrop-filter: blur(20px); 
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 30px; 
+            padding: 25px; text-align: center; margin-top: 20px; 
+        }
+
+        /* STATUS ONLINE */
+        .status-dot { height: 8px; width: 8px; border-radius: 50%; display: inline-block; margin-right: 5px; }
+        .online { background-color: #00ff88; box-shadow: 0 0 10px #00ff88; }
+        .offline { background-color: #ff4444; }
+
+        /* MUNDO DOURADO */
+        .regional-header { color: #ffd700; font-weight: bold; font-size: 1.2rem; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .golden-globe { animation: rotate 5s linear infinite; font-size: 1.5rem; }
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        /* PODERES */
+        .power-fogo { color: #ff4d00; text-shadow: 0 0 10px #ff4d00; animation: burn 1.5s infinite alternate; }
+        @keyframes burn { to { transform: translateY(-3px); } }
+        .power-gelo { color: #00d4ff; text-shadow: 0 0 10px #00d4ff; }
+        .power-floresta { color: #00ff88; text-shadow: 0 0 10px #00ff88; }
+        .power-vazio { color: #a855f7; text-shadow: 0 0 15px #6b21a8; }
+        .power-eletrico { color: #eab308; text-shadow: 0 0 10px #eab308; animation: flash 0.1s infinite; }
+        @keyframes flash { 50% { opacity: 0.7; } }
+
+        /* TAREFAS E BONUS */
+        .task-box { background: rgba(255,215,0,0.1); border: 1px dashed #ffd700; border-radius: 15px; padding: 15px; margin: 15px 0; font-size: 0.9rem; }
+        .btn-collect { background: #ffd700; color: black; border: none; padding: 10px; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; }
+        .btn-collect:disabled { background: #444; color: #888; cursor: not-allowed; }
+
+        input, select { width: 100%; padding: 14px; margin: 8px 0; border-radius: 12px; border: none; background: rgba(255,255,255,0.08); color: white; box-sizing: border-box; }
+        .btn-main { width: 100%; padding: 16px; background: linear-gradient(90deg, #00ff88, #00d4ff); border: none; border-radius: 12px; font-weight: bold; cursor: pointer; color: black; }
+        .btn-sec { background: none; border: 1px solid #333; color: #888; width: 100%; padding: 12px; border-radius: 12px; margin-top: 10px; cursor: pointer; }
+        
+        .rank-card { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); padding: 18px; border-radius: 20px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.05); }
+        .stats-info { font-size: 10px; color: #aaa; margin-top: 5px; display: block; }
+        .hidden { display: none !important; }
+    </style>
 </head>
 <body>
     <div id="app">
         <section id="auth-screen" class="glass">
             <h1 class="logo">RANK<span>CLASSE</span></h1>
-            <div class="input-group">
-                <input type="text" id="reg-turma" placeholder="Nome da Turma">
-                <input type="text" id="reg-serie" placeholder="Série/Ano">
-                <input type="text" id="reg-escola" placeholder="Nome da Escola">
-                <input type="url" id="reg-insta" placeholder="Link do Instagram">
-                <input type="password" id="reg-pass" placeholder="Senha">
-                <select id="reg-power">
-                    <option value="power-fogo">🔥 Vermelho Fogo</option>
-                    <option value="power-gelo">❄️ Azul Gelo</option>
-                    <option value="power-floresta">🌿 Verde Floresta</option>
-                    <option value="power-vazio">🌑 Roxo Vazio</option>
-                    <option value="power-eletrico">⚡ Amarelo Elétrico</option>
-                </select>
-                <button onclick="logarOuCadastrar()" class="btn-main">ENTRAR NO RANKING</button>
-            </div>
-            <button onclick="mostrarLoginAdmin()" class="btn-admin-link">SISTEMA CENTRAL</button>
+            <input type="text" id="reg-turma" placeholder="Nome da Turma">
+            <input type="text" id="reg-serie" placeholder="Série/Ano">
+            <input type="text" id="reg-escola" placeholder="Nome da Escola">
+            <input type="url" id="reg-insta" placeholder="Link do Instagram">
+            <input type="password" id="reg-pass" placeholder="Senha">
+            <select id="reg-power">
+                <option value="power-fogo">🔥 Vermelho Fogo</option>
+                <option value="power-gelo">❄️ Azul Gelo</option>
+                <option value="power-floresta">🌿 Verde Floresta</option>
+                <option value="power-vazio">🌑 Roxo Vazio</option>
+                <option value="power-eletrico">⚡ Amarelo Elétrico</option>
+            </select>
+            <button onclick="logarOuCadastrar()" class="btn-main">ENTRAR NO RANKING</button>
+            <button onclick="mostrarLoginAdmin()" class="btn-sec" style="font-size: 10px; border:none;">ADMIN</button>
         </section>
 
         <section id="rank-screen" class="hidden glass-large">
-            <div id="user-header">
-                <small>Conectado em:</small>
-                <h1 id="nome-turma-topo">---</h1>
+            <div class="regional-header">
+                <span class="golden-globe">🌎</span> RANK REGIONAL <span class="golden-globe">🌎</span>
             </div>
-            <div class="divider"></div>
+            
+            <div id="user-panel" class="task-box">
+                <div id="daily-bonus-area">
+                    <strong>🎁 Bônus Diário:</strong>
+                    <button id="btn-daily" onclick="coletarPontoDiario()" class="btn-collect">COLETAR +1 PONTO</button>
+                </div>
+                <div style="margin-top:10px; border-top:1px solid rgba(255,215,0,0.2); padding-top:10px;">
+                    <strong>📝 Missão do Dia:</strong>
+                    <p id="txt-missao" style="margin:5px 0; color:#ffd700;">Carregando missão...</p>
+                </div>
+            </div>
+
             <div id="lista-ranking"></div>
-            <button onclick="voltar()" class="btn-sec">SAIR DA CONTA</button>
+            <button onclick="sair()" class="btn-sec">SAIR DA CONTA</button>
         </section>
 
         <section id="admin-login-screen" class="hidden glass">
@@ -105,140 +101,172 @@ input, select { width: 100%; padding: 14px; margin: 8px 0; border-radius: 12px; 
         </section>
 
         <section id="admin-panel" class="hidden glass-large">
-            <h2>🛠 Painel de Lançamento</h2>
+            <h2>🛠 Painel Admin</h2>
             <div id="lista-admin"></div>
             <button onclick="voltar()" class="btn-sec">FECHAR</button>
         </section>
     </div>
-    <script src="script.js"></script>
-</body>
-</html>
 
-  <script>
-    const firebaseConfig = {
-    apiKey: "SUA_API_KEY",
-    databaseURL: "https://gincanaescola-d4f8c-default-rtdb.firebaseio.com/",
-    projectId: "gincanaescola-d4f8c",
-};
+    <script>
+        const firebaseConfig = {
+            apiKey: "SUA_API_KEY",
+            databaseURL: "https://gincanaescola-d4f8c-default-rtdb.firebaseio.com/",
+            projectId: "gincanaescola-d4f8c",
+        };
 
-if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-const database = firebase.database();
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
 
-// --- LOGIN / CADASTRO ---
-function logarOuCadastrar() {
-    const turma = document.getElementById('reg-turma').value.trim();
-    const serie = document.getElementById('reg-serie').value;
-    const escola = document.getElementById('reg-escola').value;
-    const insta = document.getElementById('reg-insta').value;
-    const pass = document.getElementById('reg-pass').value;
-    const power = document.getElementById('reg-power').value;
+        let usuarioAtual = null;
 
-    if (!turma || !pass || !escola) return alert("Preencha Turma, Escola e Senha!");
+        // --- SISTEMA DE TAREFAS DINÂMICAS ---
+        const missoes = [
+            "Grave um Reels da turma gritando o grito de guerra!",
+            "Publique uma foto da turma no pátio com a hashtag #Gincana2024",
+            "Crie um story convidando outras salas para o app!",
+            "Faça um vídeo de 15s mostrando o 'Poder' da sua turma!"
+        ];
 
-    database.ref('ranking/' + turma).once('value').then((snapshot) => {
-        if (snapshot.exists()) {
-            const dados = snapshot.val();
-            if (dados.pass === pass) entrarNoSistema(dados);
-            else alert("Senha incorreta!");
-        } else {
-            const novaTurma = {
-                turma, serie, escola, insta, pass, power,
-                seguidores: 0, videos: 0, pontos: 0, verificado: false
-            };
-            database.ref('ranking/' + turma).set(novaTurma).then(() => entrarNoSistema(novaTurma));
+        function getMissaoDoDia() {
+            const dia = new Date().getDate();
+            return missoes[dia % missoes.length];
         }
-    });
-}
 
-function entrarNoSistema(dados) {
-    document.getElementById('nome-turma-topo').innerText = `${dados.turma} - ${dados.escola}`;
-    document.getElementById('nome-turma-topo').className = dados.power;
-    esconderTudo();
-    document.getElementById('rank-screen').classList.remove('hidden');
-}
+        // --- LOGIN E STATUS ONLINE ---
+        function logarOuCadastrar() {
+            const turma = document.getElementById('reg-turma').value.trim();
+            const pass = document.getElementById('reg-pass').value;
+            if (!turma || !pass) return alert("Turma e Senha obrigatórios!");
 
-// --- RANKING GLOBAL ---
-database.ref('ranking').on('value', (snapshot) => {
-    const lista = document.getElementById('lista-ranking');
-    if (!lista) return;
-    const dadosBD = snapshot.val();
-    if (!dadosBD) { lista.innerHTML = "<p style='opacity:0.5'>Vazio...</p>"; return; }
+            database.ref('ranking/' + turma).once('value').then((snapshot) => {
+                if (snapshot.exists()) {
+                    const dados = snapshot.val();
+                    if (dados.pass === pass) entrarNoSistema(dados);
+                    else alert("Senha incorreta!");
+                } else {
+                    const novaTurma = {
+                        turma, pass,
+                        serie: document.getElementById('reg-serie').value,
+                        escola: document.getElementById('reg-escola').value,
+                        insta: document.getElementById('reg-insta').value,
+                        power: document.getElementById('reg-power').value,
+                        seguidores: 0, videos: 0, pontos: 0, 
+                        lastDaily: 0, online: true
+                    };
+                    database.ref('ranking/' + turma).set(novaTurma).then(() => entrarNoSistema(novaTurma));
+                }
+            });
+        }
 
-    let arrayTurmas = Object.keys(dadosBD).map(id => dadosBD[id]);
-    arrayTurmas.sort((a, b) => (b.pontos || 0) - (a.pontos || 0));
+        function entrarNoSistema(dados) {
+            usuarioAtual = dados.turma;
+            document.getElementById('txt-missao').innerText = getMissaoDoDia();
+            
+            // Setar Online
+            database.ref('ranking/' + usuarioAtual).update({ online: true });
+            database.ref('ranking/' + usuarioAtual).onDisconnect().update({ online: false });
 
-    lista.innerHTML = "";
-    arrayTurmas.forEach((t, i) => {
-        let medal = i === 0 && t.pontos > 0 ? "🥇" : i === 1 && t.pontos > 0 ? "🥈" : i === 2 && t.pontos > 0 ? "🥉" : "🔹";
-        lista.innerHTML += `
-            <div class="rank-card">
-                <div style="text-align:left">
-                    <span class="${t.power}" style="font-weight:bold">${medal} ${t.turma}</span><br>
-                    <small class="escola-info">${t.serie} | ${t.escola}</small>
-                    <span class="stats-info">👥 ${t.seguidores || 0} Seg | 🎬 ${t.videos || 0} Vid</span>
-                </div>
-                <div style="text-align:right">
-                    <span style="color:#00ff88; font-weight:bold; font-size:1.3rem">${t.pontos || 0} pts</span>
-                </div>
-            </div>`;
-    });
-});
+            verificarBotaoDaily(dados.lastDaily);
+            esconderTudo();
+            document.getElementById('rank-screen').classList.remove('hidden');
+        }
 
-// --- ADMIN ---
-function loginAdmin() {
-    const user = document.getElementById('admin-user').value;
-    const pass = document.getElementById('admin-pass').value;
-    if (user === "admin" && pass === "admin123") {
-        esconderTudo();
-        document.getElementById('admin-panel').classList.remove('hidden');
-        carregarPainelAdmin();
-    } else alert("Erro!");
-}
+        // --- BÔNUS DIÁRIO ---
+        function verificarBotaoDaily(lastDaily) {
+            const agora = Date.now();
+            const vinteQuatroHoras = 24 * 60 * 60 * 1000;
+            const btn = document.getElementById('btn-daily');
+            
+            if (agora - lastDaily < vinteQuatroHoras) {
+                btn.disabled = true;
+                btn.innerText = "COLETADO (Volte amanhã)";
+            } else {
+                btn.disabled = false;
+                btn.innerText = "COLETAR +1 PONTO";
+            }
+        }
 
-function carregarPainelAdmin() {
-    database.ref('ranking').on('value', snapshot => {
-        const container = document.getElementById('lista-admin');
-        container.innerHTML = "";
-        const dados = snapshot.val();
-        if(!dados) return;
+        function coletarPontoDiario() {
+            database.ref('ranking/' + usuarioAtual).once('value').then(snap => {
+                const dados = snap.val();
+                const novosPontos = (dados.pontos || 0) + 1;
+                database.ref('ranking/' + usuarioAtual).update({
+                    pontos: novosPontos,
+                    lastDaily: Date.now()
+                });
+                alert("Você ganhou 1 ponto de login!");
+                verificarBotaoDaily(Date.now());
+            });
+        }
 
-        Object.keys(dados).forEach(id => {
-            const t = dados[id];
-            container.innerHTML += `
-                <div class="admin-card ${t.verificado ? 'salvo' : ''}" id="card-${t.turma}">
-                    <strong class="${t.power}">${t.turma} (${t.escola})</strong><br>
-                    <a href="${t.insta}" target="_blank" class="btn-insta-admin">📸 Abrir Instagram</a>
-                    <div class="admin-grid">
-                        <input type="number" id="s-${t.turma}" placeholder="Seg" value="${t.seguidores}" oninput="pendente('${t.turma}')">
-                        <input type="number" id="v-${t.turma}" placeholder="Vid" value="${t.videos}" oninput="pendente('${t.turma}')">
-                    </div>
-                    <button onclick="salvarPontos('${t.turma}')" class="btn-save">LANÇAR PONTOS</button>
-                    <button onclick="deletarTurma('${t.turma}')" class="btn-delete">Excluir Turma</button>
-                </div>`;
+        // --- RANKING COM STATUS E MEDALHAS ---
+        database.ref('ranking').on('value', (snapshot) => {
+            const lista = document.getElementById('lista-ranking');
+            const dadosBD = snapshot.val();
+            if (!dadosBD) return;
+
+            let array = Object.keys(dadosBD).map(id => dadosBD[id]);
+            array.sort((a, b) => (b.pontos || 0) - (a.pontos || 0));
+
+            lista.innerHTML = "";
+            array.forEach((t, i) => {
+                let medal = i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : "🎖";
+                let statusClass = t.online ? "online" : "offline";
+
+                lista.innerHTML += `
+                    <div class="rank-card">
+                        <div style="text-align:left">
+                            <span class="status-dot ${statusClass}"></span>
+                            <span class="${t.power}" style="font-weight:bold">${t.turma}</span><br>
+                            <small style="opacity:0.5">${t.escola}</small>
+                        </div>
+                        <div style="text-align:right">
+                            <span style="color:#ffd700; font-weight:bold; font-size:1.2rem">${medal} ${t.pontos || 0} pts</span>
+                        </div>
+                    </div>`;
+            });
         });
-    });
-}
 
-function pendente(nome) {
-    const card = document.getElementById(`card-${nome}`);
-    if(card) card.classList.remove('salvo');
-}
+        // --- ADMIN ---
+        function loginAdmin() {
+            if (document.getElementById('admin-user').value === "admin" && document.getElementById('admin-pass').value === "admin123") {
+                esconderTudo();
+                document.getElementById('admin-panel').classList.remove('hidden');
+                carregarPainelAdmin();
+            }
+        }
 
-function salvarPontos(nome) {
-    const s = parseInt(document.getElementById(`s-${nome}`).value) || 0;
-    const v = parseInt(document.getElementById(`v-${nome}`).value) || 0;
-    const total = (Math.floor(s / 100) * 2) + (v * 1);
+        function carregarPainelAdmin() {
+            database.ref('ranking').on('value', snapshot => {
+                const container = document.getElementById('lista-admin');
+                container.innerHTML = "";
+                const dados = snapshot.val();
+                Object.keys(dados).forEach(id => {
+                    const t = dados[id];
+                    container.innerHTML += `
+                        <div class="admin-card">
+                            <strong>${t.turma}</strong><br>
+                            <input type="number" id="pts-${t.turma}" value="${t.pontos}">
+                            <button onclick="salvarAdmin('${t.turma}')" class="btn-save">ATUALIZAR PONTOS</button>
+                        </div>`;
+                });
+            });
+        }
 
-    database.ref('ranking/' + nome).update({ seguidores: s, videos: v, pontos: total, verificado: true });
-}
+        function salvarAdmin(turma) {
+            const p = parseInt(document.getElementById('pts-' + turma).value);
+            database.ref('ranking/' + turma).update({ pontos: p });
+            alert("Pontos atualizados!");
+        }
 
-function deletarTurma(nome) {
-    if(confirm(`Excluir ${nome}?`)) database.ref('ranking/' + nome).remove();
-}
+        function sair() {
+            if (usuarioAtual) database.ref('ranking/' + usuarioAtual).update({ online: false });
+            location.reload();
+        }
 
-function esconderTudo() { ["auth-screen", "admin-login-screen", "rank-screen", "admin-panel"].forEach(id => document.getElementById(id).classList.add('hidden')); }
-function voltar() { esconderTudo(); document.getElementById('auth-screen').classList.remove('hidden'); }
-function mostrarLoginAdmin() { esconderTudo(); document.getElementById('admin-login-screen').classList.remove('hidden'); }
-  </script>
+        function esconderTudo() { ["auth-screen", "admin-login-screen", "rank-screen", "admin-panel"].forEach(id => document.getElementById(id).classList.add('hidden')); }
+        function voltar() { esconderTudo(); document.getElementById('auth-screen').classList.remove('hidden'); }
+        function mostrarLoginAdmin() { esconderTudo(); document.getElementById('admin-login-screen').classList.remove('hidden'); }
+    </script>
 </body>
 </html>

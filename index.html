@@ -67,13 +67,14 @@
         .btn-main { width: 100%; padding: 16px; background: linear-gradient(90deg, #00ff88, #00d4ff); border: none; border-radius: 12px; font-weight: bold; cursor: pointer; color: black; margin-top: 10px; }
         .btn-sec { background: none; border: 1px solid #333; color: #888; width: 100%; padding: 12px; border-radius: 12px; margin-top: 10px; cursor: pointer; }
 
-        /* REAÇÕES DISCRETAS (Sem Verde) */
+        /* REAÇÕES DISCRETAS */
         .reaction-bar { display: flex; gap: 8px; margin-top: 5px; }
         .btn-reaction { background: rgba(255,255,255,0.1); border: none; color: white; font-size: 10px; padding: 4px 8px; border-radius: 6px; cursor: pointer; transition: 0.2s; }
         .btn-reaction:active { transform: scale(0.9); background: rgba(255,255,255,0.2); }
 
         /* ADMIN */
         .admin-card { background: #080808; padding: 20px; border-radius: 20px; border: 1px solid #222; margin-bottom: 15px; text-align: left; }
+        .insta-btn { display: inline-block; background: #E1306C; color: white; padding: 6px 12px; border-radius: 8px; font-size: 10px; text-decoration: none; font-weight: bold; margin-bottom: 10px; }
         .btn-save { background: #00ff88; color: black; border: none; width: 100%; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; }
         .btn-reset-votos { background: #441111; color: #ff8888; border: 1px solid #662222; padding: 4px 8px; border-radius: 6px; font-size: 9px; cursor: pointer; margin-top: 10px; }
 
@@ -162,7 +163,6 @@
         let slideIndex = 0;
         let eVisitante = false;
 
-        // --- FUNÇÃO DE AUTO-PREENCHIMENTO (RESTAURADA) ---
         window.onload = () => {
             const salvo = JSON.parse(localStorage.getItem('rank_user'));
             if(salvo) {
@@ -195,7 +195,6 @@
             database.ref('ranking/' + t).once('value').then((snap) => {
                 if (snap.exists()) {
                     if (snap.val().pass === p) {
-                        // Salva os dados localmente ao logar
                         localStorage.setItem('rank_user', JSON.stringify({turma:t, serie:s, escola:e, insta:i, pass:p, power:pw}));
                         database.ref('ranking/'+t).update({turma:t, serie:s, escola:e, insta:i, power:pw}).then(() => entrarNoSistema({turma:t}));
                     } else alert("Senha incorreta!");
@@ -250,7 +249,6 @@
             const key = 'voto_' + turma;
             const votoAntigo = localStorage.getItem(key);
             if (votoAntigo === tipo) return;
-
             database.ref(`ranking/${turma}`).transaction(t => {
                 if (t) {
                     if (votoAntigo) {
@@ -301,14 +299,15 @@
                     container.innerHTML += `
                         <div class="admin-card">
                             <strong>${t.turma}</strong><br>
+                            <a href="${t.insta}" target="_blank" class="insta-btn">📸 INSTAGRAM</a>
                             <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0;">
                                 <input type="number" id="s-${t.turma}" value="${t.seguidores}" placeholder="Segs">
                                 <input type="number" id="v-${t.turma}" value="${t.videos}" placeholder="Vids">
                             </div>
                             <button onclick="salvarPontos('${t.turma}')" class="btn-save">ATUALIZAR PONTOS</button>
-                            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top:10px;">
-                                <button onclick="zerarVotos('${t.turma}')" class="btn-reset-votos">🗑 ZERAR VOTOS (L/D)</button>
-                                <button onclick="deletarTurma('${t.turma}')" class="btn-delete" style="color:red; background:none; border:none; font-size:10px; cursor:pointer;">✖ EXCLUIR</button>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top:10px;">
+                                <button onclick="zerarVotos('${t.turma}')" class="btn-reset-votos">🗑 ZERAR VOTOS</button>
+                                <button onclick="deletarTurma('${t.turma}')" style="color:red; background:none; border:none; font-size:10px; cursor:pointer; font-weight:bold;">✖ EXCLUIR</button>
                             </div>
                         </div>`;
                 });

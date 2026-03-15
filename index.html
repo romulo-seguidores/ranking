@@ -22,33 +22,34 @@
         .online { background: #00ff88; box-shadow: 0 0 8px #00ff88; }
         .offline { background: #ff4444; }
 
-        /* ANIMAÇÃO LOGIN (ROUBE A COROA) */
+        /* ANIMAÇÃO LOGIN */
         .text-anim-crown {
-            font-size: 14px; color: #ffd700; font-weight: bold; margin-bottom: 20px;
+            font-size: 13px; color: #ffd700; font-weight: bold; margin-bottom: 20px;
             display: block; text-transform: uppercase;
             animation: crownFloat 2s infinite ease-in-out;
             text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
         }
         @keyframes crownFloat {
             0%, 100% { transform: translateY(0); opacity: 1; }
-            50% { transform: translateY(-5px); opacity: 0.7; }
+            50% { transform: translateY(-3px); opacity: 0.7; }
         }
 
-        /* CARROSSEL PEQUENO (TOP REGIONAL) */
+        /* CARROSSEL COMPACTO (TOP REGIONAL) */
         .regional-box { 
-            background: linear-gradient(180deg, rgba(255,215,0,0.15) 0%, rgba(0,0,0,1) 100%); 
-            border: 1px solid #ffd700; border-radius: 20px; padding: 12px; margin-bottom: 25px; 
-            position: relative; box-shadow: 0 0 15px rgba(255,215,0,0.1);
-            height: 60px; overflow: hidden; display: flex; flex-direction: column; justify-content: center;
+            background: linear-gradient(180deg, rgba(255,215,0,0.1) 0%, rgba(0,0,0,1) 100%); 
+            border: 1px solid rgba(255,215,0,0.3); border-radius: 20px; padding: 8px 15px; margin-bottom: 25px; 
+            position: relative; height: 50px; overflow: hidden; display: flex; flex-direction: column; justify-content: center;
+            text-align: left;
         }
-        .regional-box .label { font-size: 9px; color: #ffd700; font-weight: bold; letter-spacing: 2px; margin-bottom: 4px; }
+        .regional-box .label { font-size: 8px; color: #ffd700; font-weight: bold; letter-spacing: 1px; margin-bottom: 2px; opacity: 0.7; }
         
-        #carousel-container { position: relative; height: 30px; }
+        #carousel-container { position: relative; height: 25px; }
         .rank-slide {
-            position: absolute; width: 100%; left: 0; font-size: 1.2rem; font-weight: 800;
-            opacity: 0; transform: translateY(20px); transition: 0.5s ease-in-out;
+            position: absolute; width: 100%; left: 0; font-size: 0.95rem; font-weight: 800;
+            opacity: 0; transform: translateX(10px); transition: 0.5s ease-in-out;
+            text-transform: uppercase;
         }
-        .rank-slide.active { opacity: 1; transform: translateY(0); }
+        .rank-slide.active { opacity: 1; transform: translateX(0); }
 
         /* PODERES */
         .power-fogo { color: #ff4d00; text-shadow: 0 0 10px #ff4d00; }
@@ -59,19 +60,18 @@
 
         /* LISTA RANKING */
         .rank-card { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); padding: 18px; border-radius: 20px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.05); }
-        .escola-info { font-size: 9px; color: #666; font-style: italic; }
+        .escola-info { font-size: 9px; color: #666; }
 
         /* INPUTS E BOTÕES */
-        input, select { width: 100%; padding: 14px; margin: 8px 0; border-radius: 12px; border: none; background: rgba(255,255,255,0.08); color: white; box-sizing: border-box; }
-        .btn-main { width: 100%; padding: 16px; background: linear-gradient(90deg, #00ff88, #00d4ff); border: none; border-radius: 12px; font-weight: bold; cursor: pointer; color: black; }
+        input, select { width: 100%; padding: 14px; margin: 8px 0; border-radius: 12px; border: none; background: rgba(255,255,255,0.08); color: white; box-sizing: border-box; font-size: 14px; }
+        .btn-main { width: 100%; padding: 16px; background: linear-gradient(90deg, #00ff88, #00d4ff); border: none; border-radius: 12px; font-weight: bold; cursor: pointer; color: black; margin-top: 10px; }
         .btn-sec { background: none; border: 1px solid #333; color: #888; width: 100%; padding: 12px; border-radius: 12px; margin-top: 10px; cursor: pointer; }
 
-        /* ADMIN (VOLTOU AO ORIGINAL MELHORADO) */
-        .admin-card { background: #080808; padding: 20px; border-radius: 20px; border: 1px solid #222; margin-bottom: 15px; text-align: left; transition: 0.3s; }
+        /* ADMIN */
+        .admin-card { background: #080808; padding: 20px; border-radius: 20px; border: 1px solid #222; margin-bottom: 15px; text-align: left; }
         .admin-card.salvo { border-color: #00ff88; box-shadow: 0 0 15px rgba(0,255,136,0.2); }
-        .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0; }
         .btn-save { background: #00ff88; color: black; border: none; width: 100%; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        .btn-delete { background: none; border: none; color: #ff4444; font-size: 10px; margin-top: 15px; cursor: pointer; text-decoration: underline; width: 100%; text-align: center; }
+        .btn-delete { background: none; border: none; color: #ff4444; font-size: 10px; margin-top: 15px; cursor: pointer; width: 100%; }
 
         .hidden { display: none !important; }
     </style>
@@ -97,15 +97,14 @@
                 </select>
                 <button onclick="logarOuCadastrar()" class="btn-main">ENTRAR NO RANKING</button>
             </div>
-            <button onclick="mostrarLoginAdmin()" style="background:none; border:none; color:#111; font-size:10px; margin-top:20px; cursor:pointer;">SISTEMA CENTRAL</button>
+            <button onclick="mostrarLoginAdmin()" style="background:none; border:none; color:#181818; font-size:10px; margin-top:20px; cursor:pointer;">SISTEMA CENTRAL</button>
         </section>
 
         <section id="rank-screen" class="hidden glass-large">
             <div class="regional-box">
-                <div class="label">🌎 TOP REGIONAL ELITE</div>
+                <div class="label">TOP REGIONAL</div>
                 <div id="carousel-container"></div>
             </div>
-
             <div id="lista-ranking"></div>
             <button onclick="sairDaConta()" class="btn-sec">SAIR DA CONTA</button>
         </section>
@@ -119,7 +118,7 @@
         </section>
 
         <section id="admin-panel" class="hidden glass-large">
-            <h2>🛠 Lançamento de Pontos</h2>
+            <h2>🛠 Lançamento</h2>
             <div id="lista-admin"></div>
             <button onclick="voltar()" class="btn-sec">FECHAR</button>
         </section>
@@ -141,7 +140,7 @@
         let logadoComo = null;
         let slideIndex = 0;
 
-        // AO CARREGAR: Recuperar dados salvos no navegador
+        // Recuperar dados ao carregar
         window.onload = () => {
             const salvo = JSON.parse(localStorage.getItem('rank_user'));
             if(salvo) {
@@ -156,23 +155,29 @@
 
         function logarOuCadastrar() {
             const turma = document.getElementById('reg-turma').value.trim();
+            const serie = document.getElementById('reg-serie').value.trim();
+            const escola = document.getElementById('reg-escola').value.trim();
+            const insta = document.getElementById('reg-insta').value.trim();
             const pass = document.getElementById('reg-pass').value;
-            if (!turma || !pass) return alert("Preencha os campos!");
+            const power = document.getElementById('reg-power').value;
 
-            const dadosSalvar = {
-                turma, pass,
-                serie: document.getElementById('reg-serie').value,
-                escola: document.getElementById('reg-escola').value,
-                insta: document.getElementById('reg-insta').value,
-                power: document.getElementById('reg-power').value
-            };
+            // VALIDAÇÃO: Bloqueia se qualquer campo estiver vazio
+            if (!turma || !serie || !escola || !insta || !pass) {
+                return alert("⚠️ ERRO: Todos os campos devem estar preenchidos para continuar!");
+            }
+
+            const dadosSalvar = { turma, pass, serie, escola, insta, power };
             localStorage.setItem('rank_user', JSON.stringify(dadosSalvar));
 
             database.ref('ranking/' + turma).once('value').then((snapshot) => {
                 if (snapshot.exists()) {
                     const dados = snapshot.val();
-                    if (dados.pass === pass) entrarNoSistema(dados);
-                    else alert("Senha incorreta!");
+                    if (dados.pass === pass) {
+                        // Atualiza os dados no banco caso o usuário tenha mudado algo no login
+                        database.ref('ranking/' + turma).update(dadosSalvar).then(() => entrarNoSistema(dados));
+                    } else {
+                        alert("Senha incorreta!");
+                    }
                 } else {
                     const novaTurma = { ...dadosSalvar, seguidores: 0, videos: 0, pontos: 0, online: true };
                     database.ref('ranking/' + turma).set(novaTurma).then(() => entrarNoSistema(novaTurma));
@@ -188,27 +193,25 @@
             document.getElementById('rank-screen').classList.remove('hidden');
         }
 
-        // RANKING E CARROSSEL
+        // RANKING E CARROSSEL COMPACTO
         database.ref('ranking').on('value', (snapshot) => {
             const lista = document.getElementById('lista-ranking');
             const carrossel = document.getElementById('carousel-container');
             const dadosBD = snapshot.val();
             if (!dadosBD) return;
 
-            let array = Object.keys(dadosBD).map(id => dadosBD[id]);
-            array.sort((a, b) => (b.pontos || 0) - (a.pontos || 0));
+            let array = Object.keys(dadosBD).map(id => dadosBD[id]).sort((a, b) => (b.pontos || 0) - (a.pontos || 0));
 
-            // Carrossel Top 3
+            // Carrossel sem a # e menor
             carrossel.innerHTML = "";
             [0,1,2].forEach(i => {
                 if(array[i]) {
                     const crown = i === 0 ? "👑 " : "";
-                    carrossel.innerHTML += `<div class="rank-slide ${array[i].power}">${crown}#${i+1} ${array[i].turma}</div>`;
+                    carrossel.innerHTML += `<div class="rank-slide ${array[i].power}">${crown}${i+1} ${array[i].turma}</div>`;
                 }
             });
             iniciarCarrossel();
 
-            // Lista Ranking
             lista.innerHTML = "";
             array.forEach((t, i) => {
                 let medal = i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : "🔹";
@@ -256,13 +259,13 @@
                     container.innerHTML += `
                         <div class="admin-card" id="card-${t.turma}">
                             <strong>${t.turma}</strong><br>
-                            <small style="color:#555">IG: ${t.insta || 'Não informado'}</small>
-                            <div class="admin-grid">
-                                <input type="number" id="s-${t.turma}" value="${t.seguidores}" placeholder="Seguidores">
-                                <input type="number" id="v-${t.turma}" value="${t.videos}" placeholder="Vídeos">
+                            <small style="color:#444">IG: ${t.insta}</small>
+                            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0;">
+                                <input type="number" id="s-${t.turma}" value="${t.seguidores}" placeholder="Segs">
+                                <input type="number" id="v-${t.turma}" value="${t.videos}" placeholder="Vids">
                             </div>
-                            <button onclick="salvarPontos('${t.turma}')" class="btn-save">ATUALIZAR PONTOS</button>
-                            <button onclick="deletarTurma('${t.turma}')" class="btn-delete">Excluir Turma</button>
+                            <button onclick="salvarPontos('${t.turma}')" class="btn-save">SALVAR</button>
+                            <button onclick="deletarTurma('${t.turma}')" class="btn-delete">Excluir</button>
                         </div>`;
                 });
             });
@@ -272,7 +275,6 @@
             const s = parseInt(document.getElementById(`s-${nome}`).value) || 0;
             const v = parseInt(document.getElementById(`v-${nome}`).value) || 0;
             const total = (Math.floor(s / 100) * 2) + (v * 1);
-            
             database.ref('ranking/' + nome).update({ seguidores: s, videos: v, pontos: total }).then(() => {
                 const card = document.getElementById(`card-${nome}`);
                 card.classList.add('salvo');
@@ -284,12 +286,7 @@
         function esconderTudo() { ["auth-screen", "admin-login-screen", "rank-screen", "admin-panel"].forEach(id => document.getElementById(id).classList.add('hidden')); }
         function voltar() { esconderTudo(); document.getElementById('auth-screen').classList.remove('hidden'); }
         function mostrarLoginAdmin() { esconderTudo(); document.getElementById('admin-login-screen').classList.remove('hidden'); }
-        
-        function sairDaConta() { 
-            if(logadoComo) database.ref('ranking/'+logadoComo).update({online:false});
-            esconderTudo();
-            document.getElementById('auth-screen').classList.remove('hidden');
-        }
+        function sairDaConta() { if(logadoComo) database.ref('ranking/'+logadoComo).update({online:false}); location.reload(); }
     </script>
 </body>
 </html>

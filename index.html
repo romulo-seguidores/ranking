@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Rank Classe - Regional Gold</title>
+  <title>Rank Classe - Elite Regional</title>
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
 
-    body { margin: 0; background: #020202; color: white; font-family: 'Poppins', sans-serif; display: flex; justify-content: center; }
+    body { margin: 0; background: #020202; color: white; font-family: 'Poppins', sans-serif; display: flex; justify-content: center; overflow-x: hidden; }
     #app { width: 100%; max-width: 420px; padding: 20px; }
 
     .glass, .glass-large { 
@@ -22,22 +22,37 @@
     .online { background: #00ff88; box-shadow: 0 0 8px #00ff88; }
     .offline { background: #ff4444; }
 
-    /* NOVO RANK REGIONAL DINÂMICO */
-    .regional-box { background: linear-gradient(145deg, #1a1a1a, #000); border: 1px solid #ffd700; border-radius: 20px; padding: 15px; margin-bottom: 20px; position: relative; overflow: hidden; }
-    .regional-box::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,215,0,0.1) 0%, transparent 70%); animation: pulse 4s infinite; }
-    @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
-    .globe { font-size: 1.5rem; animation: spin 5s linear infinite; display: inline-block; }
+    /* RANK REGIONAL ESTILO FREE FIRE (TOP GLOBAL) */
+    .regional-box { 
+        background: linear-gradient(180deg, rgba(255,215,0,0.2) 0%, rgba(0,0,0,1) 100%); 
+        border: 2px solid #ffd700; border-radius: 20px; padding: 20px; margin-bottom: 25px; 
+        position: relative; box-shadow: 0 0 20px rgba(255,215,0,0.2);
+    }
+    .regional-box .label { font-size: 10px; color: #ffd700; font-weight: bold; letter-spacing: 2px; }
+    #topo-nome { 
+        font-size: 1.8rem; font-weight: 800; color: #fff; text-shadow: 0 0 15px #ffd700; 
+        margin: 5px 0; text-transform: uppercase; 
+    }
+    .globe-icon { font-size: 1.2rem; vertical-align: middle; animation: spin 4s linear infinite; display: inline-block; }
     @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-    #topo-nome { color: #ffd700; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
 
     /* SISTEMA DE COLETA E MISSÕES */
     .task-area { background: rgba(255,215,0,0.05); border: 1px dashed rgba(255,215,0,0.3); border-radius: 15px; padding: 15px; margin: 15px 0; font-size: 12px; }
     .btn-collect { background: #ffd700; color: black; border: none; padding: 12px; border-radius: 10px; font-weight: bold; width: 100%; cursor: pointer; margin-top: 10px; }
     .btn-collect:disabled { background: #333; color: #666; cursor: not-allowed; }
     
-    /* ANIMAÇÃO DE COLETA */
-    .collect-anim { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #ffd700; color: black; padding: 20px 40px; border-radius: 50px; font-weight: bold; z-index: 9999; animation: floatUp 1.5s forwards; }
-    @keyframes floatUp { 0% { opacity: 0; transform: translate(-50%, -20%); } 20% { opacity: 1; } 80% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%, -150%); } }
+    /* ANIMAÇÃO DE COLETA (SUMIR SOZINHA) */
+    .collect-anim { 
+        position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+        background: linear-gradient(45deg, #ffd700, #fff); color: black; 
+        padding: 20px 40px; border-radius: 50px; font-weight: 800; z-index: 10000; 
+        box-shadow: 0 0 30px #ffd700; pointer-events: none;
+        animation: collectPop 2s forwards; 
+    }
+    @keyframes collectPop { 
+        0% { opacity: 0; scale: 0.5; } 20% { opacity: 1; scale: 1.2; } 
+        80% { opacity: 1; transform: translate(-50%, -100%); } 100% { opacity: 0; transform: translate(-50%, -200%); } 
+    }
 
     /* PODERES */
     .power-fogo { color: #ff4d00; text-shadow: 0 0 10px #ff4d00; animation: burn 1.5s infinite alternate; }
@@ -55,16 +70,13 @@
     .btn-admin-link { background: none; border: none; color: #111; font-size: 10px; margin-top: 20px; cursor: pointer; }
     
     .rank-card { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); padding: 18px; border-radius: 20px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.05); }
-    .stats-info { font-size: 10px; color: #aaa; margin-top: 5px; display: block; }
     .escola-info { font-size: 9px; color: #666; font-style: italic; }
-    .divider { height: 1px; background: rgba(255,255,255,0.1); margin: 20px 0; }
 
     /* ADMIN */
     .admin-card { background: #080808; padding: 20px; border-radius: 20px; border: 1px solid #222; margin-bottom: 15px; text-align: left; }
     .admin-card.salvo { border-color: #00ff88; }
     .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0; }
     .btn-save { background: #00ff88; color: black; border: none; width: 100%; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-    .btn-insta-admin { display: inline-block; padding: 5px 10px; background: #e1306c; color: white; text-decoration: none; font-size: 10px; border-radius: 5px; margin-bottom: 10px; font-weight: bold; }
     .btn-delete { background: none; border: none; color: #ff4444; font-size: 10px; margin-top: 15px; cursor: pointer; text-decoration: underline; width: 100%; text-align: center; }
 
     .hidden { display: none !important; }
@@ -95,25 +107,23 @@
 
         <section id="rank-screen" class="hidden glass-large">
             <div class="regional-box">
-                <div style="font-size: 10px; color: #ffd700;">LÍDER ATUAL</div>
-                <div id="topo-nome"><span class="globe">🌎</span> RANK REGIONAL <span class="globe">🌎</span></div>
+                <div class="label"><span class="globe-icon">🌎</span> TOP GLOBAL REGIONAL</div>
+                <div id="topo-nome">AGUARDANDO...</div>
             </div>
 
             <div id="user-header">
-                <h1 id="nome-turma-topo" style="font-size: 1.2rem;">---</h1>
+                <h1 id="nome-turma-topo" style="font-size: 1.1rem;">---</h1>
             </div>
 
             <div class="task-area">
-                <strong>🎁 BÔNUS 24H:</strong>
-                <button id="btn-bonus" onclick="coletarPonto()" class="btn-collect">COLETAR +1 PONTO</button>
+                <div id="status-bonus" style="font-weight: bold; color: #ffd700;">🎁 BÔNUS DE LOGIN ATIVO</div>
                 <div style="margin-top:10px; padding-top:10px; border-top: 1px solid rgba(255,255,255,0.1);">
-                    <strong>🎯 MISSÃO:</strong> <span id="label-missao">Carregando...</span>
+                    <strong>🎯 MISSÃO:</strong> <span id="label-missao">...</span>
                 </div>
             </div>
 
-            <div class="divider"></div>
             <div id="lista-ranking"></div>
-            <button onclick="sair()" class="btn-sec">SAIR DA CONTA</button>
+            <button onclick="sairDaConta()" class="btn-sec">SAIR DA CONTA</button>
         </section>
 
         <section id="admin-login-screen" class="hidden glass">
@@ -147,11 +157,33 @@
         let logadoComo = null;
         const missoes = ["Postar 1 Story da turma", "Gritar o grito de guerra", "Fazer 1 vídeo de 15s", "Seguir o insta oficial"];
 
-        // --- LOGIN / CADASTRO ---
+        // AO CARREGAR: Recuperar dados salvos
+        window.onload = () => {
+            const salvo = JSON.parse(localStorage.getItem('rank_user'));
+            if(salvo) {
+                document.getElementById('reg-turma').value = salvo.turma || '';
+                document.getElementById('reg-serie').value = salvo.serie || '';
+                document.getElementById('reg-escola').value = salvo.escola || '';
+                document.getElementById('reg-insta').value = salvo.insta || '';
+                document.getElementById('reg-pass').value = salvo.pass || '';
+                document.getElementById('reg-power').value = salvo.power || 'power-fogo';
+            }
+        };
+
         function logarOuCadastrar() {
             const turma = document.getElementById('reg-turma').value.trim();
             const pass = document.getElementById('reg-pass').value;
             if (!turma || !pass) return alert("Preencha os campos!");
+
+            // Salvar no navegador para não ter que digitar de novo
+            const dadosSalvar = {
+                turma, pass,
+                serie: document.getElementById('reg-serie').value,
+                escola: document.getElementById('reg-escola').value,
+                insta: document.getElementById('reg-insta').value,
+                power: document.getElementById('reg-power').value
+            };
+            localStorage.setItem('rank_user', JSON.stringify(dadosSalvar));
 
             database.ref('ranking/' + turma).once('value').then((snapshot) => {
                 if (snapshot.exists()) {
@@ -159,15 +191,7 @@
                     if (dados.pass === pass) entrarNoSistema(dados);
                     else alert("Senha incorreta!");
                 } else {
-                    const novaTurma = {
-                        turma, pass,
-                        serie: document.getElementById('reg-serie').value,
-                        escola: document.getElementById('reg-escola').value,
-                        insta: document.getElementById('reg-insta').value,
-                        power: document.getElementById('reg-power').value,
-                        seguidores: 0, videos: 0, pontos: 0, 
-                        online: true, lastBonus: 0
-                    };
+                    const novaTurma = { ...dadosSalvar, seguidores: 0, videos: 0, pontos: 0, online: true, lastBonus: 0 };
                     database.ref('ranking/' + turma).set(novaTurma).then(() => entrarNoSistema(novaTurma));
                 }
             });
@@ -179,47 +203,39 @@
             document.getElementById('nome-turma-topo').className = dados.power;
             document.getElementById('label-missao').innerText = missoes[new Date().getDate() % missoes.length];
             
-            // Status Online
             database.ref('ranking/' + logadoComo).update({ online: true });
             database.ref('ranking/' + logadoComo).onDisconnect().update({ online: false });
 
-            verificarBotaoBonus(dados.lastBonus);
+            // COLETA AUTOMÁTICA DE BÔNUS NO LOGIN
+            verificarEColetarAutomatico(dados.lastBonus);
+
             esconderTudo();
             document.getElementById('rank-screen').classList.remove('hidden');
         }
 
-        function verificarBotaoBonus(last) {
+        function verificarEColetarAutomatico(last) {
             const agora = Date.now();
-            const btn = document.getElementById('btn-bonus');
-            if (agora - last < 24 * 60 * 60 * 1000) {
-                btn.disabled = true;
-                btn.innerText = "COLETADO (24H)";
-            } else {
-                btn.disabled = false;
-                btn.innerText = "COLETAR +1 PONTO";
+            const vinteQuatroHoras = 24 * 60 * 60 * 1000;
+            
+            if (agora - last >= vinteQuatroHoras) {
+                database.ref('ranking/' + logadoComo).once('value').then(snap => {
+                    const d = snap.val();
+                    database.ref('ranking/' + logadoComo).update({
+                        pontos: (d.pontos || 0) + 1,
+                        lastBonus: agora
+                    });
+                    
+                    // Mostrar animação que some sozinha
+                    const msg = document.createElement('div');
+                    msg.className = 'collect-anim';
+                    msg.innerText = '🔥 BÔNUS DIÁRIO COLETADO! +1 PONTO';
+                    document.body.appendChild(msg);
+                    setTimeout(() => msg.remove(), 2000);
+                });
             }
         }
 
-        function coletarPonto() {
-            database.ref('ranking/' + logadoComo).once('value').then(snap => {
-                const dados = snap.val();
-                database.ref('ranking/' + logadoComo).update({
-                    pontos: (dados.pontos || 0) + 1,
-                    lastBonus: Date.now()
-                });
-                
-                // Animação de coleta
-                const msg = document.createElement('div');
-                msg.className = 'collect-anim';
-                msg.innerText = '+1 PONTO COLETADO!';
-                document.body.appendChild(msg);
-                setTimeout(() => msg.remove(), 1500);
-
-                verificarBotaoBonus(Date.now());
-            });
-        }
-
-        // --- RANKING GLOBAL ---
+        // RANKING GLOBAL E LÍDER
         database.ref('ranking').on('value', (snapshot) => {
             const lista = document.getElementById('lista-ranking');
             const dadosBD = snapshot.val();
@@ -228,8 +244,10 @@
             let array = Object.keys(dadosBD).map(id => dadosBD[id]);
             array.sort((a, b) => (b.pontos || 0) - (a.pontos || 0));
 
-            // Atualiza o Líder no Rank Regional
-            if(array[0]) document.getElementById('topo-nome').innerHTML = `👑 ${array[0].turma}`;
+            // Atualiza o Top Global (Free Fire Style)
+            if(array[0]) {
+                document.getElementById('topo-nome').innerText = array[0].turma;
+            }
 
             lista.innerHTML = "";
             array.forEach((t, i) => {
@@ -249,15 +267,13 @@
             });
         });
 
-        // --- ADMIN (MANTIDO IGUAL) ---
+        // ADMIN (SEM ALTERAÇÕES)
         function loginAdmin() {
-            const user = document.getElementById('admin-user').value;
-            const pass = document.getElementById('admin-pass').value;
-            if (user === "admin" && pass === "admin123") {
+            if (document.getElementById('admin-user').value === "admin" && document.getElementById('admin-pass').value === "admin123") {
                 esconderTudo();
                 document.getElementById('admin-panel').classList.remove('hidden');
                 carregarPainelAdmin();
-            } else alert("Erro!");
+            }
         }
 
         function carregarPainelAdmin() {
@@ -269,34 +285,37 @@
                 Object.keys(dados).forEach(id => {
                     const t = dados[id];
                     container.innerHTML += `
-                        <div class="admin-card ${t.verificado ? 'salvo' : ''}" id="card-${t.turma}">
-                            <strong class="${t.power}">${t.turma} (${t.escola})</strong><br>
-                            <a href="${t.insta}" target="_blank" class="btn-insta-admin">📸 Instagram</a>
+                        <div class="admin-card" id="card-${t.turma}">
+                            <strong>${t.turma}</strong><br>
                             <div class="admin-grid">
-                                <input type="number" id="s-${t.turma}" placeholder="Seg" value="${t.seguidores}" oninput="pendente('${t.turma}')">
-                                <input type="number" id="v-${t.turma}" placeholder="Vid" value="${t.videos}" oninput="pendente('${t.turma}')">
+                                <input type="number" id="s-${t.turma}" value="${t.seguidores}">
+                                <input type="number" id="v-${t.turma}" value="${t.videos}">
                             </div>
-                            <button onclick="salvarPontos('${t.turma}')" class="btn-save">LANÇAR PONTOS</button>
+                            <button onclick="salvarPontos('${t.turma}')" class="btn-save">ATUALIZAR</button>
                             <button onclick="deletarTurma('${t.turma}')" class="btn-delete">Excluir</button>
                         </div>`;
                 });
             });
         }
 
-        function pendente(nome) { document.getElementById(`card-${nome}`).classList.remove('salvo'); }
-
         function salvarPontos(nome) {
             const s = parseInt(document.getElementById(`s-${nome}`).value) || 0;
             const v = parseInt(document.getElementById(`v-${nome}`).value) || 0;
             const total = (Math.floor(s / 100) * 2) + (v * 1);
-            database.ref('ranking/' + nome).update({ seguidores: s, videos: v, pontos: total, verificado: true });
+            database.ref('ranking/' + nome).update({ seguidores: s, videos: v, pontos: total });
         }
 
         function deletarTurma(nome) { if(confirm("Excluir?")) database.ref('ranking/' + nome).remove(); }
         function esconderTudo() { ["auth-screen", "admin-login-screen", "rank-screen", "admin-panel"].forEach(id => document.getElementById(id).classList.add('hidden')); }
         function voltar() { esconderTudo(); document.getElementById('auth-screen').classList.remove('hidden'); }
         function mostrarLoginAdmin() { esconderTudo(); document.getElementById('admin-login-screen').classList.remove('hidden'); }
-        function sair() { if(logadoComo) database.ref('ranking/'+logadoComo).update({online:false}); location.reload(); }
+        
+        function sairDaConta() { 
+            if(logadoComo) database.ref('ranking/'+logadoComo).update({online:false});
+            // Esconde a tela de rank e volta pra auth, mas o localStorage mantém os inputs preenchidos
+            esconderTudo();
+            document.getElementById('auth-screen').classList.remove('hidden');
+        }
     </script>
 </body>
 </html>

@@ -17,10 +17,11 @@
             padding: 25px; text-align: center; margin-top: 20px; 
         }
 
-        /* STATUS ONLINE */
+        /* STATUS ONLINE E VISTO POR ÚLTIMO */
         .status-dot { height: 8px; width: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
         .online { background: #00ff88; box-shadow: 0 0 8px #00ff88; }
         .offline { background: #ff4444; }
+        .last-seen { font-size: 8px; color: #555; margin-left: 5px; font-weight: normal; }
 
         /* ANIMAÇÃO LOGIN */
         .text-anim-crown {
@@ -60,7 +61,8 @@
 
         /* LISTA RANKING */
         .rank-card { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); padding: 18px; border-radius: 20px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.05); }
-        .escola-info { font-size: 9px; color: #666; }
+        .escola-info { font-size: 9px; color: #666; display: block; margin: 2px 0; }
+        .stats-info { font-size: 9px; color: #00d4ff; font-weight: bold; }
 
         /* INPUTS E BOTÕES */
         input, select { width: 100%; padding: 14px; margin: 8px 0; border-radius: 12px; border: none; background: rgba(255,255,255,0.08); color: white; box-sizing: border-box; font-size: 14px; }
@@ -163,6 +165,7 @@
         let slideIndex = 0;
         let eVisitante = false;
 
+        // Auto-preenchimento
         window.onload = () => {
             const salvo = JSON.parse(localStorage.getItem('rank_user'));
             if(salvo) {
@@ -193,13 +196,14 @@
             if (!t || !s || !e || !i || !p) return alert("⚠️ Preencha tudo!");
             
             database.ref('ranking/' + t).once('value').then((snap) => {
+                const agora = Date.now();
                 if (snap.exists()) {
                     if (snap.val().pass === p) {
                         localStorage.setItem('rank_user', JSON.stringify({turma:t, serie:s, escola:e, insta:i, pass:p, power:pw}));
-                        database.ref('ranking/'+t).update({turma:t, serie:s, escola:e, insta:i, power:pw}).then(() => entrarNoSistema({turma:t}));
+                        database.ref('ranking/'+t).update({turma:t, serie:s, escola:e, insta:i, power:pw, lastSeen: agora}).then(() => entrarNoSistema({turma:t}));
                     } else alert("Senha incorreta!");
                 } else {
-                    const nova = { turma:t, pass:p, serie:s, escola:e, insta:i, power:pw, seguidores:0, videos:0, pontos:0, online:true, likes:0, dislikes:0 };
+                    const nova = { turma:t, pass:p, serie:s, escola:e, insta:i, power:pw, seguidores:0, videos:0, pontos:0, online:true, lastSeen: agora, likes:0, dislikes:0 };
                     localStorage.setItem('rank_user', JSON.stringify({turma:t, serie:s, escola:e, insta:i, pass:p, power:pw}));
                     database.ref('ranking/' + t).set(nova).then(() => entrarNoSistema(nova));
                 }
@@ -208,11 +212,34 @@
 
         function entrarNoSistema(dados) {
             logadoComo = dados.turma;
-            database.ref('ranking/' + logadoComo).update({ online: true });
-            database.ref('ranking/' + logadoComo).onDisconnect().update({ online: false });
+            // Sistema de presença em tempo real
+            const presenceRef = database.ref('ranking/' + logadoComo);
+            presenceRef.update({ online: true, lastSeen: Date.now() });
+            presenceRef.onDisconnect().update({ online: false, lastSeen: Date.now() });
+            
+            // Loop para atualizar o "lastSeen" enquanto estiver logado
+            setInterval(() => {
+                if(logadoComo && !eVisitante) database.ref('ranking/' + logadoComo).update({ lastSeen: Date.now(), online: true });
+            }, 60000);
+
             document.getElementById('auth-screen').classList.add('hidden');
             document.getElementById('rank-screen').classList.remove('hidden');
             document.getElementById('chat-container').classList.remove('hidden');
+        }
+
+        // Função para formatar o tempo relativo
+        function tempoRelativo(timestamp) {
+            if (!timestamp) return "";
+            const diff = Date.now() - timestamp;
+            const segundos = Math.floor(diff / 1000);
+            const minutos = Math.floor(segundos / 60);
+            const horas = Math.floor(minutos / 60);
+            const dias = Math.floor(horas / 24);
+
+            if (segundos < 60) return "agora";
+            if (minutos < 60) return `${minutos}min`;
+            if (horas < 24) return `${horas}h`;
+            return `${dias}d`;
         }
 
         database.ref('ranking').on('value', (snap) => {
@@ -229,12 +256,17 @@
             lista.innerHTML = "";
             array.forEach((t, i) => {
                 let medal = i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : "🔹";
+                let vistoTxt = t.online ? "" : `<span class="last-seen">visto há ${tempoRelativo(t.lastSeen)}</span>`;
+                
                 lista.innerHTML += `
                 <div class="rank-card">
                     <div style="text-align:left">
                         <span class="status-dot ${t.online?'online':'offline'}"></span>
-                        <span class="${t.power}" style="font-weight:bold">${t.turma}</span><br>
-                        <small class="escola-info">${t.escola}</small>
+                        <span class="${t.power}" style="font-weight:bold">${t.turma}</span>
+                        ${vistoTxt}
+                        <br>
+                        <span class="escola-info">${t.serie || ''} - ${t.escola}</span>
+                        <span class="stats-info">👥 ${t.seguidores || 0} | 🎬 ${t.videos || 0}</span>
                         <div class="reaction-bar">
                             <button class="btn-reaction" onclick="reagir('${t.turma}', 'like')">👍 ${t.likes || 0}</button>
                             <button class="btn-reaction" onclick="reagir('${t.turma}', 'dislike')">👎 ${t.dislikes || 0}</button>
@@ -245,6 +277,7 @@
             });
         });
 
+        // Funções de reação, chat e carrossel mantidas iguais...
         function reagir(turma, tipo) {
             const key = 'voto_' + turma;
             const votoAntigo = localStorage.getItem(key);
@@ -298,7 +331,7 @@
                     const t = dados[id]; if(!t.turma) return;
                     container.innerHTML += `
                         <div class="admin-card">
-                            <strong>${t.turma}</strong><br>
+                            <strong>${t.turma} (${t.serie})</strong><br>
                             <a href="${t.insta}" target="_blank" class="insta-btn">📸 INSTAGRAM</a>
                             <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0;">
                                 <input type="number" id="s-${t.turma}" value="${t.seguidores}" placeholder="Segs">

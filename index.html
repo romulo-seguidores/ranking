@@ -9,7 +9,7 @@
         /* IMPORTAÇÃO DE FONTES */
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap');
 
-        /* VARIÁVEIS DE DESIGN */
+        /* VARIÁVEIS DE DESIGN "MÍDIA" */
         :root {
             --ouro: #ffd700;
             --prata: #e0e0e0;
@@ -21,9 +21,9 @@
             --insta-grad: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
         }
 
-        /* RESET E SCROLLBAR */
+        /* RESET E SCROLL */
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
-        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: var(--deep-black); }
         ::-webkit-scrollbar-thumb { background: #1a1a1a; border-radius: 10px; }
 
@@ -39,12 +39,12 @@
 
         #app { 
             width: 100%; 
-            max-width: 440px; 
+            max-width: 430px; 
             padding: 20px; 
             position: relative; 
         }
 
-        /* EFEITO GLASSMORPHISM */
+        /* GLASSMORPHISM PREMIUM */
         .glass-panel { 
             background: var(--glass-bg); 
             backdrop-filter: blur(30px); 
@@ -55,10 +55,9 @@
             text-align: center; 
             margin-top: 20px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.6);
-            transition: transform 0.3s ease;
         }
 
-        /* CABEÇALHO DO USUÁRIO */
+        /* HEADER DO USUÁRIO */
         .user-header { 
             text-align: left; 
             margin-bottom: 25px; 
@@ -85,8 +84,8 @@
         .xp-container { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-top: 12px; overflow: hidden; }
         .xp-fill { height: 100%; background: var(--ouro); width: 0%; transition: 1.2s cubic-bezier(0.22, 1, 0.36, 1); }
 
-        /* CARROSSEL TOP 3 */
-        .highlight-carousel { 
+        /* CARROSSEL TOP 3 ESTÁVEL */
+        .highlight-box { 
             background: linear-gradient(180deg, rgba(0,255,136,0.05) 0%, rgba(0,0,0,0) 100%); 
             border: 1px solid rgba(0,255,136,0.15); 
             border-radius: 25px; 
@@ -108,17 +107,18 @@
             letter-spacing: 1px;
             text-align: center;
             width: 100%;
+            transform: translateY(10px);
         }
-        .slide-item.active { opacity: 1; transform: scale(1.05); }
+        .slide-item.active { opacity: 1; transform: translateY(0) scale(1.05); }
 
-        /* RANK CARDS */
-        .rank-item { 
+        /* RANK CARDS DETALHADOS */
+        .rank-card { 
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
             background: rgba(255,255,255,0.03); 
             padding: 18px 22px; 
-            border-radius: 28px; 
+            border-radius: 30px; 
             margin-bottom: 15px; 
             border: 1px solid var(--card-border); 
             position: relative;
@@ -127,28 +127,26 @@
         }
         @keyframes cardAppear { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-        .rank-item.top-gold { 
+        .rank-card.top-gold { 
             background: rgba(255, 215, 0, 0.04); 
             border: 1px solid rgba(255, 215, 0, 0.2); 
             box-shadow: 0 0 30px rgba(255, 215, 0, 0.05);
         }
 
-        /* INFO TEXTS */
         .main-info { text-align: left; flex: 1; }
         .turma-name { font-size: 17px; font-weight: 800; display: inline-block; vertical-align: middle; }
-        .sub-details { font-size: 10px; color: #666; display: block; margin-top: 1px; font-weight: 500; }
-        .time-tag { font-size: 9px; font-weight: 400; color: #444; margin-left: 6px; }
+        .sub-details { font-size: 10px; color: #666; display: block; margin-top: 2px; font-weight: 600; line-height: 1.2; }
+        .time-tag { font-size: 9px; font-weight: 500; color: #444; margin-left: 6px; }
 
-        /* MEDALHAS */
+        /* MEDALHAS E STATUS */
         .medal-box { font-size: 22px; margin-right: 12px; }
         .txt-gold { color: var(--ouro); text-shadow: 0 0 15px var(--ouro); }
         .txt-silver { color: var(--prata); text-shadow: 0 0 15px var(--prata); }
         .txt-bronze { color: var(--bronze); text-shadow: 0 0 15px var(--bronze); }
 
-        /* STATUS */
         .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
         .dot-on { background: var(--neon); box-shadow: 0 0 10px var(--neon); }
-        .dot-off { background: #333; }
+        .dot-off { background: #ff4444; }
 
         /* INSTAGRAM SLIM */
         .btn-insta-slim { 
@@ -156,56 +154,52 @@
             align-items: center; 
             background: rgba(255,255,255,0.06); 
             color: #aaa; 
-            padding: 4px 10px; 
-            border-radius: 8px; 
+            padding: 4px 12px; 
+            border-radius: 10px; 
             font-size: 9px; 
             text-decoration: none; 
-            font-weight: 700; 
+            font-weight: 800; 
             margin-top: 10px;
             border: 1px solid rgba(255,255,255,0.05);
             transition: 0.2s;
+            text-transform: uppercase;
         }
         .btn-insta-slim:hover { background: var(--insta-grad); color: white; border-color: transparent; }
 
         /* REAÇÕES */
-        .reactions { display: flex; gap: 8px; margin-top: 12px; }
-        .react-btn { 
+        .reaction-row { display: flex; gap: 10px; margin-top: 12px; }
+        .btn-react { 
             background: rgba(255,255,255,0.05); 
             border: 1px solid rgba(255,255,255,0.03); 
             color: #fff; 
-            font-size: 10px; 
-            padding: 5px 10px; 
-            border-radius: 9px; 
+            font-size: 11px; 
+            padding: 6px 12px; 
+            border-radius: 12px; 
             cursor: pointer; 
-            font-weight: 600;
+            font-weight: 700;
         }
+
+        /* PODERES ELEMENTARES */
+        .p-fogo { color: #ff4d00; text-shadow: 0 0 12px #ff4d00; }
+        .p-gelo { color: #00d4ff; text-shadow: 0 0 12px #00d4ff; }
+        .p-floresta { color: #00ff88; text-shadow: 0 0 12px #00ff88; }
+        .p-vazio { color: #a855f7; text-shadow: 0 0 12px #a855f7; }
+        .p-eletrico { color: #fbbf24; text-shadow: 0 0 12px #fbbf24; }
 
         /* INPUTS E BOTÕES */
         input, select { 
-            width: 100%; 
-            padding: 16px; 
-            margin: 12px 0; 
-            border-radius: 18px; 
-            border: 1px solid rgba(255,255,255,0.05); 
-            background: rgba(255,255,255,0.05); 
-            color: #fff; 
-            font-family: 'Poppins'; 
-            font-size: 14px;
+            width: 100%; padding: 16px; margin: 10px 0; border-radius: 18px; 
+            border: 1px solid rgba(255,255,255,0.05); background: rgba(255,255,255,0.05); 
+            color: #fff; font-family: 'Poppins'; font-size: 14px;
         }
         input:focus { border-color: var(--neon); background: rgba(255,255,255,0.08); }
 
-        .btn-action { 
-            width: 100%; 
-            padding: 18px; 
+        .btn-main { 
+            width: 100%; padding: 18px; 
             background: linear-gradient(90deg, #00ff88, #00d4ff); 
-            border: none; 
-            border-radius: 18px; 
-            font-weight: 900; 
-            cursor: pointer; 
-            color: #000; 
-            text-transform: uppercase; 
-            letter-spacing: 1px;
-            margin-top: 10px;
+            border: none; border-radius: 18px; font-weight: 900; 
+            cursor: pointer; color: #000; text-transform: uppercase; 
+            letter-spacing: 1px; margin-top: 10px;
         }
 
         /* CHAT FLOATING */
@@ -216,39 +210,31 @@
             border: 1px solid #1a1a1a; 
             border-radius: 25px; 
             display: flex; flex-direction: column; 
-            z-index: 1000; 
-            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+            z-index: 1000; box-shadow: 0 10px 40px rgba(0,0,0,0.8);
         }
-        #chat-log { flex: 1; overflow-y: auto; padding: 15px; font-size: 11px; scroll-behavior: smooth; }
-        .chat-row { margin-bottom: 8px; line-height: 1.4; }
+        #chat-messages { flex: 1; overflow-y: auto; padding: 15px; font-size: 10px; scroll-behavior: smooth; }
+        .msg-row { margin-bottom: 8px; line-height: 1.4; }
 
-        /* ADMIN CARD */
-        .admin-item { 
+        /* PAINEL ADMIN */
+        .admin-card { 
             background: #080808; padding: 20px; border-radius: 30px; 
             border: 1px solid #222; margin-bottom: 20px; text-align: left; 
             position: relative; 
         }
-        .del-btn { position: absolute; top: 18px; right: 18px; color: #ff4444; background: none; border: none; font-weight: 800; cursor: pointer; }
+        .btn-del { position: absolute; top: 18px; right: 18px; color: #ff4444; background: none; border: none; font-weight: 800; cursor: pointer; }
 
         .hidden { display: none !important; }
-        .footer-credit { position: fixed; bottom: 10px; left: 20px; color: #111; font-size: 10px; font-weight: 900; pointer-events: none; }
-
-        /* PODERES ELEMENTARES */
-        .p-fogo { color: #ff4d00; text-shadow: 0 0 12px #ff4d00; }
-        .p-gelo { color: #00d4ff; text-shadow: 0 0 12px #00d4ff; }
-        .p-floresta { color: #00ff88; text-shadow: 0 0 12px #00ff88; }
-        .p-vazio { color: #a855f7; text-shadow: 0 0 12px #a855f7; }
-        .p-eletrico { color: #fbbf24; text-shadow: 0 0 12px #fbbf24; }
+        .tag-dev { position: fixed; bottom: 10px; left: 20px; color: #111; font-size: 10px; font-weight: 900; pointer-events: none; }
     </style>
 </head>
 <body>
 
     <div id="app">
-        <div id="modal-conquista" class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 3000; display: flex; align-items: center; justify-content: center; padding: 40px;">
+        <div id="modal-up" class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 3000; display: flex; align-items: center; justify-content: center; padding: 40px;">
             <div class="glass-panel" style="border: 2px solid var(--ouro);">
                 <h1 style="color: var(--ouro); font-size: 40px; margin-bottom: 10px;">UP!</h1>
-                <p id="msg-lvl" style="font-size: 18px; margin-bottom: 25px;"></p>
-                <button onclick="fecharModal()" class="btn-action">BORAAA</button>
+                <p id="up-text" style="font-size: 18px; margin-bottom: 25px;"></p>
+                <button onclick="document.getElementById('modal-up').classList.add('hidden')" class="btn-main">BORAAA</button>
             </div>
         </div>
 
@@ -256,51 +242,49 @@
             <h1 style="font-size: 35px; letter-spacing: -2px; margin-bottom: 5px;">RANK<span style="color:var(--neon)">CLASSE</span></h1>
             <p style="font-size: 11px; color: #555; font-weight: 800; margin-bottom: 30px;">ELITE REGIONAL v5.0</p>
             
-            <div class="form-group">
-                <input type="text" id="in-turma" placeholder="Nome da Turma">
-                <input type="text" id="in-serie" placeholder="Série (ex: 3º B)">
-                <input type="text" id="in-escola" placeholder="Nome da Escola">
-                <input type="url" id="in-insta" placeholder="Link do Instagram">
-                <input type="password" id="in-pass" placeholder="Defina uma Senha">
-                
-                <select id="in-power">
-                    <option value="p-fogo">🔥 ELEMENTO FOGO</option>
-                    <option value="p-gelo">❄️ ELEMENTO GELO</option>
-                    <option value="p-floresta">🌿 ELEMENTO FLORESTA</option>
-                    <option value="p-vazio">🌑 ELEMENTO VAZIO</option>
-                    <option value="p-eletrico">⚡ ELEMENTO ELÉTRICO</option>
-                </select>
-                
-                <button onclick="autenticar()" class="btn-action">ENTRAR NO SISTEMA</button>
-                <button onclick="modoVisitante()" style="background:none; border:none; color:#444; font-weight:800; margin-top:15px; cursor:pointer;">ACESSAR COMO VISITANTE</button>
-            </div>
-
-            <button onclick="abrirAdminLogin()" style="margin-top: 40px; background:none; border:none; color:#0a0a0a; font-size:10px; cursor:pointer;">ADMINISTRADOR ROOT</button>
+            <input type="text" id="reg-turma" placeholder="Nome da sua Turma">
+            <input type="text" id="reg-serie" placeholder="Série (Ex: 3º B)">
+            <input type="text" id="reg-escola" placeholder="Nome da Escola">
+            <input type="url" id="reg-insta" placeholder="Link do Instagram">
+            <input type="password" id="reg-pass" placeholder="Crie uma Senha">
+            
+            <select id="reg-power">
+                <option value="p-fogo">🔥 ELEMENTO FOGO</option>
+                <option value="p-gelo">❄️ ELEMENTO GELO</option>
+                <option value="p-floresta">🌿 ELEMENTO FLORESTA</option>
+                <option value="p-vazio">🌑 ELEMENTO VAZIO</option>
+                <option value="p-eletrico">⚡ ELEMENTO ELÉTRICO</option>
+            </select>
+            
+            <button onclick="autenticar()" class="btn-main">ENTRAR NO SISTEMA</button>
+            <button onclick="entrarVisitante()" style="background:none; border:none; color:#444; font-weight:800; margin-top:15px; cursor:pointer;">ACESSAR COMO VISITANTE</button>
+            
+            <button onclick="abrirAdminLogin()" style="margin-top: 40px; background:none; border:none; color:#0a0a0a; font-size:10px; cursor:pointer;">ADMIN ROOT</button>
         </section>
 
         <section id="screen-main" class="hidden glass-panel">
             <div class="user-header">
-                <h2 id="txt-welcome">Carregando...</h2>
-                <div id="stats-box" class="hidden">
-                    <span class="lvl-pill" id="display-lvl">LVL 0</span>
-                    <div class="xp-container"><div class="xp-fill" id="display-xp"></div></div>
+                <h2 id="txt-welcome">Sincronizando...</h2>
+                <div id="user-ui" class="hidden">
+                    <span class="lvl-pill" id="lvl-display">LVL 0</span>
+                    <div class="xp-container"><div class="xp-fill" id="xp-fill"></div></div>
                 </div>
             </div>
 
-            <div class="highlight-carousel">
+            <div class="highlight-box">
                 <div id="carousel-inner"></div>
             </div>
 
-            <div id="rank-list" style="min-height: 400px;"></div>
+            <div id="lista-ranking" style="min-height: 400px;"></div>
 
             <button onclick="location.reload()" style="background:none; border:1px solid #222; color:#333; width:100%; padding:15px; border-radius:18px; margin-top:30px; font-weight:800; cursor:pointer;">DESCONECTAR</button>
         </section>
 
         <div id="chat-ui" class="hidden">
-            <div id="chat-log"></div>
+            <div id="chat-messages"></div>
             <div style="padding:10px; display:flex; background:#000; border-radius: 0 0 25px 25px;">
                 <input type="text" id="chat-in" placeholder="Mensagem..." style="margin:0; padding:10px; font-size:11px; border:none; background:none;">
-                <button onclick="mandarMsg()" style="background:var(--neon); border:none; border-radius:12px; padding:0 15px; color:#000; font-weight:bold;">></button>
+                <button onclick="enviarMsg()" style="background:var(--neon); border:none; border-radius:12px; padding:0 15px; color:#000; font-weight:bold;">></button>
             </div>
         </div>
 
@@ -308,49 +292,51 @@
             <h2 style="color:var(--neon); margin-bottom:20px;">CONTROLE ROOT</h2>
             <button onclick="limparChat()" style="background:#ff4444; color:#fff; border:none; width:100%; padding:15px; border-radius:15px; margin-bottom:25px; font-weight:900; cursor:pointer;">APAGAR HISTÓRICO CHAT</button>
             <div id="admin-list"></div>
-            <button onclick="location.reload()" class="btn-action" style="background:#1a1a1a; color:#fff;">SAIR DO PAINEL</button>
+            <button onclick="location.reload()" class="btn-main" style="background:#1a1a1a; color:#fff;">SAIR</button>
         </section>
 
         <section id="screen-admin-login" class="hidden glass-panel">
             <h3>ACESSO RESTRITO</h3>
             <input type="text" id="adm-u" placeholder="Usuário">
             <input type="password" id="adm-p" placeholder="Senha Master">
-            <button onclick="entrarAdmin()" class="btn-action">VALIDAR</button>
+            <button onclick="validarAdmin()" class="btn-main">VALIDAR</button>
         </section>
 
-        <div class="footer-credit">DEVELOPED BY RÔMULO</div>
+        <div class="tag-dev">DEVELOPED BY RÔMULO</div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <script>
-        // CONFIG
+        // CONFIGURAÇÃO DO SEU FIREBASE
         const firebaseConfig = { apiKey: "SUA_API_KEY", databaseURL: "https://gincanaescola-d4f8c-default-rtdb.firebaseio.com/", projectId: "gincanaescola-d4f8c" };
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
         let me = null;
         let isGuest = false;
-        let oldLvl = 0;
+        let lastLvl = 0;
         let slideIdx = 0;
 
-        // PERSISTÊNCIA DE DADOS
+        // PERSISTÊNCIA LOCAL
         window.onload = () => {
-            const saved = JSON.parse(localStorage.getItem('elite_rank_v5'));
+            const saved = JSON.parse(localStorage.getItem('rank_v5_cache'));
             if(saved) {
-                ['in-turma','in-serie','in-escola','in-insta','in-pass','in-power'].forEach(id => {
-                    const field = id.split('-')[1];
-                    document.getElementById(id).value = saved[field] || '';
-                });
+                document.getElementById('reg-turma').value = saved.turma || '';
+                document.getElementById('reg-serie').value = saved.serie || '';
+                document.getElementById('reg-escola').value = saved.escola || '';
+                document.getElementById('reg-insta').value = saved.insta || '';
+                document.getElementById('reg-pass').value = saved.pass || '';
+                document.getElementById('reg-power').value = saved.power || 'p-fogo';
             }
         };
 
-        // AUTH
+        // LÓGICA DE AUTENTICAÇÃO
         function autenticar() {
-            const t = document.getElementById('in-turma').value.trim();
-            const p = document.getElementById('in-pass').value;
-            if(!t || !p) return alert("Erro: Turma e Senha são obrigatórios.");
+            const t = document.getElementById('reg-turma').value.trim();
+            const p = document.getElementById('reg-pass').value;
+            if(!t || !p) return alert("Erro: Turma e Senha obrigatórios.");
 
             db.ref('ranking/' + t).once('value', s => {
                 const d = s.val();
@@ -358,30 +344,32 @@
 
                 const userObj = {
                     turma: t, pass: p,
-                    serie: document.getElementById('in-serie').value,
-                    escola: document.getElementById('in-escola').value,
-                    insta: document.getElementById('in-insta').value,
-                    power: document.getElementById('in-power').value,
+                    serie: document.getElementById('reg-serie').value,
+                    escola: document.getElementById('reg-escola').value,
+                    insta: document.getElementById('reg-insta').value,
+                    power: document.getElementById('reg-power').value,
                     pontos: d?.pontos || 0,
                     seg: d?.seg || 0, vid: d?.vid || 0,
                     likes: d?.likes || 0, dislikes: d?.dislikes || 0,
                     on: true, last: Date.now()
                 };
 
-                localStorage.setItem('elite_rank_v5', JSON.stringify(userObj));
+                localStorage.setItem('rank_v5_cache', JSON.stringify(userObj));
                 db.ref('ranking/' + t).update(userObj).then(() => {
                     me = t;
-                    startApp();
+                    iniciarApp();
                 });
             });
         }
 
-        function startApp() {
+        function entrarVisitante() { isGuest = true; me = "Visitante"; iniciarApp(); }
+
+        function iniciarApp() {
             document.getElementById('screen-auth').classList.add('hidden');
             document.getElementById('screen-main').classList.remove('hidden');
             document.getElementById('chat-ui').classList.remove('hidden');
             if(!isGuest) {
-                document.getElementById('stats-box').classList.remove('hidden');
+                document.getElementById('user-ui').classList.remove('hidden');
                 db.ref('ranking/' + me).onDisconnect().update({ on: false, last: Date.now() });
                 setInterval(() => db.ref('ranking/' + me).update({ on: true, last: Date.now() }), 10000);
             } else {
@@ -389,10 +377,8 @@
             }
         }
 
-        function modoVisitante() { isGuest = true; me = "Guest"; startApp(); document.getElementById('chat-ui').style.paddingBottom = "0"; }
-
-        // RELATIVE TIME
-        function getRelTime(ts, on) {
+        // TEMPO RELATIVO
+        function relTime(ts, on) {
             if(on) return "Online agora";
             if(!ts) return "Offline";
             const diff = Date.now() - ts;
@@ -403,10 +389,10 @@
             return `há ${Math.floor(h/24)}d`;
         }
 
-        // RANKING ENGINE
+        // MOTOR DO RANKING
         db.ref('ranking').on('value', s => {
             const data = s.val(); if(!data) return;
-            const list = document.getElementById('rank-list');
+            const list = document.getElementById('lista-ranking');
             const car = document.getElementById('carousel-inner');
             const arr = Object.values(data).filter(x => x && x.turma).sort((a,b) => b.pontos - a.pontos);
             
@@ -416,26 +402,26 @@
                 const medal = ['🥇','🥈','🥉'];
                 car.innerHTML += `<div class="slide-item ${item.power}">${medal[i]} ${i+1}º ${item.turma}</div>`;
             });
-            updateSlides();
+            rodarCarrossel();
 
-            // LISTA PRINCIPAL
+            // LISTA
             list.innerHTML = "";
             arr.forEach((item, i) => {
                 const curLvl = Math.floor((item.pontos || 0) / 10);
                 let medalClass = i===0?'txt-gold':i===1?'txt-silver':i===2?'txt-bronze':'';
                 let medalIcon = i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1);
-                let cardClass = "rank-item";
+                let cardClass = "rank-card";
                 if(i===0) cardClass += " top-gold";
 
                 if(item.turma === me) {
                     document.getElementById('txt-welcome').innerText = "SALVE, " + item.turma;
-                    document.getElementById('display-lvl').innerText = "LVL " + curLvl;
-                    document.getElementById('display-xp').style.width = ((item.pontos % 10) * 10) + "%";
-                    if(curLvl > oldLvl && oldLvl !== 0) {
-                        document.getElementById('msg-lvl').innerText = `A turma ${item.turma} subiu para o Level ${curLvl}!`;
-                        document.getElementById('modal-conquista').classList.remove('hidden');
+                    document.getElementById('lvl-display').innerText = "LVL " + curLvl;
+                    document.getElementById('xp-fill').style.width = ((item.pontos % 10) * 10) + "%";
+                    if(curLvl > lastLvl && lastLvl !== 0) {
+                        document.getElementById('up-text').innerText = `A turma ${item.turma} subiu para o Level ${curLvl}!`;
+                        document.getElementById('modal-up').classList.remove('hidden');
                     }
-                    oldLvl = curLvl;
+                    lastLvl = curLvl;
                 }
 
                 list.innerHTML += `
@@ -444,12 +430,12 @@
                         <span class="dot ${item.on?'dot-on':'dot-off'}"></span>
                         <span class="medal-box ${medalClass}">${medalIcon}</span>
                         <span class="turma-name ${item.power}">${item.turma}</span>
-                        <span class="time-tag">${getRelTime(item.last, item.on)}</span>
+                        <span class="time-tag">${relTime(item.last, item.on)}</span>
                         <span class="sub-details">${item.serie || ''} • ${item.escola || ''} • LVL ${curLvl}</span>
                         <a href="${item.insta}" target="_blank" class="btn-insta-slim">INSTAGRAM</a>
-                        <div class="reactions">
-                            <button class="react-btn" onclick="voto('${item.turma}','like')">👍 ${item.likes||0}</button>
-                            <button class="react-btn" onclick="voto('${item.turma}','dislike')">👎 ${item.dislikes||0}</button>
+                        <div class="reaction-row">
+                            <button class="btn-react" onclick="voto('${item.turma}','like')">👍 ${item.likes||0}</button>
+                            <button class="btn-react" onclick="voto('${item.turma}','dislike')">👎 ${item.dislikes||0}</button>
                         </div>
                     </div>
                     <div style="text-align:right">
@@ -460,10 +446,10 @@
             });
         });
 
-        // ACTIONS
+        // REAÇÕES
         function voto(id, type) {
-            if(isGuest) return alert("Visitantes não podem votar.");
-            const k = 'v5_voto_' + id;
+            if(isGuest) return alert("Visitantes não votam.");
+            const k = 'v5_vote_' + id;
             if(localStorage.getItem(k) === type) return;
             db.ref('ranking/' + id).transaction(t => {
                 if(t) {
@@ -476,32 +462,32 @@
             localStorage.setItem(k, type);
         }
 
-        // ADMIN ROOT
-        function enterAdmin() {
+        // ADMIN
+        function validarAdmin() {
             const u = document.getElementById('adm-u').value;
             const p = document.getElementById('adm-p').value;
             if(u === "admin" && p === "admin123") {
                 document.getElementById('screen-admin-login').classList.add('hidden');
                 document.getElementById('screen-admin').classList.remove('hidden');
-                loadAdminPanel();
+                abrirPainelAdmin();
             }
         }
 
-        function loadAdminPanel() {
+        function abrirPainelAdmin() {
             db.ref('ranking').on('value', s => {
                 const list = document.getElementById('admin-list'); list.innerHTML = "";
                 Object.values(s.val()||{}).forEach(t => {
                     if(!t.turma) return;
                     list.innerHTML += `
-                    <div class="admin-item">
-                        <button class="del-btn" onclick="deleteAcc('${t.turma}')">EXCLUIR</button>
+                    <div class="admin-card">
+                        <button class="btn-del" onclick="deleteAcc('${t.turma}')">APAGAR</button>
                         <b>TURMA: ${t.turma}</b><br>
-                        <button class="react-btn" style="margin-top:10px" onclick="resetV('${t.turma}')">LIMPAR VOTOS</button>
+                        <button class="btn-react" style="margin-top:10px" onclick="resetV('${t.turma}')">ZERAR REAÇÕES</button>
                         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:15px;">
-                            <div><label style="font-size:8px; color:var(--neon)">SEGUIDORES</label><input type="number" id="adm-s-${t.turma}" value="${t.seg}"></div>
-                            <div><label style="font-size:8px; color:var(--neon)">VÍDEOS</label><input type="number" id="adm-v-${t.turma}" value="${t.vid}"></div>
+                            <div><label style="font-size:8px; color:var(--neon)">SEGUIDORES</label><input type="number" id="adm-s-${t.turma}" value="${t.seg||0}"></div>
+                            <div><label style="font-size:8px; color:var(--neon)">VÍDEOS</label><input type="number" id="adm-v-${t.turma}" value="${t.vid||0}"></div>
                         </div>
-                        <button onclick="savePts('${t.turma}')" class="btn-action" style="padding:12px; font-size:11px;">ATUALIZAR PONTOS</button>
+                        <button onclick="savePts('${t.turma}')" class="btn-main" style="padding:12px; font-size:11px;">SINCRONIZAR PONTOS</button>
                     </div>`;
                 });
             });
@@ -512,31 +498,30 @@
             const v = parseInt(document.getElementById(`adm-v-${t}`).value) || 0;
             const calc = (Math.floor(s / 100) * 2) + (v * 1);
             db.ref('ranking/' + t).update({ seg: s, vid: v, pontos: calc });
-            alert("Sincronizado!");
+            alert("Atualizado!");
         }
 
         function deleteAcc(t) { if(confirm("Apagar conta de "+t+"?")) db.ref('ranking/'+t).remove(); }
         function resetV(t) { if(confirm("Zerar votos?")) db.ref('ranking/'+t).update({ likes: 0, dislikes: 0 }); }
         function abrirAdminLogin() { document.getElementById('screen-auth').classList.add('hidden'); document.getElementById('screen-admin-login').classList.remove('hidden'); }
-        function fecharModal() { document.getElementById('modal-conquista').classList.add('hidden'); }
-        function limparChat() { if(confirm("Resetar chat?")) db.ref('chat_logs').remove(); }
+        function limparChat() { if(confirm("Apagar chat?")) db.ref('chat_logs').remove(); }
 
-        // UTILS
-        function updateSlides() {
+        // CARROSSEL
+        function rodarCarrossel() {
             const items = document.querySelectorAll('.slide-item'); if(!items.length) return;
             items.forEach(i => i.classList.remove('active'));
             slideIdx = (slideIdx + 1) % items.length; items[slideIdx].classList.add('active');
-            if(window.timerC) clearTimeout(window.timerC); window.timerC = setTimeout(updateSlides, 3500);
+            if(window.timerC) clearTimeout(window.timerC); window.timerC = setTimeout(rodarCarrossel, 3500);
         }
 
         // CHAT ENGINE
-        function mandarMsg() {
+        function enviarMsg() {
             const i = document.getElementById('chat-in'); if(!i.value.trim() || !me || isGuest) return;
             db.ref('chat_logs').push({ u: me, t: i.value }); i.value = "";
         }
         db.ref('chat_logs').limitToLast(25).on('value', s => {
-            const log = document.getElementById('chat-log'); log.innerHTML = "";
-            s.forEach(m => { log.innerHTML += `<div class="chat-row"><b style="color:var(--neon)">${m.val().u}:</b> ${m.val().t}</div>`; });
+            const log = document.getElementById('chat-messages'); log.innerHTML = "";
+            s.forEach(m => { log.innerHTML += `<div class="msg-row"><b style="color:var(--neon)">${m.val().u}:</b> ${m.val().t}</div>`; });
             log.scrollTop = log.scrollHeight;
         });
     </script>

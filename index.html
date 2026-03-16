@@ -67,7 +67,6 @@
         /* REAÇÕES */
         .reaction-bar { display: flex; gap: 8px; margin-top: 5px; }
         .btn-reaction { background: rgba(255,255,255,0.1); border: none; color: white; font-size: 10px; padding: 4px 8px; border-radius: 6px; cursor: pointer; transition: 0.2s; }
-        .btn-reaction:active { transform: scale(0.9); }
 
         /* ADMIN */
         .admin-card { background: #080808; padding: 20px; border-radius: 20px; border: 1px solid #222; margin-bottom: 15px; text-align: left; }
@@ -154,6 +153,7 @@
         let logadoComo = null;
         let slideIndex = 0;
         let eVisitante = false;
+        let listaDadosCache = []; // Para atualizar o tempo sem re-renderizar tudo
 
         window.onload = () => {
             const salvo = JSON.parse(localStorage.getItem('rank_user'));
@@ -203,7 +203,7 @@
             const ref = database.ref('ranking/' + logadoComo);
             ref.update({ online: true, lastSeen: Date.now() });
             ref.onDisconnect().update({ online: false, lastSeen: Date.now() });
-            setInterval(() => { if(logadoComo && !eVisitante) ref.update({ lastSeen: Date.now(), online: true }); }, 30000);
+            setInterval(() => { if(logadoComo && !eVisitante) ref.update({ lastSeen: Date.now(), online: true }); }, 20000);
             document.getElementById('auth-screen').classList.add('hidden');
             document.getElementById('rank-screen').classList.remove('hidden');
             document.getElementById('chat-container').classList.remove('hidden');
@@ -219,6 +219,14 @@
             return `${Math.floor(h/24)} d`;
         }
 
+        // Timer para atualizar os textos de tempo sem precisar de sinal do Firebase
+        setInterval(() => {
+            document.querySelectorAll('.last-seen-text').forEach(el => {
+                const ts = el.getAttribute('data-ts');
+                if(ts) el.innerText = "online a " + tempoRelativo(parseInt(ts));
+            });
+        }, 30000);
+
         database.ref('ranking').on('value', snap => {
             const lista = document.getElementById('lista-ranking');
             const carrossel = document.getElementById('carousel-container');
@@ -232,7 +240,7 @@
             lista.innerHTML = "";
             array.forEach((t, i) => {
                 let medal = i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : "🔹";
-                let statusTxt = t.online ? "" : `<span class="last-seen">online a ${tempoRelativo(t.lastSeen)}</span>`;
+                let statusTxt = t.online ? "" : `<span class="last-seen">online a <span class="last-seen-text" data-ts="${t.lastSeen}">${tempoRelativo(t.lastSeen)}</span></span>`;
                 lista.innerHTML += `
                 <div class="rank-card">
                     <div style="text-align:left">

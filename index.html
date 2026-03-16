@@ -209,10 +209,10 @@
         }
 
         function tempoRelativo(timestamp) {
-            if(!timestamp) return "agora";
+            if(!timestamp) return "";
             const diff = Date.now() - timestamp;
             const seg = Math.floor(diff/1000);
-            if(seg < 60) return "agora";
+            if(seg < 60) return ""; // REMOVIDO "AGORA"
             const min = Math.floor(seg/60); if(min < 60) return `${min} min`;
             const h = Math.floor(min/60); if(h < 24) return `${h} h`;
             const d = Math.floor(h/24); if(d < 7) return `${d} d`;
@@ -232,7 +232,8 @@
             lista.innerHTML = "";
             array.forEach((t, i) => {
                 let medal = i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : "🔹";
-                let statusLabel = !t.online ? `<span class="last-seen">online a ${tempoRelativo(t.lastSeen)}</span>` : "";
+                let tempoStr = tempoRelativo(t.lastSeen);
+                let statusLabel = (!t.online && tempoStr !== "") ? `<span class="last-seen">online a ${tempoStr}</span>` : "";
                 
                 lista.innerHTML += `
                 <div class="rank-card">

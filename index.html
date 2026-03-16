@@ -153,17 +153,16 @@
         let logadoComo = null;
         let slideIndex = 0;
         let eVisitante = false;
-        let listaDadosCache = []; // Para atualizar o tempo sem re-renderizar tudo
 
         window.onload = () => {
             const salvo = JSON.parse(localStorage.getItem('rank_user'));
             if(salvo) {
-                document.getElementById('reg-turma').value = salvo.turma;
-                document.getElementById('reg-serie').value = salvo.serie;
-                document.getElementById('reg-escola').value = salvo.escola;
-                document.getElementById('reg-insta').value = salvo.insta;
-                document.getElementById('reg-pass').value = salvo.pass;
-                document.getElementById('reg-power').value = salvo.power;
+                document.getElementById('reg-turma').value = salvo.turma || '';
+                document.getElementById('reg-serie').value = salvo.serie || '';
+                document.getElementById('reg-escola').value = salvo.escola || '';
+                document.getElementById('reg-insta').value = salvo.insta || '';
+                document.getElementById('reg-pass').value = salvo.pass || '';
+                document.getElementById('reg-power').value = salvo.power || 'power-fogo';
             }
         };
 
@@ -203,29 +202,30 @@
             const ref = database.ref('ranking/' + logadoComo);
             ref.update({ online: true, lastSeen: Date.now() });
             ref.onDisconnect().update({ online: false, lastSeen: Date.now() });
-            setInterval(() => { if(logadoComo && !eVisitante) ref.update({ lastSeen: Date.now(), online: true }); }, 20000);
+            setInterval(() => { if(logadoComo && !eVisitante) ref.update({ lastSeen: Date.now(), online: true }); }, 15000);
             document.getElementById('auth-screen').classList.add('hidden');
             document.getElementById('rank-screen').classList.remove('hidden');
             document.getElementById('chat-container').classList.remove('hidden');
         }
 
         function tempoRelativo(timestamp) {
-            if(!timestamp) return "";
+            if(!timestamp) return "agora";
             const diff = Date.now() - timestamp;
             const seg = Math.floor(diff/1000);
             if(seg < 60) return "agora";
             const min = Math.floor(seg/60); if(min < 60) return `${min} min`;
             const h = Math.floor(min/60); if(h < 24) return `${h} h`;
-            return `${Math.floor(h/24)} d`;
+            const d = Math.floor(h/24); if(d < 7) return `${d} d`;
+            return `${Math.floor(d/7)} sem`;
         }
 
-        // Timer para atualizar os textos de tempo sem precisar de sinal do Firebase
+        // ATUALIZAÇÃO EM TEMPO REAL DO TEXTO "ONLINE A..."
         setInterval(() => {
-            document.querySelectorAll('.last-seen-text').forEach(el => {
+            document.querySelectorAll('.last-seen-label').forEach(el => {
                 const ts = el.getAttribute('data-ts');
                 if(ts) el.innerText = "online a " + tempoRelativo(parseInt(ts));
             });
-        }, 30000);
+        }, 1000);
 
         database.ref('ranking').on('value', snap => {
             const lista = document.getElementById('lista-ranking');
@@ -240,12 +240,13 @@
             lista.innerHTML = "";
             array.forEach((t, i) => {
                 let medal = i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : "🔹";
-                let statusTxt = t.online ? "" : `<span class="last-seen">online a <span class="last-seen-text" data-ts="${t.lastSeen}">${tempoRelativo(t.lastSeen)}</span></span>`;
+                let statusLabel = t.online ? "" : `<span class="last-seen last-seen-label" data-ts="${t.lastSeen}">online a ${tempoRelativo(t.lastSeen)}</span>`;
+                
                 lista.innerHTML += `
                 <div class="rank-card">
                     <div style="text-align:left">
                         <span class="status-dot ${t.online?'online':'offline'}"></span>
-                        <span class="${t.power}" style="font-weight:bold">${t.turma}</span> ${statusTxt}<br>
+                        <span class="${t.power}" style="font-weight:bold">${t.turma}</span> ${statusLabel}<br>
                         <span class="escola-info">${t.serie || ''} - ${t.escola}</span>
                         <span class="stats-info">👥 ${t.seguidores || 0} | 🎬 ${t.videos || 0}</span>
                         <div class="reaction-bar">

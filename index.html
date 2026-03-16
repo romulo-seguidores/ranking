@@ -219,18 +219,6 @@
             return `${Math.floor(d/7)} sem`;
         }
 
-        // TIMER PARA ATUALIZAR SÓ QUEM ESTÁ OFFLINE
-        setInterval(() => {
-            document.querySelectorAll('.rank-card').forEach(card => {
-                const dot = card.querySelector('.status-dot');
-                const label = card.querySelector('.last-seen-label');
-                if(dot && dot.classList.contains('offline') && label) {
-                    const ts = label.getAttribute('data-ts');
-                    if(ts) label.innerText = "online a " + tempoRelativo(parseInt(ts));
-                }
-            });
-        }, 1000);
-
         database.ref('ranking').on('value', snap => {
             const lista = document.getElementById('lista-ranking');
             const carrossel = document.getElementById('carousel-container');
@@ -244,8 +232,7 @@
             lista.innerHTML = "";
             array.forEach((t, i) => {
                 let medal = i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : "🔹";
-                // Lógica corrigida: só injeta o HTML da etiqueta se estiver OFFLINE
-                let statusLabel = !t.online ? `<span class="last-seen">online a <span class="last-seen-label" data-ts="${t.lastSeen}">${tempoRelativo(t.lastSeen)}</span></span>` : "";
+                let statusLabel = !t.online ? `<span class="last-seen">online a ${tempoRelativo(t.lastSeen)}</span>` : "";
                 
                 lista.innerHTML += `
                 <div class="rank-card">

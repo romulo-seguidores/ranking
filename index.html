@@ -6,116 +6,241 @@
     <title>Rank Classe - Elite Regional</title>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700;800&display=swap');
 
-        body { margin: 0; background: #020202; color: white; font-family: 'Poppins', sans-serif; display: flex; justify-content: center; overflow-x: hidden; }
-        #app { width: 100%; max-width: 420px; padding: 20px; min-height: 100vh; position: relative; }
-
-        .glass, .glass-large { 
-            background: rgba(255,255,255,0.03); backdrop-filter: blur(20px); 
-            border: 1px solid rgba(255,255,255,0.1); border-radius: 30px; 
-            padding: 25px; text-align: center; margin-top: 20px; 
+        /* CONFIGURAÇÕES GERAIS */
+        :root {
+            --ouro: #ffd700;
+            --prata: #c0c0c0;
+            --bronze: #cd7f32;
+            --neon: #00ff88;
         }
 
-        /* HEADER E USUÁRIO */
-        .header-user { text-align: left; margin-bottom: 20px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); }
-        .header-user h2 { font-size: 14px; margin: 0; color: #00ff88; }
-        .lvl-badge-top { font-size: 10px; background: #ffd700; color: black; padding: 2px 8px; border-radius: 10px; font-weight: bold; margin-top: 5px; display: inline-block; }
-        .xp-bar-bg { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; margin-top: 8px; overflow: hidden; }
-        .xp-bar-fill { height: 100%; background: #ffd700; width: 0%; transition: 0.8s; }
+        body { 
+            margin: 0; 
+            background: #020202; 
+            color: white; 
+            font-family: 'Poppins', sans-serif; 
+            display: flex; 
+            justify-content: center; 
+            overflow-x: hidden; 
+        }
 
-        /* STATUS ONLINE */
-        .status-dot { height: 8px; width: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
-        .online { background: #00ff88; box-shadow: 0 0 8px #00ff88; }
+        #app { 
+            width: 100%; 
+            max-width: 420px; 
+            padding: 20px; 
+            min-height: 100vh; 
+            position: relative; 
+        }
+
+        /* EFEITOS GLASS */
+        .glass, .glass-large { 
+            background: rgba(255,255,255,0.03); 
+            backdrop-filter: blur(25px); 
+            border: 1px solid rgba(255,255,255,0.1); 
+            border-radius: 35px; 
+            padding: 25px; 
+            text-align: center; 
+            margin-top: 20px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+        }
+
+        /* HEADER DO USUÁRIO */
+        .header-user { 
+            text-align: left; 
+            margin-bottom: 25px; 
+            padding: 18px; 
+            background: rgba(255,255,255,0.05); 
+            border-radius: 22px; 
+            border: 1px solid rgba(255,255,255,0.1); 
+        }
+        .header-user h2 { font-size: 15px; margin: 0; color: var(--neon); text-transform: uppercase; }
+        .lvl-badge-top { 
+            font-size: 11px; 
+            background: var(--ouro); 
+            color: black; 
+            padding: 3px 10px; 
+            border-radius: 12px; 
+            font-weight: 800; 
+            margin-top: 8px; 
+            display: inline-block; 
+            box-shadow: 0 0 10px rgba(255,215,0,0.3);
+        }
+        .xp-bar-bg { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; margin-top: 10px; overflow: hidden; }
+        .xp-bar-fill { height: 100%; background: var(--ouro); width: 0%; transition: 1s cubic-bezier(0.17, 0.67, 0.83, 0.67); }
+
+        /* MEDALHAS */
+        .medal { font-size: 22px; margin-right: 8px; vertical-align: middle; }
+        .m-ouro { color: var(--ouro); text-shadow: 0 0 15px var(--ouro); }
+        .m-prata { color: var(--prata); text-shadow: 0 0 15px var(--prata); }
+        .m-bronze { color: var(--bronze); text-shadow: 0 0 15px var(--bronze); }
+
+        /* CARROSSEL */
+        .regional-box { 
+            background: linear-gradient(180deg, rgba(255,215,0,0.05) 0%, rgba(0,0,0,1) 100%); 
+            border: 1px solid rgba(255,215,0,0.2); 
+            border-radius: 25px; 
+            padding: 12px 20px; 
+            margin-bottom: 30px; 
+            position: relative; 
+            height: 55px; 
+            overflow: hidden; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+        }
+        .rank-slide { position: absolute; width: 100%; opacity: 0; transition: 0.6s; text-transform: uppercase; font-weight: 800; font-size: 15px; left: 0; text-align: center; }
+        .rank-slide.active { opacity: 1; transform: scale(1.05); }
+
+        /* CARD DE RANKING */
+        .rank-card { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            background: rgba(255,255,255,0.04); 
+            padding: 20px; 
+            border-radius: 25px; 
+            margin-bottom: 15px; 
+            border: 1px solid rgba(255,255,255,0.05); 
+            transition: 0.4s; 
+            animation: slideIn 0.5s ease-out;
+        }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .rank-card.top1 { border: 1px solid rgba(255, 215, 0, 0.3); background: rgba(255, 215, 0, 0.05); box-shadow: 0 0 20px rgba(255, 215, 0, 0.1); }
+        
+        /* STATUS E PODERES */
+        .status-dot { height: 9px; width: 9px; border-radius: 50%; display: inline-block; margin-right: 8px; }
+        .online { background: var(--neon); box-shadow: 0 0 10px var(--neon); }
         .offline { background: #ff4444; }
-        .last-seen { font-size: 8px; color: #777; margin-left: 2px; font-weight: normal; vertical-align: middle; }
-
-        /* CARROSSEL REGIONAL */
-        .regional-box { background: linear-gradient(180deg, rgba(255,215,0,0.1) 0%, rgba(0,0,0,1) 100%); border: 1px solid rgba(255,215,0,0.3); border-radius: 20px; padding: 8px 15px; margin-bottom: 25px; position: relative; height: 50px; overflow: hidden; display: flex; flex-direction: column; justify-content: center; text-align: left; }
-        .rank-slide { position: absolute; width: 100%; opacity: 0; transition: 0.5s; text-transform: uppercase; font-weight: 800; font-size: 14px; }
-        .rank-slide.active { opacity: 1; }
-
-        /* CORES DE PODERES */
         .power-fogo { color: #ff4d00; text-shadow: 0 0 10px #ff4d00; }
         .power-gelo { color: #00d4ff; text-shadow: 0 0 10px #00d4ff; }
         .power-floresta { color: #00ff88; text-shadow: 0 0 10px #00ff88; }
         .power-vazio { color: #a855f7; text-shadow: 0 0 15px #6b21a8; }
         .power-eletrico { color: #eab308; text-shadow: 0 0 10px #eab308; }
 
-        /* LISTA RANKING */
-        .rank-card { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); padding: 18px; border-radius: 20px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.05); text-align: left; transition: 0.3s; }
-        .lvl-card { font-size: 11px; font-weight: bold; color: #ffd700; display: block; margin-top: 2px; }
-        .escola-info { font-size: 9px; color: #666; display: block; }
-        .insta-btn-link { display: inline-block; background: #E1306C; color: white; padding: 4px 8px; border-radius: 6px; font-size: 9px; text-decoration: none; font-weight: bold; margin-top: 5px; }
-
-        /* REAÇÕES */
-        .reaction-bar { display: flex; gap: 8px; margin-top: 8px; }
-        .btn-reaction { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); color: white; font-size: 10px; padding: 4px 8px; border-radius: 8px; cursor: pointer; transition: 0.2s; }
-        .btn-reaction:active { transform: scale(0.9); }
-
-        /* INPUTS E BOTÕES */
-        input, select { width: 100%; padding: 14px; margin: 8px 0; border-radius: 12px; border: none; background: rgba(255,255,255,0.08); color: white; box-sizing: border-box; font-family: 'Poppins'; }
-        .btn-main { width: 100%; padding: 16px; background: linear-gradient(90deg, #00ff88, #00d4ff); border: none; border-radius: 12px; font-weight: bold; cursor: pointer; color: black; margin-bottom: 10px; }
-        .btn-visitor { width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white; font-weight: bold; cursor: pointer; }
+        /* BOTÕES E INPUTS */
+        input, select { 
+            width: 100%; 
+            padding: 16px; 
+            margin: 10px 0; 
+            border-radius: 15px; 
+            border: 1px solid rgba(255,255,255,0.1); 
+            background: rgba(255,255,255,0.07); 
+            color: white; 
+            box-sizing: border-box; 
+            font-family: 'Poppins';
+            outline: none;
+        }
+        input:focus { border-color: var(--neon); background: rgba(255,255,255,0.12); }
+        
+        .btn-main { 
+            width: 100%; 
+            padding: 18px; 
+            background: linear-gradient(135deg, #00ff88, #00d4ff); 
+            border: none; 
+            border-radius: 15px; 
+            font-weight: 800; 
+            cursor: pointer; 
+            color: black; 
+            margin-bottom: 12px; 
+            transition: 0.3s;
+        }
+        .btn-main:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,255,136,0.3); }
+        
+        .insta-btn-link { 
+            display: inline-block; 
+            background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); 
+            color: white; 
+            padding: 5px 12px; 
+            border-radius: 8px; 
+            font-size: 10px; 
+            text-decoration: none; 
+            font-weight: bold; 
+            margin-top: 8px; 
+        }
 
         /* CHAT */
-        #chat-container { position: fixed; bottom: 20px; right: 10px; width: 160px; height: 220px; background: rgba(10,10,10,0.95); border: 1px solid #222; border-radius: 15px; display: flex; flex-direction: column; z-index: 999; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        #chat-messages { flex: 1; overflow-y: auto; padding: 8px; font-size: 10px; scroll-behavior: smooth; }
-        #chat-messages div { margin-bottom: 5px; line-height: 1.3; }
+        #chat-container { 
+            position: fixed; 
+            bottom: 25px; 
+            right: 15px; 
+            width: 180px; 
+            height: 250px; 
+            background: rgba(10,10,10,0.98); 
+            border: 1px solid #222; 
+            border-radius: 20px; 
+            display: flex; 
+            flex-direction: column; 
+            z-index: 999; 
+            box-shadow: 0 15px 40px rgba(0,0,0,0.8); 
+        }
+        #chat-messages { flex: 1; overflow-y: auto; padding: 12px; font-size: 10px; scroll-behavior: smooth; }
+        .msg-line { margin-bottom: 6px; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* ADMIN CARD */
-        .admin-card { background: #080808; padding: 15px; border-radius: 20px; border: 1px solid #222; margin-bottom: 15px; text-align: left; position: relative; }
-        .btn-del-account { position: absolute; top: 12px; right: 12px; background: none; border: none; color: #ff4444; font-weight: bold; cursor: pointer; font-size: 12px; }
-        .btn-save-admin { background: #00ff88; color: black; border: none; width: 100%; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .btn-reset-votos { background: #333; color: #ccc; border: none; padding: 5px 10px; border-radius: 6px; font-size: 9px; margin-top: 8px; cursor: pointer; }
+        /* ADMIN */
+        .admin-card { 
+            background: #0a0a0a; 
+            padding: 20px; 
+            border-radius: 25px; 
+            border: 1px solid #222; 
+            margin-bottom: 20px; 
+            text-align: left; 
+            position: relative; 
+        }
+        .btn-del-account { position: absolute; top: 15px; right: 15px; background: none; border: none; color: #ff4444; font-weight: bold; cursor: pointer; }
+        .btn-reset-votos { background: #1a1a1a; color: #888; border: 1px solid #333; padding: 6px 12px; border-radius: 8px; font-size: 9px; margin-top: 10px; cursor: pointer; }
 
-        /* MODAIS E TAGS */
         .hidden { display: none !important; }
-        .criador-tag { position: fixed; bottom: 10px; left: 15px; color: rgba(0, 255, 136, 0.4); font-weight: bold; font-size: 10px; z-index: 1000; }
-        
-        #level-up-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.98); border: 2px solid #ffd700; padding: 30px; border-radius: 30px; z-index: 2000; text-align: center; box-shadow: 0 0 60px #ffd700; }
+        .criador-tag { position: fixed; bottom: 12px; left: 20px; color: rgba(255,255,255,0.2); font-size: 9px; font-weight: bold; }
 
-        /* SCROLLBAR */
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+        /* RESPONSIVIDADE */
+        @media (max-width: 380px) {
+            #app { padding: 10px; }
+            .rank-card { padding: 15px; }
+        }
     </style>
 </head>
 <body>
 
     <div id="app">
-        <div id="level-up-modal" class="hidden">
-            <h2 style="color:#ffd700; margin:0">🎊 LEVEL UP! 🎊</h2>
-            <p id="level-up-msg" style="margin: 15px 0; font-size: 14px;"></p>
-            <button onclick="document.getElementById('level-up-modal').classList.add('hidden')" class="btn-main" style="padding:10px;">BORAA!</button>
+        <div id="level-up-modal" class="hidden" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #000; border: 2px solid var(--ouro); padding: 40px; border-radius: 35px; z-index: 2000; text-align: center; box-shadow: 0 0 100px rgba(255,215,0,0.4);">
+            <h1 style="color:var(--ouro); margin:0; font-size: 30px;">UP!</h1>
+            <p id="level-up-msg" style="margin: 20px 0; font-size: 16px; line-height: 1.6;"></p>
+            <button onclick="document.getElementById('level-up-modal').classList.add('hidden')" class="btn-main">CONTINUAR JORNADA</button>
         </div>
 
         <section id="auth-screen" class="glass">
-            <h1 style="letter-spacing: -1px;">RANK<span style="color:#00ff88">CLASSE</span></h1>
-            <p style="font-size: 10px; color: #555; margin-top: -15px; margin-bottom: 20px;">Elite Regional v3.0</p>
+            <h1 style="font-size: 32px; letter-spacing: -2px; margin-bottom: 5px;">RANK<span style="color:var(--neon)">CLASSE</span></h1>
+            <p style="font-size: 11px; color: #666; margin-bottom: 25px;">SISTEMA DE COMPETIÇÃO REGIONAL</p>
             
-            <input type="text" id="reg-turma" placeholder="Nome da Turma">
-            <input type="text" id="reg-serie" placeholder="Série/Ano (ex: 3º Ano A)">
-            <input type="text" id="reg-escola" placeholder="Nome da Escola">
-            <input type="url" id="reg-insta" placeholder="Link do Instagram">
-            <input type="password" id="reg-pass" placeholder="Defina uma Senha">
+            <div id="cadastro-form">
+                <input type="text" id="reg-turma" placeholder="Nome da sua Turma">
+                <input type="text" id="reg-serie" placeholder="Série e Turma (Ex: 2º B)">
+                <input type="text" id="reg-escola" placeholder="Nome da Instituição/Escola">
+                <input type="url" id="reg-insta" placeholder="Link do Perfil no Instagram">
+                <input type="password" id="reg-pass" placeholder="Crie uma Senha">
+                
+                <select id="reg-power">
+                    <option value="power-fogo">🔥 ELEMENTO: FOGO</option>
+                    <option value="power-gelo">❄️ ELEMENTO: GELO</option>
+                    <option value="power-floresta">🌿 ELEMENTO: FLORESTA</option>
+                    <option value="power-vazio">🌑 ELEMENTO: VAZIO</option>
+                    <option value="power-eletrico">⚡ ELEMENTO: ELÉTRICO</option>
+                </select>
+                
+                <button onclick="logarOuCadastrar()" class="btn-main">ENTRAR NO RANKING</button>
+                <button onclick="entrarComoVisitante()" style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid #333; border-radius: 15px; color: #888; font-weight: bold; cursor: pointer;">APENAS OBSERVAR</button>
+            </div>
             
-            <select id="reg-power">
-                <option value="power-fogo">🔥 Elemento Fogo</option>
-                <option value="power-gelo">❄️ Elemento Gelo</option>
-                <option value="power-floresta">🌿 Elemento Floresta</option>
-                <option value="power-vazio">🌑 Elemento Vazio</option>
-                <option value="power-eletrico">⚡ Elemento Elétrico</option>
-            </select>
-            
-            <button onclick="logarOuCadastrar()" class="btn-main">ENTRAR NO RANKING</button>
-            <button onclick="entrarComoVisitante()" class="btn-visitor">ENTRAR COMO VISITANTE</button>
-            
-            <button onclick="mostrarLoginAdmin()" style="background:none; border:none; color:#181818; font-size:10px; margin-top:25px; cursor:pointer">SISTEMA DO ADMINISTRADOR</button>
+            <button onclick="mostrarLoginAdmin()" style="background:none; border:none; color:#1a1a1a; font-size:10px; margin-top:30px; cursor:pointer; text-transform: uppercase; letter-spacing: 1px;">Acesso Restrito</button>
         </section>
 
         <section id="rank-screen" class="hidden glass-large">
             <div class="header-user">
-                <h2 id="welcome-text">Carregando...</h2>
+                <h2 id="welcome-text">Sincronizando...</h2>
                 <div id="user-stats-ui" class="hidden">
                     <span class="lvl-badge-top" id="top-lvl-display">LVL 0</span>
                     <div class="xp-bar-bg"><div class="xp-bar-fill" id="top-xp-fill"></div></div>
@@ -128,34 +253,34 @@
 
             <div id="lista-ranking"></div>
 
-            <button onclick="location.reload()" class="btn-main" style="background:#111; color:white; margin-top:20px; border: 1px solid #222;">SAIR DA CONTA</button>
+            <button onclick="location.reload()" class="btn-main" style="background:#151515; color:#555; margin-top:25px; border: 1px solid #222;">DESCONECTAR</button>
         </section>
 
         <div id="chat-container" class="hidden">
             <div id="chat-messages"></div>
-            <div id="chat-input-box" style="display:flex; padding:5px; border-top:1px solid #222; background: #0a0a0a; border-radius: 0 0 15px 15px;">
-                <input type="text" id="msg-input" placeholder="Mensagem..." style="font-size:10px; margin:0; padding:8px; background:none;">
-                <button onclick="enviarMensagem()" style="background:#00ff88; border:none; padding:0 10px; border-radius:8px; font-weight:bold;">></button>
+            <div id="chat-input-box" style="display:flex; padding:8px; border-top:1px solid #222; background: #050505; border-radius: 0 0 20px 20px;">
+                <input type="text" id="msg-input" placeholder="Diga algo..." style="font-size:11px; margin:0; padding:10px; background:none; border:none;">
+                <button onclick="enviarMensagem()" style="background:var(--neon); border:none; padding:0 12px; border-radius:10px; color:black; font-weight:bold;">></button>
             </div>
         </div>
 
-        <div class="criador-tag">Criado por Rômulo</div>
+        <div class="criador-tag">SYSTEM BY RÔMULO</div>
 
         <section id="admin-panel" class="hidden glass-large">
-            <h2 style="color: #00ff88;">🛠 Painel de Controle</h2>
-            <button onclick="limparChat()" style="background: #ff4444; color: white; border: none; padding: 12px; border-radius: 12px; width: 100%; margin-bottom: 20px; font-weight:bold; cursor:pointer">🧹 APAGAR CHAT</button>
+            <h2 style="color: var(--neon); margin-bottom: 25px;">SISTEMA DE CONTROLE</h2>
+            <button onclick="limparChat()" style="background: #ff4444; color: white; border: none; padding: 15px; border-radius: 15px; width: 100%; margin-bottom: 25px; font-weight:bold; cursor:pointer">🧹 RESETAR CHAT</button>
             
             <div id="lista-admin"></div>
             
-            <button onclick="location.reload()" class="btn-main" style="background:#222; color:white;">FECHAR PAINEL</button>
+            <button onclick="location.reload()" class="btn-main" style="background:#111; color:white;">FECHAR SISTEMA</button>
         </section>
 
         <section id="admin-login-screen" class="hidden glass">
-            <h3>Acesso Restrito</h3>
-            <input type="text" id="admin-user" placeholder="Usuário Admin">
-            <input type="password" id="admin-pass" placeholder="Senha de Acesso">
-            <button onclick="loginAdmin()" class="btn-main">CONECTAR AO SISTEMA</button>
-            <button onclick="location.reload()" style="background:none; border:none; color:#555; cursor:pointer">Voltar</button>
+            <h3>PAINEL DE SEGURANÇA</h3>
+            <input type="text" id="admin-user" placeholder="Usuário Root">
+            <input type="password" id="admin-pass" placeholder="Master Password">
+            <button onclick="loginAdmin()" class="btn-main">VALIDAR ACESSO</button>
+            <button onclick="location.reload()" style="background:none; border:none; color:#444; cursor:pointer; margin-top:10px;">Cancelar</button>
         </section>
     </div>
 
@@ -163,7 +288,7 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <script>
-        // CONFIGURAÇÃO FIREBASE
+        // CONFIGURAÇÃO REALTIME DATABASE
         const firebaseConfig = { apiKey: "SUA_API_KEY", databaseURL: "https://gincanaescola-d4f8c-default-rtdb.firebaseio.com/", projectId: "gincanaescola-d4f8c" };
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
@@ -173,30 +298,30 @@
         let lastLevel = 0;
         let slideIndex = 0;
 
-        // PERSISTÊNCIA: Carregar dados salvos ao abrir
+        // SISTEMA DE MEMÓRIA (PERSISTÊNCIA)
         window.onload = () => {
-            const salvo = JSON.parse(localStorage.getItem('rank_user_v3'));
-            if(salvo) {
-                document.getElementById('reg-turma').value = salvo.turma || '';
-                document.getElementById('reg-serie').value = salvo.serie || '';
-                document.getElementById('reg-escola').value = salvo.escola || '';
-                document.getElementById('reg-insta').value = salvo.insta || '';
-                document.getElementById('reg-pass').value = salvo.pass || '';
-                document.getElementById('reg-power').value = salvo.power || 'power-fogo';
+            const cache = JSON.parse(localStorage.getItem('rank_data_v4'));
+            if(cache) {
+                document.getElementById('reg-turma').value = cache.turma || '';
+                document.getElementById('reg-serie').value = cache.serie || '';
+                document.getElementById('reg-escola').value = cache.escola || '';
+                document.getElementById('reg-insta').value = cache.insta || '';
+                document.getElementById('reg-pass').value = cache.pass || '';
+                document.getElementById('reg-power').value = cache.power || 'power-fogo';
             }
         };
 
-        // LÓGICA DE LOGIN E CADASTRO
+        // LÓGICA DE ACESSO
         function logarOuCadastrar() {
             const t = document.getElementById('reg-turma').value.trim();
             const p = document.getElementById('reg-pass').value;
-            if(!t || !p) return alert("Por favor, preencha o nome da Turma e a Senha!");
+            if(!t || !p) return alert("Erro: Turma e Senha são campos obrigatórios!");
 
             database.ref('ranking/' + t).once('value', snap => {
                 const d = snap.val();
-                if(d && d.pass !== p) return alert("Senha incorreta para esta turma!");
+                if(d && d.pass !== p) return alert("Erro: Senha inválida para esta conta.");
 
-                const info = {
+                const finalData = {
                     turma: t, pass: p,
                     serie: document.getElementById('reg-serie').value,
                     escola: document.getElementById('reg-escola').value,
@@ -211,181 +336,208 @@
                     lastSeen: Date.now()
                 };
 
-                localStorage.setItem('rank_user_v3', JSON.stringify(info));
-                database.ref('ranking/' + t).update(info).then(() => {
+                localStorage.setItem('rank_data_v4', JSON.stringify(finalData));
+                database.ref('ranking/' + t).update(finalData).then(() => {
                     logadoComo = t;
-                    iniciarInterface();
+                    ativarApp();
                 });
             });
         }
 
         function entrarComoVisitante() {
             ehVisitante = true;
-            logadoComo = "Visitante";
-            iniciarInterface();
+            logadoComo = "Anônimo";
+            ativarApp();
             document.getElementById('chat-input-box').classList.add('hidden');
         }
 
-        function iniciarInterface() {
+        function ativarApp() {
             document.getElementById('auth-screen').classList.add('hidden');
             document.getElementById('rank-screen').classList.remove('hidden');
             document.getElementById('chat-container').classList.remove('hidden');
             if(!ehVisitante) {
                 document.getElementById('user-stats-ui').classList.remove('hidden');
                 database.ref('ranking/' + logadoComo).onDisconnect().update({ online: false, lastSeen: Date.now() });
-                setInterval(() => database.ref('ranking/' + logadoComo).update({ online: true, lastSeen: Date.now() }), 10000);
+                setInterval(() => {
+                    database.ref('ranking/' + logadoComo).update({ online: true, lastSeen: Date.now() });
+                }, 10000);
             } else {
-                document.getElementById('welcome-text').innerText = "Modo Visitante";
+                document.getElementById('welcome-text').innerText = "VISUALIZAÇÃO PÚBLICA";
             }
         }
 
-        // ATUALIZAÇÃO DO RANKING EM TEMPO REAL
+        // ATUALIZAÇÃO DO RANKING COM MEDALHAS
         database.ref('ranking').on('value', snap => {
-            const dados = snap.val(); if(!dados) return;
-            const lista = document.getElementById('lista-ranking');
+            const data = snap.val(); if(!data) return;
+            const container = document.getElementById('lista-ranking');
             const carrossel = document.getElementById('carousel-container');
-            const array = Object.values(dados).filter(t => t && t.turma).sort((a,b) => b.pontos - a.pontos);
+            const rankArray = Object.values(data).filter(item => item && item.turma).sort((a,b) => b.pontos - a.pontos);
             
-            // Carrossel Top 3
+            // Render Carrossel Top 3
             carrossel.innerHTML = "";
-            array.slice(0, 3).forEach((t, i) => {
-                carrossel.innerHTML += `<div class="rank-slide ${t.power}">${i===0?"👑 ":""}${i+1}º ${t.turma}</div>`;
+            rankArray.slice(0, 3).forEach((item, i) => {
+                const icons = ['🥇','🥈','🥉'];
+                carrossel.innerHTML += `<div class="rank-slide ${item.power}">${icons[i]} ${i+1}º ${item.turma}</div>`;
             });
-            iniciarCarrossel();
+            startCarousel();
 
-            // Lista de Ranking
-            lista.innerHTML = "";
-            array.forEach((t, i) => {
-                const lvl = Math.floor((t.pontos || 0) / 10);
-                
-                if(t.turma === logadoComo) {
-                    document.getElementById('welcome-text').innerText = "Bem-vindo, " + t.turma;
-                    document.getElementById('top-lvl-display').innerText = "LVL " + lvl;
-                    document.getElementById('top-xp-fill').style.width = ((t.pontos % 10) * 10) + "%";
-                    if(lvl > lastLevel && lastLevel !== 0) {
-                        document.getElementById('level-up-msg').innerHTML = `A turma <b>${t.turma}</b> subiu para o <b>Level ${lvl}</b>! 🚀`;
+            // Render Lista
+            container.innerHTML = "";
+            rankArray.forEach((item, i) => {
+                const currentLvl = Math.floor((item.pontos || 0) / 10);
+                let medalhaHtml = "";
+                let cardClass = "rank-card";
+
+                if(i === 0) { medalhaHtml = '<span class="medal m-ouro">🥇</span>'; cardClass += " top1"; }
+                else if(i === 1) { medalhaHtml = '<span class="medal m-prata">🥈</span>'; }
+                else if(i === 2) { medalhaHtml = '<span class="medal m-bronze">🥉</span>'; }
+                else { medalhaHtml = `<span style="margin-right:15px; color:#333; font-weight:800">${i+1}</span>`; }
+
+                if(item.turma === logadoComo) {
+                    document.getElementById('welcome-text').innerText = "BEM-VINDO, " + item.turma;
+                    document.getElementById('top-lvl-display').innerText = "LVL " + currentLvl;
+                    document.getElementById('top-xp-fill').style.width = ((item.pontos % 10) * 10) + "%";
+                    
+                    if(currentLvl > lastLevel && lastLevel !== 0) {
+                        document.getElementById('level-up-msg').innerHTML = `INCREDÍVEL!<br>Sua turma alcançou o <b>Level ${currentLvl}</b>!`;
                         document.getElementById('level-up-modal').classList.remove('hidden');
                     }
-                    lastLevel = lvl;
+                    lastLevel = currentLvl;
                 }
 
-                lista.innerHTML += `
-                <div class="rank-card" style="border-left: 4px solid ${t.online?'#00ff88':'#333'}">
-                    <div>
-                        <span class="status-dot ${t.online?'online':'offline'}"></span>
-                        <b class="${t.power}" style="font-size:15px">${t.turma}</b>
-                        <span class="last-seen">${tempoRelativo(t.lastSeen, t.online)}</span><br>
-                        <span class="lvl-card">LEVEL ${lvl}</span>
-                        <span class="escola-info">${t.serie || ''} - ${t.escola || ''}</span>
-                        <a href="${t.insta}" target="_blank" class="insta-btn-link">📸 INSTAGRAM</a>
+                container.innerHTML += `
+                <div class="${cardClass}">
+                    <div style="text-align:left">
+                        <span class="status-dot ${item.online?'online':'offline'}"></span>
+                        ${medalhaHtml}
+                        <b class="${item.power}" style="font-size:16px">${item.turma}</b><br>
+                        <span class="lvl-card">Série: ${item.serie || 'N/A'} | LVL ${currentLvl}</span>
+                        <a href="${item.insta}" target="_blank" class="insta-btn-link">MEU INSTAGRAM</a>
                         <div class="reaction-bar">
-                            <button class="btn-reaction" onclick="reagir('${t.turma}', 'like')">👍 ${t.likes || 0}</button>
-                            <button class="btn-reaction" onclick="reagir('${t.turma}', 'dislike')">👎 ${t.dislikes || 0}</button>
+                            <button class="btn-reaction" onclick="votar('${item.turma}', 'like')">🔥 ${item.likes || 0}</button>
+                            <button class="btn-reaction" onclick="votar('${item.turma}', 'dislike')">❄️ ${item.dislikes || 0}</button>
                         </div>
                     </div>
                     <div style="text-align:right">
-                        <div style="font-size:18px; font-weight:800; color:#ffd700">${t.pontos || 0}<small style="font-size:10px">pts</small></div>
-                        <div style="font-size:10px; color:#444">${i+1}º LUGAR</div>
+                        <div style="font-size:20px; font-weight:900; color:var(--ouro)">${item.pontos || 0}</div>
+                        <div style="font-size:9px; color:#444; letter-spacing:1px">PONTOS</div>
                     </div>
                 </div>`;
             });
         });
 
-        // REAÇÕES LIKES/DISLIKES
-        function reagir(turma, tipo) {
-            if(ehVisitante) return alert("Visitantes não podem votar!");
-            const vKey = 'voto_v3_' + turma;
-            if(localStorage.getItem(vKey) === tipo) return;
+        // REAÇÕES
+        function votar(id, type) {
+            if(ehVisitante) return alert("Ação bloqueada para visitantes.");
+            const key = 'voto_v4_sys_' + id;
+            if(localStorage.getItem(key) === type) return;
 
-            database.ref('ranking/' + turma).transaction(t => {
-                if(t) {
-                    if(localStorage.getItem(vKey)) {
-                        let ant = localStorage.getItem(vKey) === 'like' ? 'likes' : 'dislikes';
-                        t[ant] = Math.max(0, (t[ant] || 0) - 1);
+            database.ref('ranking/' + id).transaction(node => {
+                if(node) {
+                    const old = localStorage.getItem(key);
+                    if(old) {
+                        const oldField = (old === 'like') ? 'likes' : 'dislikes';
+                        node[oldField] = Math.max(0, (node[oldField] || 0) - 1);
                     }
-                    let novo = tipo === 'like' ? 'likes' : 'dislikes';
-                    t[novo] = (t[novo] || 0) + 1;
+                    const newField = (type === 'like') ? 'likes' : 'dislikes';
+                    node[newField] = (node[newField] || 0) + 1;
                 }
-                return t;
+                return node;
             });
-            localStorage.setItem(vKey, tipo);
+            localStorage.setItem(key, type);
         }
 
-        // PAINEL ADMINISTRATIVO
+        // ADMINISTRAÇÃO
         function carregarPainelAdmin() {
             database.ref('ranking').on('value', snap => {
-                const container = document.getElementById('lista-admin');
-                container.innerHTML = "";
-                const dados = snap.val(); if(!dados) return;
+                const adminList = document.getElementById('lista-admin');
+                adminList.innerHTML = "";
+                const entries = snap.val(); if(!entries) return;
 
-                Object.values(dados).forEach(t => {
+                Object.values(entries).forEach(t => {
                     if(!t.turma) return;
-                    container.innerHTML += `
+                    adminList.innerHTML += `
                     <div class="admin-card">
-                        <button class="btn-del-account" onclick="deletarTurma('${t.turma}')">✖ EXCLUIR</button>
-                        <b>${t.turma}</b><br>
-                        <a href="${t.insta}" target="_blank" style="color:#E1306C; font-size:10px;">📸 Conferir Instagram</a><br>
-                        <button class="btn-reset-votos" onclick="zerarVotos('${t.turma}')">♻ Zerar Likes/Dislikes</button>
+                        <button class="btn-del-account" onclick="apagarConta('${t.turma}')">APAGAR</button>
+                        <b>TURMA: ${t.turma}</b><br>
+                        <span style="font-size:10px; color:#555">INSTA: ${t.insta || 'Sem link'}</span><br>
+                        <button class="btn-reset-votos" onclick="limparVotos('${t.turma}')">REINICIAR REAÇÕES</button>
                         
-                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-top:10px;">
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:15px;">
                             <div>
-                                <label style="font-size:9px; color:#666">SEGUIDORES</label>
-                                <input type="number" id="s-${t.turma}" value="${t.seguidores || 0}">
+                                <label style="font-size:8px; color:var(--neon)">SEGUIDORES</label>
+                                <input type="number" id="adm-s-${t.turma}" value="${t.seguidores || 0}">
                             </div>
                             <div>
-                                <label style="font-size:9px; color:#666">VÍDEOS</label>
-                                <input type="number" id="v-${t.turma}" value="${t.videos || 0}">
+                                <label style="font-size:8px; color:var(--neon)">VÍDEOS</label>
+                                <input type="number" id="adm-v-${t.turma}" value="${t.videos || 0}">
                             </div>
                         </div>
-                        <button onclick="salvarAdmin('${t.turma}')" class="btn-save-admin">ATUALIZAR PONTOS</button>
+                        <button onclick="salvarAlteracoes('${t.turma}')" class="btn-main" style="padding:12px; font-size:11px; margin-top:10px;">SALVAR DADOS</button>
                     </div>`;
                 });
             });
         }
 
-        function salvarAdmin(nome) {
-            const s = parseInt(document.getElementById(`s-${nome}`).value) || 0;
-            const v = parseInt(document.getElementById(`v-${nome}`).value) || 0;
-            const pts = (Math.floor(s / 100) * 2) + (v * 1);
-            database.ref('ranking/' + nome).update({ seguidores: s, videos: v, pontos: pts });
-            alert("Pontuação de " + nome + " atualizada!");
+        function salvarAlteracoes(turma) {
+            const s = parseInt(document.getElementById(`adm-s-${turma}`).value) || 0;
+            const v = parseInt(document.getElementById(`adm-v-${turma}`).value) || 0;
+            const calc = (Math.floor(s / 100) * 2) + (v * 1);
+            database.ref('ranking/' + turma).update({ seguidores: s, videos: v, pontos: calc });
+            alert("Sucesso: Dados de "+turma+" atualizados!");
         }
 
-        function zerarVotos(nome) { if(confirm("Zerar as reações de "+nome+"?")) database.ref('ranking/'+nome).update({ likes: 0, dislikes: 0 }); }
-        function deletarTurma(nome) { if(confirm("Deseja APAGAR permanentemente a conta da turma "+nome+"?")) database.ref('ranking/'+nome).remove(); }
-        function loginAdmin() { if(document.getElementById('admin-user').value==="admin" && document.getElementById('admin-pass').value==="admin123") { document.getElementById('admin-login-screen').classList.add('hidden'); document.getElementById('admin-panel').classList.remove('hidden'); carregarPainelAdmin(); } else { alert("Acesso negado!"); } }
+        function limparVotos(t) { if(confirm("Zerar curtidas de "+t+"?")) database.ref('ranking/'+t).update({ likes: 0, dislikes: 0 }); }
+        function apagarConta(t) { if(confirm("DELETAR PERMANENTEMENTE a turma "+t+"?")) database.ref('ranking/'+t).remove(); }
+        function loginAdmin() { 
+            const u = document.getElementById('admin-user').value;
+            const p = document.getElementById('admin-pass').value;
+            if(u === "admin" && p === "admin123") { 
+                document.getElementById('admin-login-screen').classList.add('hidden'); 
+                document.getElementById('admin-panel').classList.remove('hidden'); 
+                carregarPainelAdmin(); 
+            } else { alert("Acesso negado: Credenciais inválidas."); }
+        }
         function mostrarLoginAdmin() { document.getElementById('auth-screen').classList.add('hidden'); document.getElementById('admin-login-screen').classList.remove('hidden'); }
-        function limparChat() { if(confirm("Limpar todo o histórico do chat?")) database.ref('mensagens_chat').remove(); }
+        function limparChat() { if(confirm("Deseja apagar todas as mensagens do chat global?")) database.ref('mensagens_chat').remove(); }
 
-        // AUXILIARES
-        function iniciarCarrossel() {
-            const slides = document.querySelectorAll('.rank-slide'); if(slides.length === 0) return;
-            slides.forEach(s => s.classList.remove('active'));
-            slideIndex = (slideIndex + 1) % slides.length; slides[slideIndex].classList.add('active');
-            if(window.timerC) clearTimeout(window.timerC); window.timerC = setTimeout(iniciarCarrossel, 3000);
+        // UTILITÁRIOS VISUAIS
+        function startCarousel() {
+            const items = document.querySelectorAll('.rank-slide'); if(items.length === 0) return;
+            items.forEach(el => el.classList.remove('active'));
+            slideIndex = (slideIndex + 1) % items.length; 
+            items[slideIndex].classList.add('active');
+            if(window.carTimer) clearTimeout(window.carTimer); 
+            window.carTimer = setTimeout(startCarousel, 3500);
         }
 
-        function tempoRelativo(ts, online) {
-            if(online) return "Online agora";
-            if(!ts) return "";
-            const diff = Date.now() - ts;
-            const min = Math.floor(diff/60000);
-            if(min < 1) return "Online agora";
-            if(min < 60) return `online a ${min}m`;
-            const h = Math.floor(min/60); if(h < 24) return `online a ${h}h`;
-            return `online a ${Math.floor(h/24)}d`;
+        function tempoRelativo(time, isOnline) {
+            if(isOnline) return "Online";
+            if(!time) return "Desconectado";
+            const diff = Date.now() - time;
+            const m = Math.floor(diff/60000);
+            if(m < 1) return "Online";
+            if(m < 60) return `há ${m}m`;
+            const h = Math.floor(m/60); if(h < 24) return `há ${h}h`;
+            return `há ${Math.floor(h/24)}d`;
         }
 
-        // CHAT ENGINE
+        // CHAT GLOBAL ENGINE
         function enviarMensagem() {
-            const inp = document.getElementById('msg-input');
-            if(!inp.value.trim() || !logadoComo || ehVisitante) return;
-            database.ref('mensagens_chat').push({ user: logadoComo, text: inp.value, time: Date.now() });
-            inp.value = "";
+            const input = document.getElementById('msg-input');
+            if(!input.value.trim() || !logadoComo || ehVisitante) return;
+            database.ref('mensagens_chat').push({ 
+                user: logadoComo, 
+                text: input.value, 
+                timestamp: Date.now() 
+            });
+            input.value = "";
         }
-        database.ref('mensagens_chat').limitToLast(20).on('value', snap => {
+        database.ref('mensagens_chat').limitToLast(25).on('value', snap => {
             const box = document.getElementById('chat-messages'); box.innerHTML = "";
-            snap.forEach(d => { box.innerHTML += `<div><b style="color:#00ff88">${d.val().user}:</b> ${d.val().text}</div>`; });
+            snap.forEach(msg => { 
+                box.innerHTML += `<div class="msg-line"><b style="color:var(--neon)">${msg.val().user}:</b> ${msg.val().text}</div>`; 
+            });
             box.scrollTop = box.scrollHeight;
         });
     </script>

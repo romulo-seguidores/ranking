@@ -71,7 +71,8 @@
         /* ADMIN */
         .admin-card { background: #080808; padding: 20px; border-radius: 20px; border: 1px solid #222; margin-bottom: 15px; text-align: left; }
         .insta-btn { display: inline-block; background: #E1306C; color: white; padding: 6px 12px; border-radius: 8px; font-size: 10px; text-decoration: none; font-weight: bold; margin-bottom: 10px; }
-        .btn-save { background: #00ff88; color: black; border: none; width: 100%; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .btn-save { background: #00ff88; color: black; border: none; width: 100%; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn-save.saved { background: #008844 !important; color: white !important; }
 
         /* CHAT */
         #chat-container { position: fixed; bottom: 20px; right: 10px; width: 160px; height: 220px; background: rgba(10,10,10,0.95); border: 1px solid #222; border-radius: 15px; display: flex; flex-direction: column; z-index: 999; backdrop-filter: blur(10px); }
@@ -137,6 +138,7 @@
 
         <section id="admin-panel" class="hidden glass-large">
             <h2>🛠 Lançamento</h2>
+            <button onclick="limparChat()" style="background: #ff4444; color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; width: 100%; margin-bottom: 20px; cursor: pointer;">🧹 LIMPAR CONVERSAS DO CHAT</button>
             <div id="lista-admin"></div>
             <button onclick="voltar()" class="btn-sec">FECHAR</button>
         </section>
@@ -212,7 +214,7 @@
             if(!timestamp) return "";
             const diff = Date.now() - timestamp;
             const seg = Math.floor(diff/1000);
-            if(seg < 60) return ""; // REMOVIDO "AGORA"
+            if(seg < 60) return "";
             const min = Math.floor(seg/60); if(min < 60) return `${min} min`;
             const h = Math.floor(min/60); if(h < 24) return `${h} h`;
             const d = Math.floor(h/24); if(d < 7) return `${d} d`;
@@ -311,7 +313,7 @@
                                 <input type="number" id="s-${t.turma}" value="${t.seguidores}" placeholder="Segs">
                                 <input type="number" id="v-${t.turma}" value="${t.videos}" placeholder="Vids">
                             </div>
-                            <button onclick="salvarPontos('${t.turma}')" class="btn-save">ATUALIZAR PONTOS</button>
+                            <button id="btn-save-${t.turma}" onclick="salvarPontos('${t.turma}')" class="btn-save">ATUALIZAR PONTOS</button>
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-top:10px;">
                                 <button onclick="zerarVotos('${t.turma}')" class="btn-reset-votos" style="background: #441111; color: #ff8888; border: 1px solid #662222; padding: 4px 8px; border-radius: 6px; font-size: 9px; cursor: pointer;">🗑 ZERAR VOTOS</button>
                                 <button onclick="deletarTurma('${t.turma}')" style="color:red; background:none; border:none; font-size:10px; cursor:pointer; font-weight:bold;">✖ EXCLUIR</button>
@@ -321,12 +323,19 @@
             });
         }
 
-        function zerarVotos(nome) { if(confirm("Zerar votos de "+nome+"?")) database.ref('ranking/' + nome).update({ likes: 0, dislikes: 0 }); }
+        function limparChat() { if(confirm("Tem certeza que deseja apagar TODO o histórico do chat?")) database.ref('mensagens_chat').remove(); }
+
         function salvarPontos(nome) {
+            const btn = document.getElementById(`btn-save-${nome}`);
             const s = parseInt(document.getElementById(`s-${nome}`).value) || 0;
             const v = parseInt(document.getElementById(`v-${nome}`).value) || 0;
-            database.ref('ranking/' + nome).update({ seguidores: s, videos: v, pontos: (s * 10) + (v * 50) });
+            database.ref('ranking/' + nome).update({ seguidores: s, videos: v, pontos: (s * 10) + (v * 50) }).then(() => {
+                btn.classList.add('saved');
+                btn.innerText = "ATUALIZADO";
+            });
         }
+
+        function zerarVotos(nome) { if(confirm("Zerar votos de "+nome+"?")) database.ref('ranking/' + nome).update({ likes: 0, dislikes: 0 }); }
         function deletarTurma(nome) { if(confirm("Excluir "+nome+"?")) database.ref('ranking/'+nome).remove(); }
         function esconderTudo() { document.querySelectorAll('section').forEach(s => s.classList.add('hidden')); }
         function sairDaConta() { location.reload(); }

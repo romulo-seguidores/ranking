@@ -17,35 +17,23 @@
             padding: 25px; text-align: center; margin-top: 20px; 
         }
 
-        /* STATUS ONLINE E TEMPO */
+        /* TOPO BEM VINDO */
+        .header-user { text-align: left; margin-bottom: 20px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); }
+        .header-user h2 { font-size: 14px; margin: 0; color: #00ff88; }
+        .lvl-badge-top { font-size: 10px; background: #ffd700; color: black; padding: 2px 8px; border-radius: 10px; font-weight: bold; margin-top: 5px; display: inline-block; }
+        .xp-bar-bg { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; margin-top: 8px; overflow: hidden; }
+        .xp-bar-fill { height: 100%; background: #ffd700; width: 0%; transition: 0.8s; }
+
+        /* STATUS ONLINE */
         .status-dot { height: 8px; width: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
         .online { background: #00ff88; box-shadow: 0 0 8px #00ff88; }
         .offline { background: #ff4444; }
         .last-seen { font-size: 8px; color: #777; margin-left: 2px; font-weight: normal; vertical-align: middle; }
 
-        /* ANIMAÇÃO LOGIN */
-        .text-anim-crown {
-            font-size: 13px; color: #ffd700; font-weight: bold; margin-bottom: 20px;
-            display: block; text-transform: uppercase;
-            animation: crownFloat 2s infinite ease-in-out;
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
-        }
-        @keyframes crownFloat {
-            0%, 100% { transform: translateY(0); opacity: 1; }
-            50% { transform: translateY(-3px); opacity: 0.7; }
-        }
-
         /* CARROSSEL */
-        .regional-box { 
-            background: linear-gradient(180deg, rgba(255,215,0,0.1) 0%, rgba(0,0,0,1) 100%); 
-            border: 1px solid rgba(255,215,0,0.3); border-radius: 20px; padding: 8px 15px; margin-bottom: 25px; 
-            position: relative; height: 50px; overflow: hidden; display: flex; flex-direction: column; justify-content: center;
-            text-align: left;
-        }
-        .regional-box .label { font-size: 8px; color: #ffd700; font-weight: bold; letter-spacing: 1px; margin-bottom: 2px; opacity: 0.7; }
-        #carousel-container { position: relative; height: 25px; }
-        .rank-slide { position: absolute; width: 100%; left: 0; font-size: 0.95rem; font-weight: 800; opacity: 0; transform: translateX(10px); transition: 0.5s; text-transform: uppercase; }
-        .rank-slide.active { opacity: 1; transform: translateX(0); }
+        .regional-box { background: linear-gradient(180deg, rgba(255,215,0,0.1) 0%, rgba(0,0,0,1) 100%); border: 1px solid rgba(255,215,0,0.3); border-radius: 20px; padding: 8px 15px; margin-bottom: 25px; position: relative; height: 50px; overflow: hidden; display: flex; flex-direction: column; justify-content: center; text-align: left; }
+        .rank-slide { position: absolute; width: 100%; opacity: 0; transition: 0.5s; text-transform: uppercase; font-weight: 800; font-size: 14px; }
+        .rank-slide.active { opacity: 1; }
 
         /* PODERES */
         .power-fogo { color: #ff4d00; text-shadow: 0 0 10px #ff4d00; }
@@ -55,92 +43,94 @@
         .power-eletrico { color: #eab308; text-shadow: 0 0 10px #eab308; }
 
         /* LISTA RANKING */
-        .rank-card { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); padding: 18px; border-radius: 20px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.05); }
-        .escola-info { font-size: 9px; color: #666; display: block; margin: 2px 0; }
-        .stats-info { font-size: 9px; color: #00d4ff; font-weight: bold; }
+        .rank-card { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); padding: 18px; border-radius: 20px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.05); text-align: left; }
+        .lvl-card { font-size: 11px; font-weight: bold; color: #ffd700; display: block; margin-top: 2px; }
+        .escola-info { font-size: 9px; color: #666; display: block; }
+        .insta-btn-link { display: inline-block; background: #E1306C; color: white; padding: 4px 8px; border-radius: 6px; font-size: 9px; text-decoration: none; font-weight: bold; margin-top: 5px; }
+
+        /* MODAL LVL UP */
+        #level-up-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.98); border: 2px solid #ffd700; padding: 30px; border-radius: 30px; z-index: 2000; text-align: center; box-shadow: 0 0 50px #ffd700; animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes popIn { from { transform: translate(-50%, -50%) scale(0.5); opacity: 0; } to { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
 
         /* INPUTS E BOTÕES */
-        input, select { width: 100%; padding: 14px; margin: 8px 0; border-radius: 12px; border: none; background: rgba(255,255,255,0.08); color: white; box-sizing: border-box; font-size: 14px; }
-        .btn-main { width: 100%; padding: 16px; background: linear-gradient(90deg, #00ff88, #00d4ff); border: none; border-radius: 12px; font-weight: bold; cursor: pointer; color: black; margin-top: 10px; }
-        .btn-sec { background: none; border: 1px solid #333; color: #888; width: 100%; padding: 12px; border-radius: 12px; margin-top: 10px; cursor: pointer; }
-
-        /* REAÇÕES */
-        .reaction-bar { display: flex; gap: 8px; margin-top: 5px; }
-        .btn-reaction { background: rgba(255,255,255,0.1); border: none; color: white; font-size: 10px; padding: 4px 8px; border-radius: 6px; cursor: pointer; transition: 0.2s; }
-
-        /* ADMIN */
-        .admin-card { background: #080808; padding: 20px; border-radius: 20px; border: 1px solid #222; margin-bottom: 15px; text-align: left; }
-        .insta-btn { display: inline-block; background: #E1306C; color: white; padding: 6px 12px; border-radius: 8px; font-size: 10px; text-decoration: none; font-weight: bold; margin-bottom: 10px; }
-        .btn-save { background: #00ff88; color: black; border: none; width: 100%; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        input, select { width: 100%; padding: 14px; margin: 8px 0; border-radius: 12px; border: none; background: rgba(255,255,255,0.08); color: white; box-sizing: border-box; }
+        .btn-main { width: 100%; padding: 16px; background: linear-gradient(90deg, #00ff88, #00d4ff); border: none; border-radius: 12px; font-weight: bold; cursor: pointer; color: black; }
+        .btn-save { background: #00ff88; color: black; border: none; width: 100%; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; }
         .btn-save.saved { background: #008844 !important; color: white !important; }
 
-        /* CHAT */
-        #chat-container { position: fixed; bottom: 20px; right: 10px; width: 160px; height: 220px; background: rgba(10,10,10,0.95); border: 1px solid #222; border-radius: 15px; display: flex; flex-direction: column; z-index: 999; backdrop-filter: blur(10px); }
+        #chat-container { position: fixed; bottom: 20px; right: 10px; width: 160px; height: 220px; background: rgba(10,10,10,0.95); border: 1px solid #222; border-radius: 15px; display: flex; flex-direction: column; z-index: 999; }
         #chat-messages { flex: 1; overflow-y: auto; padding: 8px; font-size: 10px; }
-        #chat-input-box { display: flex; border-top: 1px solid #222; padding: 5px; }
-        #chat-input-box input { margin: 0; padding: 6px; font-size: 10px; }
+        .reaction-bar { display: flex; gap: 8px; margin-top: 5px; }
+        .btn-reaction { background: rgba(255,255,255,0.1); border: none; color: white; font-size: 9px; padding: 3px 6px; border-radius: 5px; cursor: pointer; }
 
-        .criador-tag { position: fixed; bottom: 10px; left: 15px; color: #00ff88; font-weight: bold; font-size: 11px; z-index: 1000; }
         .hidden { display: none !important; }
+        .criador-tag { position: fixed; bottom: 10px; left: 15px; color: #00ff88; font-weight: bold; font-size: 11px; }
+        .admin-card { background: #080808; padding: 15px; border-radius: 20px; border: 1px solid #222; margin-bottom: 10px; text-align: left; }
     </style>
 </head>
 <body>
 
     <div id="app">
+        <div id="level-up-modal" class="hidden">
+            <h2 style="color:#ffd700; margin:0">🎉 LEVEL UP!</h2>
+            <p id="level-up-msg"></p>
+            <button onclick="fecharModalLvl()" class="btn-main" style="padding:10px;">CONTINUAR</button>
+        </div>
+
         <section id="auth-screen" class="glass">
-            <h1 class="logo">RANK<span>CLASSE</span></h1>
-            <span class="text-anim-crown">👑 ROUBE A COROA DAS TURMAS E SEJA A MELHOR!</span>
-            <div class="input-group">
-                <input type="text" id="reg-turma" placeholder="Nome da Turma">
-                <input type="text" id="reg-serie" placeholder="Série/Ano">
-                <input type="text" id="reg-escola" placeholder="Nome da Escola">
-                <input type="url" id="reg-insta" placeholder="Link do Instagram">
-                <input type="password" id="reg-pass" placeholder="Senha">
-                <select id="reg-power">
-                    <option value="power-fogo">🔥 Vermelho Fogo</option>
-                    <option value="power-gelo">❄️ Azul Gelo</option>
-                    <option value="power-floresta">🌿 Verde Floresta</option>
-                    <option value="power-vazio">🌑 Roxo Vazio</option>
-                    <option value="power-eletrico">⚡ Amarelo Elétrico</option>
-                </select>
-                <button onclick="logarOuCadastrar()" class="btn-main">ENTRAR NO RANKING</button>
-                <button onclick="entrarComoVisitante()" class="btn-sec" style="color: #00ff88; border-color: #00ff88;">ENTRAR PARA VER A TURMA</button>
-            </div>
-            <button onclick="mostrarLoginAdmin()" style="background:none; border:none; color:#181818; font-size:10px; margin-top:20px; cursor:pointer;">SISTEMA CENTRAL</button>
+            <h1>RANK<span>CLASSE</span></h1>
+            <input type="text" id="reg-turma" placeholder="Nome da Turma">
+            <input type="text" id="reg-serie" placeholder="Série/Ano">
+            <input type="text" id="reg-escola" placeholder="Nome da Escola">
+            <input type="url" id="reg-insta" placeholder="Link do Instagram">
+            <input type="password" id="reg-pass" placeholder="Senha">
+            <select id="reg-power">
+                <option value="power-fogo">🔥 Fogo</option>
+                <option value="power-gelo">❄️ Gelo</option>
+                <option value="power-floresta">🌿 Floresta</option>
+                <option value="power-vazio">🌑 Vazio</option>
+                <option value="power-eletrico">⚡ Elétrico</option>
+            </select>
+            <button onclick="logarOuCadastrar()" class="btn-main">ENTRAR</button>
+            <button onclick="mostrarLoginAdmin()" style="background:none; border:none; color:#181818; font-size:10px; margin-top:20px;">SISTEMA CENTRAL</button>
         </section>
 
         <section id="rank-screen" class="hidden glass-large">
+            <div class="header-user">
+                <h2 id="welcome-text">Bem-vindo!</h2>
+                <span class="lvl-badge-top" id="top-lvl-display">LVL 0</span>
+                <div class="xp-bar-bg"><div class="xp-bar-fill" id="top-xp-fill"></div></div>
+            </div>
+
             <div class="regional-box">
-                <div class="label">TOP REGIONAL</div>
                 <div id="carousel-container"></div>
             </div>
+
             <div id="lista-ranking"></div>
-            <button onclick="sairDaConta()" class="btn-sec">SAIR DA CONTA</button>
+            <button onclick="sairDaConta()" class="btn-main" style="background:#222; color:white; margin-top:15px;">SAIR DA CONTA</button>
         </section>
 
         <div id="chat-container" class="hidden">
             <div id="chat-messages"></div>
-            <div id="chat-input-box">
-                <input type="text" id="msg-input" placeholder="Chat...">
-                <button onclick="enviarMensagem()" style="background:#00ff88; border:none; border-radius:5px; margin-left:3px; padding:0 8px; cursor:pointer">></button>
+            <div style="display:flex; padding:5px; border-top:1px solid #222">
+                <input type="text" id="msg-input" placeholder="Chat..." style="font-size:10px; margin:0; padding:5px;">
+                <button onclick="enviarMensagem()" style="background:#00ff88; border:none; padding:5px; border-radius:5px">></button>
             </div>
         </div>
 
         <div class="criador-tag">Criado por Rômulo</div>
 
-        <section id="admin-login-screen" class="hidden glass">
-            <h2>Admin</h2>
-            <input type="text" id="admin-user" placeholder="Usuário">
-            <input type="password" id="admin-pass" placeholder="Senha">
-            <button onclick="loginAdmin()" class="btn-main">CONECTAR</button>
-            <button onclick="voltar()" class="btn-sec">VOLTAR</button>
-        </section>
-
         <section id="admin-panel" class="hidden glass-large">
             <h2>🛠 Lançamento</h2>
-            <button onclick="limparChat()" style="background: #ff4444; color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; width: 100%; margin-bottom: 20px; cursor: pointer;">🧹 LIMPAR CONVERSAS DO CHAT</button>
+            <button onclick="limparChat()" style="background: #ff4444; color: white; border: none; padding: 10px; border-radius: 8px; width: 100%; margin-bottom: 20px;">🧹 LIMPAR CHAT</button>
             <div id="lista-admin"></div>
-            <button onclick="voltar()" class="btn-sec">FECHAR</button>
+            <button onclick="voltar()" class="btn-main">FECHAR</button>
+        </section>
+
+        <section id="admin-login-screen" class="hidden glass">
+            <input type="text" id="admin-user" placeholder="Usuário Admin">
+            <input type="password" id="admin-pass" placeholder="Senha">
+            <button onclick="loginAdmin()" class="btn-main">CONECTAR</button>
         </section>
     </div>
 
@@ -153,194 +143,195 @@
         const database = firebase.database();
 
         let logadoComo = null;
+        let lastLevel = 0;
         let slideIndex = 0;
-        let eVisitante = false;
 
         window.onload = () => {
             const salvo = JSON.parse(localStorage.getItem('rank_user'));
             if(salvo) {
-                document.getElementById('reg-turma').value = salvo.turma || '';
-                document.getElementById('reg-serie').value = salvo.serie || '';
-                document.getElementById('reg-escola').value = salvo.escola || '';
-                document.getElementById('reg-insta').value = salvo.insta || '';
-                document.getElementById('reg-pass').value = salvo.pass || '';
-                document.getElementById('reg-power').value = salvo.power || 'power-fogo';
+                document.getElementById('reg-turma').value = salvo.turma;
+                document.getElementById('reg-pass').value = salvo.pass;
             }
         };
 
-        function entrarComoVisitante() {
-            eVisitante = true; logadoComo = "vis_" + Math.floor(Math.random()*99);
-            document.getElementById('auth-screen').classList.add('hidden');
-            document.getElementById('rank-screen').classList.remove('hidden');
-            document.getElementById('chat-container').classList.remove('hidden');
+        function calcularPontos(seg, vid) {
+            return (Math.floor(seg / 100) * 2) + (vid * 1);
+        }
+
+        function tempoRelativo(timestamp, online) {
+            if(online) return "Online agora";
+            if(!timestamp) return "";
+            const diff = Date.now() - timestamp;
+            const min = Math.floor(diff/60000);
+            if(min < 1) return "Online agora";
+            if(min < 60) return `online a ${min} min`;
+            const h = Math.floor(min/60); if(h < 24) return `online a ${h} h`;
+            return `online a ${Math.floor(h/24)} d`;
         }
 
         function logarOuCadastrar() {
             const t = document.getElementById('reg-turma').value.trim();
-            const s = document.getElementById('reg-serie').value.trim();
-            const e = document.getElementById('reg-escola').value.trim();
-            const i = document.getElementById('reg-insta').value.trim();
             const p = document.getElementById('reg-pass').value;
-            const pw = document.getElementById('reg-power').value;
             if(!t || !p) return alert("Preencha Turma e Senha!");
 
             database.ref('ranking/' + t).once('value', snap => {
-                const agora = Date.now();
-                if(snap.exists()) {
-                    if(snap.val().pass === p) {
-                        localStorage.setItem('rank_user', JSON.stringify({turma:t, serie:s, escola:e, insta:i, pass:p, power:pw}));
-                        database.ref('ranking/'+t).update({serie:s, escola:e, insta:i, power:pw, lastSeen: agora}).then(() => entrarNoSistema({turma:t}));
-                    } else alert("Senha incorreta!");
-                } else {
-                    const nova = { turma:t, pass:p, serie:s, escola:e, insta:i, power:pw, seguidores:0, videos:0, pontos:0, online:true, lastSeen: agora, likes:0, dislikes:0 };
-                    localStorage.setItem('rank_user', JSON.stringify({turma:t, serie:s, escola:e, insta:i, pass:p, power:pw}));
-                    database.ref('ranking/' + t).set(nova).then(() => entrarNoSistema(nova));
-                }
+                const dados = snap.val();
+                if(dados && dados.pass !== p) return alert("Senha incorreta!");
+
+                const novo = {
+                    turma: t, pass: p,
+                    serie: document.getElementById('reg-serie').value,
+                    escola: document.getElementById('reg-escola').value,
+                    insta: document.getElementById('reg-insta').value,
+                    power: document.getElementById('reg-power').value,
+                    pontos: dados ? dados.pontos : 0,
+                    seguidores: dados ? dados.seguidores : 0,
+                    videos: dados ? dados.videos : 0,
+                    likes: dados ? (dados.likes || 0) : 0,
+                    dislikes: dados ? (dados.dislikes || 0) : 0,
+                    online: true, lastSeen: Date.now()
+                };
+                localStorage.setItem('rank_user', JSON.stringify({turma:t, pass:p}));
+                database.ref('ranking/' + t).update(novo).then(() => entrarNoSistema(t));
             });
         }
 
-        function entrarNoSistema(dados) {
-            logadoComo = dados.turma;
-            const ref = database.ref('ranking/' + logadoComo);
-            ref.update({ online: true, lastSeen: Date.now() });
-            ref.onDisconnect().update({ online: false, lastSeen: Date.now() });
-            setInterval(() => { if(logadoComo && !eVisitante) ref.update({ lastSeen: Date.now(), online: true }); }, 15000);
+        function entrarNoSistema(turma) {
+            logadoComo = turma;
             document.getElementById('auth-screen').classList.add('hidden');
             document.getElementById('rank-screen').classList.remove('hidden');
             document.getElementById('chat-container').classList.remove('hidden');
-        }
-
-        function tempoRelativo(timestamp) {
-            if(!timestamp) return "";
-            const diff = Date.now() - timestamp;
-            const seg = Math.floor(diff/1000);
-            if(seg < 60) return "";
-            const min = Math.floor(seg/60); if(min < 60) return `${min} min`;
-            const h = Math.floor(min/60); if(h < 24) return `${h} h`;
-            const d = Math.floor(h/24); if(d < 7) return `${d} d`;
-            return `${Math.floor(d/7)} sem`;
+            database.ref('ranking/' + turma).onDisconnect().update({ online: false, lastSeen: Date.now() });
+            setInterval(() => database.ref('ranking/' + turma).update({ online: true, lastSeen: Date.now() }), 10000);
         }
 
         database.ref('ranking').on('value', snap => {
+            const dados = snap.val(); if(!dados) return;
             const lista = document.getElementById('lista-ranking');
             const carrossel = document.getElementById('carousel-container');
-            const dadosBD = snap.val(); if(!dadosBD) return;
-            let array = Object.keys(dadosBD).map(id => dadosBD[id]).filter(t => t.turma).sort((a,b) => (b.pontos || 0) - (a.pontos || 0));
-
+            const array = Object.values(dados).sort((a,b) => b.pontos - a.pontos);
+            
+            // Atualizar Carrossel Top 3
             carrossel.innerHTML = "";
-            [0,1,2].forEach(i => { if(array[i]) carrossel.innerHTML += `<div class="rank-slide ${array[i].power}">${i===0?"👑 ":""}${i+1} ${array[i].turma}</div>`; });
+            array.slice(0, 3).forEach((t, i) => {
+                carrossel.innerHTML += `<div class="rank-slide ${t.power}">${i===0?"👑 ":""}${i+1}º ${t.turma}</div>`;
+            });
             iniciarCarrossel();
 
             lista.innerHTML = "";
             array.forEach((t, i) => {
-                let medal = i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : "🔹";
-                let tempoStr = tempoRelativo(t.lastSeen);
-                let statusLabel = (!t.online && tempoStr !== "") ? `<span class="last-seen">online a ${tempoStr}</span>` : "";
-                
+                const lvl = Math.floor(t.pontos / 10);
+                if(t.turma === logadoComo) {
+                    document.getElementById('welcome-text').innerText = "Bem-vindo, " + t.turma;
+                    document.getElementById('top-lvl-display').innerText = "LVL " + lvl;
+                    document.getElementById('top-xp-fill').style.width = ((t.pontos % 10) * 10) + "%";
+                    if(lvl > lastLevel && lastLevel !== 0) mostrarModalLvl(t.turma, lvl);
+                    lastLevel = lvl;
+                }
+
                 lista.innerHTML += `
                 <div class="rank-card">
                     <div style="text-align:left">
                         <span class="status-dot ${t.online?'online':'offline'}"></span>
-                        <span class="${t.power}" style="font-weight:bold">${t.turma}</span> ${statusLabel}<br>
+                        <b class="${t.power}">${t.turma}</b> <span class="last-seen">${tempoRelativo(t.lastSeen, t.online)}</span><br>
+                        <span class="lvl-card">LEVEL ${lvl}</span>
                         <span class="escola-info">${t.serie || ''} - ${t.escola}</span>
-                        <span class="stats-info">👥 ${t.seguidores || 0} | 🎬 ${t.videos || 0}</span>
+                        <a href="${t.insta}" target="_blank" class="insta-btn-link">📸 INSTAGRAM</a>
                         <div class="reaction-bar">
                             <button class="btn-reaction" onclick="reagir('${t.turma}', 'like')">👍 ${t.likes || 0}</button>
                             <button class="btn-reaction" onclick="reagir('${t.turma}', 'dislike')">👎 ${t.dislikes || 0}</button>
                         </div>
                     </div>
-                    <div style="text-align:right"><span style="color:#ffd700; font-weight:bold;">${medal} ${t.pontos || 0} pts</span></div>
+                    <div style="text-align:right; font-weight:bold; color:#ffd700">
+                        ${i<3?['🥇','🥈','🥉'][i]:'🔹'} ${t.pontos} pts
+                    </div>
                 </div>`;
             });
         });
 
+        function mostrarModalLvl(nome, lvl) {
+            document.getElementById('level-up-msg').innerHTML = `<b>${nome}</b> subiu para o <b>Level ${lvl}</b>!`;
+            document.getElementById('level-up-modal').classList.remove('hidden');
+        }
+        function fecharModalLvl() { document.getElementById('level-up-modal').classList.add('hidden'); }
+
+        function iniciarCarrossel() {
+            const slides = document.querySelectorAll('.rank-slide'); if(slides.length === 0) return;
+            slides.forEach(s => s.classList.remove('active'));
+            slideIndex = (slideIndex + 1) % slides.length; slides[slideIndex].classList.add('active');
+            if(window.timerC) clearTimeout(window.timerC); window.timerC = setTimeout(iniciarCarrossel, 3000);
+        }
+
         function reagir(turma, tipo) {
             const key = 'voto_' + turma;
-            const votoAntigo = localStorage.getItem(key);
-            if (votoAntigo === tipo) return;
-            database.ref(`ranking/${turma}`).transaction(t => {
-                if (t) {
-                    if (votoAntigo) {
-                        let cAntigo = votoAntigo === 'like' ? 'likes' : 'dislikes';
-                        t[cAntigo] = Math.max(0, (t[cAntigo] || 1) - 1);
+            if(localStorage.getItem(key) === tipo) return;
+            database.ref('ranking/' + turma).transaction(t => {
+                if(t) {
+                    if(localStorage.getItem(key)) {
+                        let antigo = localStorage.getItem(key) === 'like' ? 'likes' : 'dislikes';
+                        t[antigo] = Math.max(0, (t[antigo] || 1) - 1);
                     }
-                    let cNovo = tipo === 'like' ? 'likes' : 'dislikes';
-                    t[cNovo] = (t[cNovo] || 0) + 1;
+                    let novo = tipo === 'like' ? 'likes' : 'dislikes';
+                    t[novo] = (t[novo] || 0) + 1;
                 }
                 return t;
             });
             localStorage.setItem(key, tipo);
         }
 
-        function enviarMensagem() {
-            if(eVisitante) return alert("Logue para falar!");
-            const inp = document.getElementById('msg-input');
-            if(!inp.value.trim()) return;
-            database.ref('mensagens_chat').push({ user: logadoComo, text: inp.value, timestamp: Date.now() });
-            inp.value = "";
-        }
-
-        database.ref('mensagens_chat').limitToLast(20).on('value', snap => {
-            const box = document.getElementById('chat-messages'); box.innerHTML = "";
-            snap.forEach(d => { box.innerHTML += `<div><b style="color:#00ff88">${d.val().user}:</b> ${d.val().text}</div>`; });
-            box.scrollTop = box.scrollHeight;
-        });
-
-        function iniciarCarrossel() {
-            const slides = document.querySelectorAll('.rank-slide'); if(slides.length === 0) return;
-            slides.forEach(s => s.classList.remove('active'));
-            slideIndex = (slideIndex + 1) % slides.length; slides[slideIndex].classList.add('active');
-            if(window.carrosselTimer) clearTimeout(window.carrosselTimer); window.carrosselTimer = setTimeout(iniciarCarrossel, 3000);
-        }
-
-        function loginAdmin() {
-            if (document.getElementById('admin-user').value === "admin" && document.getElementById('admin-pass').value === "admin123") {
-                esconderTudo(); document.getElementById('admin-panel').classList.remove('hidden'); carregarPainelAdmin();
-            }
+        function salvarPontos(nome) {
+            const s = parseInt(document.getElementById(`s-${nome}`).value) || 0;
+            const v = parseInt(document.getElementById(`v-${nome}`).value) || 0;
+            const pts = calcularPontos(s, v);
+            database.ref('ranking/' + nome).update({ seguidores: s, videos: v, pontos: pts }).then(() => {
+                const b = document.getElementById(`btn-save-${nome}`);
+                b.classList.add('saved'); b.innerText = "ATUALIZADO";
+            });
         }
 
         function carregarPainelAdmin() {
             database.ref('ranking').on('value', snap => {
                 const container = document.getElementById('lista-admin'); container.innerHTML = "";
-                const dados = snap.val(); if(!dados) return;
-                Object.keys(dados).forEach(id => {
-                    const t = dados[id]; if(!t.turma) return;
+                Object.values(snap.val()).forEach(t => {
                     container.innerHTML += `
-                        <div class="admin-card">
-                            <strong>${t.turma} (${t.serie})</strong><br>
-                            <a href="${t.insta}" target="_blank" class="insta-btn">📸 INSTAGRAM</a>
-                            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0;">
-                                <input type="number" id="s-${t.turma}" value="${t.seguidores}" placeholder="Segs">
-                                <input type="number" id="v-${t.turma}" value="${t.videos}" placeholder="Vids">
-                            </div>
-                            <button id="btn-save-${t.turma}" onclick="salvarPontos('${t.turma}')" class="btn-save">ATUALIZAR PONTOS</button>
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top:10px;">
-                                <button onclick="zerarVotos('${t.turma}')" class="btn-reset-votos" style="background: #441111; color: #ff8888; border: 1px solid #662222; padding: 4px 8px; border-radius: 6px; font-size: 9px; cursor: pointer;">🗑 ZERAR VOTOS</button>
-                                <button onclick="deletarTurma('${t.turma}')" style="color:red; background:none; border:none; font-size:10px; cursor:pointer; font-weight:bold;">✖ EXCLUIR</button>
-                            </div>
-                        </div>`;
+                    <div class="admin-card">
+                        <b>${t.turma}</b><br>
+                        <a href="${t.insta}" target="_blank" style="color:#E1306C; font-size:10px; text-decoration:none;">📸 Ver Insta</a>
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px; margin: 10px 0;">
+                            <input type="number" id="s-${t.turma}" value="${t.seguidores}" placeholder="Segs">
+                            <input type="number" id="v-${t.turma}" value="${t.videos}" placeholder="Vids">
+                        </div>
+                        <button id="btn-save-${t.turma}" onclick="salvarPontos('${t.turma}')" class="btn-save">SALVAR PONTOS</button>
+                    </div>`;
                 });
             });
         }
 
-        function limparChat() { if(confirm("Tem certeza que deseja apagar TODO o histórico do chat?")) database.ref('mensagens_chat').remove(); }
-
-        function salvarPontos(nome) {
-            const btn = document.getElementById(`btn-save-${nome}`);
-            const s = parseInt(document.getElementById(`s-${nome}`).value) || 0;
-            const v = parseInt(document.getElementById(`v-${nome}`).value) || 0;
-            database.ref('ranking/' + nome).update({ seguidores: s, videos: v, pontos: (s * 10) + (v * 50) }).then(() => {
-                btn.classList.add('saved');
-                btn.innerText = "ATUALIZADO";
-            });
+        function loginAdmin() {
+            if(document.getElementById('admin-user').value==="admin" && document.getElementById('admin-pass').value==="admin123") {
+                document.getElementById('admin-login-screen').classList.add('hidden');
+                document.getElementById('admin-panel').classList.remove('hidden');
+                carregarPainelAdmin();
+            }
         }
 
-        function zerarVotos(nome) { if(confirm("Zerar votos de "+nome+"?")) database.ref('ranking/' + nome).update({ likes: 0, dislikes: 0 }); }
-        function deletarTurma(nome) { if(confirm("Excluir "+nome+"?")) database.ref('ranking/'+nome).remove(); }
-        function esconderTudo() { document.querySelectorAll('section').forEach(s => s.classList.add('hidden')); }
-        function sairDaConta() { location.reload(); }
-        function mostrarLoginAdmin() { esconderTudo(); document.getElementById('admin-login-screen').classList.remove('hidden'); }
+        function enviarMensagem() {
+            const inp = document.getElementById('msg-input');
+            if(!inp.value.trim() || !logadoComo) return;
+            database.ref('mensagens_chat').push({ user: logadoComo, text: inp.value });
+            inp.value = "";
+        }
+
+        database.ref('mensagens_chat').limitToLast(15).on('value', snap => {
+            const box = document.getElementById('chat-messages'); box.innerHTML = "";
+            snap.forEach(d => { box.innerHTML += `<div><b>${d.val().user}:</b> ${d.val().text}</div>`; });
+            box.scrollTop = box.scrollHeight;
+        });
+
+        function mostrarLoginAdmin() { document.getElementById('auth-screen').classList.add('hidden'); document.getElementById('admin-login-screen').classList.remove('hidden'); }
         function voltar() { location.reload(); }
+        function sairDaConta() { localStorage.removeItem('rank_user'); location.reload(); }
+        function limparChat() { if(confirm("Apagar chat?")) database.ref('mensagens_chat').remove(); }
     </script>
 </body>
 </html>

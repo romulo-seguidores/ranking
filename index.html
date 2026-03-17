@@ -3,11 +3,11 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <title>RANK CLASSE V7 - OMNI EDITION</title>
+    <title>RANK CLASSE V8 - ULTRA EDITION</title>
 
     <style>
         /* ============================================================
-           SISTEMA VISUAL "MÍDIA" EXTREMO - BY RÔMULO
+           SISTEMA VISUAL "MÍDIA" EVOLVED - MOBILE FOCUS
            ============================================================ */
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
 
@@ -18,480 +18,412 @@
             --neon: #00ff88;
             --sky: #00d4ff;
             --danger: #ff4444;
-            --bg-master: #020202;
-            --glass-base: rgba(255, 255, 255, 0.03);
+            --bg-master: #050505;
+            --glass-base: rgba(255, 255, 255, 0.02);
             --glass-border: rgba(255, 255, 255, 0.08);
-            --shadow-glow: 0 0 20px rgba(0, 255, 136, 0.2);
+            --drawer-bg: #0a0a0a;
         }
 
-        /* CONFIGURAÇÕES BASE */
-        * {
-            margin: 0; padding: 0; box-sizing: border-box;
-            outline: none; font-family: 'Poppins', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
+        /* RESET GERAL */
+        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg-master); color: #fff; overflow-x: hidden; min-height: 100vh; }
 
-        body {
-            background-color: var(--bg-master);
-            color: #ffffff;
-            display: flex;
-            justify-content: center;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
+        /* SCROLL ESTILIZADO */
+        ::-webkit-scrollbar { width: 0px; } /* Escondido para parecer App */
 
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 10px; }
+        #app { width: 100%; max-width: 500px; margin: 0 auto; padding: 15px; position: relative; min-height: 100vh; }
 
-        #app {
-            width: 100%;
-            max-width: 480px;
-            padding: 20px;
-            position: relative;
-        }
+        /* ANIMAÇÕES */
+        @keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes pulseAdmin { 0% { box-shadow: 0 0 5px var(--neon); } 50% { box-shadow: 0 0 20px var(--neon); } 100% { box-shadow: 0 0 5px var(--neon); } }
+        @keyframes float3d { 0% { transform: translateY(0px) rotateY(0deg); } 50% { transform: translateY(-5px) rotateY(15deg); } 100% { transform: translateY(0px) rotateY(0deg); } }
 
-        /* ANIMAÇÕES CINEMATOGRÁFICAS */
-        @keyframes entrance {
-            from { opacity: 0; transform: translateY(40px) scale(0.95); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-
-        @keyframes pulseOnline {
-            0% { transform: scale(1); box-shadow: 0 0 0px var(--neon); }
-            50% { transform: scale(1.2); box-shadow: 0 0 10px var(--neon); }
-            100% { transform: scale(1); box-shadow: 0 0 0px var(--neon); }
-        }
-
-        @keyframes goldShine {
-            0% { filter: brightness(1) drop-shadow(0 0 0px var(--ouro)); }
-            50% { filter: brightness(1.3) drop-shadow(0 0 15px var(--ouro)); }
-            100% { filter: brightness(1) drop-shadow(0 0 0px var(--ouro)); }
-        }
-
-        /* CONTAINERS GLASS */
+        /* COMPONENTES DE INTERFACE */
         .glass-box {
             background: var(--glass-base);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
             border: 1px solid var(--glass-border);
-            border-radius: 40px;
-            padding: 35px;
-            box-shadow: 0 40px 80px rgba(0,0,0,0.8);
-            animation: entrance 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+            border-radius: 35px;
+            padding: 30px;
+            animation: fadeIn 0.5s ease;
         }
 
-        /* HEADER DE PERFIL MÍDIA */
-        .profile-card {
-            background: linear-gradient(145deg, rgba(255,255,255,0.06), rgba(255,255,255,0.01));
+        /* PERFIL & AVATAR */
+        .profile-container {
+            position: relative;
+            background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, transparent 100%);
             border-radius: 35px;
             padding: 25px;
+            margin-bottom: 20px;
             border: 1px solid var(--glass-border);
-            margin-bottom: 30px;
-            position: relative;
-            overflow: hidden;
         }
 
-        .lvl-badge {
-            background: var(--ouro);
+        .avatar-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid var(--neon);
+            background-size: cover;
+            background-position: center;
+            background-image: url('https://cdn-icons-png.flaticon.com/512/3135/3135715.png'); /* Default */
+            margin-bottom: 15px;
+            box-shadow: 0 10px 25px rgba(0, 255, 136, 0.2);
+        }
+
+        .edit-pencil {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            background: var(--neon);
             color: #000;
-            padding: 5px 14px;
+            width: 35px;
+            height: 35px;
             border-radius: 12px;
-            font-size: 11px;
-            font-weight: 900;
-            text-transform: uppercase;
-            box-shadow: 0 8px 20px rgba(255, 215, 0, 0.3);
-        }
-
-        .xp-container {
-            width: 100%;
-            height: 10px;
-            background: rgba(0,0,0,0.5);
-            border-radius: 20px;
-            margin-top: 15px;
-            overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .xp-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--neon), var(--sky));
-            width: 0%;
-            transition: width 1.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        /* MEDALHAS */
-        .medal {
-            font-size: 28px;
-            margin-right: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-        .medal-gold { animation: goldShine 2s infinite; }
-
-        /* CARDS DO RANKING */
-        .rank-row {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--glass-border);
-            border-radius: 35px;
-            padding: 24px;
-            margin-bottom: 18px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .rank-row:hover {
-            transform: translateY(-8px) scale(1.02);
-            background: rgba(255, 255, 255, 0.04);
-            border-color: rgba(255, 255, 255, 0.2);
-        }
-
-        .row-top { border: 1.5px solid rgba(255, 215, 0, 0.3); }
-
-        /* STATUS DOT */
-        .status-box { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
-        .dot { width: 9px; height: 9px; border-radius: 50%; }
-        .dot-online { background: var(--neon); animation: pulseOnline 2s infinite; }
-        .dot-offline { background: var(--danger); box-shadow: 0 0 10px var(--danger); }
-        .status-txt { font-size: 10px; font-weight: 900; letter-spacing: 0.5px; text-transform: uppercase; }
-
-        /* INPUTS E BOTOES */
-        .mídia-input {
-            width: 100%;
-            background: #0a0a0a;
-            border: 1.5px solid #1a1a1a;
-            padding: 20px 25px;
-            border-radius: 25px;
-            color: #fff;
-            margin-bottom: 15px;
-            font-size: 14px;
-            transition: 0.3s;
-        }
-
-        .mídia-input:focus {
-            border-color: var(--neon);
-            box-shadow: 0 0 25px rgba(0, 255, 136, 0.1);
-        }
-
-        .mídia-btn {
-            width: 100%;
-            padding: 22px;
-            border-radius: 25px;
-            border: none;
-            font-weight: 900;
-            font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+            font-size: 18px;
             cursor: pointer;
-            transition: 0.4s;
-            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.4);
         }
 
-        .btn-white { background: #fff; color: #000; box-shadow: 0 15px 30px rgba(255,255,255,0.1); }
-        .btn-dark { background: transparent; border: 1.5px solid #222; color: #888; }
-        .btn-dark:hover { color: #fff; border-color: #fff; }
-
-        /* INSTAGRAM BTN */
-        .insta-btn {
-            font-size: 10px;
-            font-weight: 800;
-            color: #888;
-            text-decoration: none;
-            border: 1.5px solid #222;
-            padding: 8px 18px;
-            border-radius: 15px;
-            display: inline-block;
-            margin-top: 15px;
-            transition: 0.3s;
-        }
-
-        .insta-btn:hover { background: #fff; color: #000; border-color: #fff; }
-
-        /* CHAT FLOATING */
-        #chat-omni {
+        /* GAVETA DE EDIÇÃO (SIDE DRAWER) */
+        #profile-drawer {
             position: fixed;
-            bottom: 30px;
-            right: 25px;
-            width: 300px;
-            height: 400px;
-            background: rgba(5, 5, 5, 0.98);
-            border: 1px solid #1a1a1a;
-            border-radius: 35px;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            z-index: 999;
-            box-shadow: 0 30px 90px rgba(0,0,0,1);
-            backdrop-filter: blur(20px);
-        }
-
-        #chat-feed {
-            flex: 1;
-            padding: 25px;
-            overflow-y: auto;
-            font-size: 12px;
+            top: 0; right: 0;
+            width: 85%; height: 100%;
+            background: var(--drawer-bg);
+            z-index: 10000;
+            padding: 40px 25px;
+            box-shadow: -20px 0 60px rgba(0,0,0,0.8);
+            transform: translateX(101%);
+            transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             flex-direction: column;
             gap: 15px;
         }
 
-        .msg-line {
+        #profile-drawer.open { transform: translateX(0); }
+
+        .drawer-overlay {
+            position: fixed;
+            top:0; left:0; width:100%; height:100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 9999;
+            display: none;
+            backdrop-filter: blur(5px);
+        }
+
+        /* RANKING CARDS */
+        .rank-card {
             background: rgba(255,255,255,0.03);
-            padding: 12px 18px;
+            border-radius: 28px;
+            padding: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid var(--glass-border);
+            transition: 0.3s;
+        }
+
+        .rank-card.admin-active {
+            border: 2px solid var(--neon) !important;
+            animation: pulseAdmin 2s infinite;
+        }
+
+        .rank-info-main { display: flex; align-items: center; gap: 15px; }
+
+        /* MEDALHAS 3D */
+        .medal-3d {
+            font-size: 35px;
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5));
+            animation: float3d 3s infinite ease-in-out;
+            display: block;
+        }
+
+        /* BOTÕES MÍDIA */
+        .mídia-btn {
+            width: 100%;
+            padding: 20px;
             border-radius: 20px;
-            border-left: 4px solid var(--neon);
-            animation: entrance 0.4s ease-out;
-        }
-
-        .msg-line b { color: var(--neon); text-transform: lowercase; margin-right: 6px; }
-
-        /* ADMIN DASHBOARD - VISUAL COMPLETO */
-        .adm-tool-card {
-            background: #080808;
-            border: 1.5px solid #151515;
-            padding: 30px;
-            border-radius: 40px;
-            margin-bottom: 25px;
-        }
-
-        .adm-grid-tools {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-top: 20px;
-        }
-
-        .adm-small-btn {
-            padding: 14px;
-            border-radius: 18px;
             border: none;
-            font-size: 10px;
-            font-weight: 900;
+            font-weight: 800;
             text-transform: uppercase;
+            letter-spacing: 1px;
             cursor: pointer;
-            transition: 0.2s;
+            transition: 0.3s;
+            margin-bottom: 10px;
         }
 
-        .adm-small-btn:active { transform: scale(0.95); }
+        .btn-main { background: #fff; color: #000; }
+        .btn-outline { background: transparent; border: 1px solid #333; color: #fff; }
 
-        /* CLASSES DE UTILIDADE */
+        /* CHAT FLOATING MOBILE REWORK */
+        #chat-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 900;
+        }
+
+        .chat-toggle-btn {
+            width: 60px; height: 60px;
+            border-radius: 50%;
+            background: var(--neon);
+            color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 10px 30px rgba(0,255,136,0.4);
+        }
+
+        #chat-modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #000;
+            z-index: 2000;
+            display: none;
+            flex-direction: column;
+        }
+
+        #chat-msgs { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .chat-bubble { background: rgba(255,255,255,0.05); padding: 12px 18px; border-radius: 20px; border-left: 3px solid var(--neon); }
+        .chat-bubble b { color: var(--neon); font-size: 12px; }
+
+        /* ADMIN PANEL */
+        .admin-section { padding-bottom: 100px; }
+        .adm-card { background: #111; border-radius: 25px; padding: 20px; margin-bottom: 15px; border: 1px solid #222; }
+
+        /* UTILITÁRIOS */
         .hidden { display: none !important; }
         .txt-neon { color: var(--neon); }
-        .txt-danger { color: var(--danger); }
-        .creator-watermark { position: fixed; bottom: 15px; left: 30px; font-size: 11px; color: #1a1a1a; font-weight: 900; z-index: -1; }
-
+        .input-mídia {
+            width: 100%; background: #151515; border: 1px solid #222; 
+            padding: 18px; border-radius: 18px; color: #fff; margin-bottom: 10px;
+        }
+        
     </style>
 </head>
 <body>
 
 <div id="app">
-    
-    <section id="auth-screen" class="glass-box">
-        <h1 style="font-weight: 900; font-size: 42px; letter-spacing: -3px; margin: 0; line-height: 0.9;">RANK<br><span style="color:var(--neon)">CLASSE</span></h1>
-        <p style="font-size: 10px; color: #444; margin-bottom: 40px; font-weight: 900; text-transform: uppercase; letter-spacing: 3px;">Omni Elite System v7.0</p>
+
+    <div id="overlay" class="drawer-overlay" onclick="closeDrawer()"></div>
+
+    <section id="screen-auth" class="glass-box">
+        <h1 style="font-size: 45px; font-weight: 900; letter-spacing: -3px; line-height: 1;">RANK<br><span class="txt-neon">CLASSE</span></h1>
+        <p style="font-size: 10px; color: #666; font-weight: 800; margin-bottom: 30px;">ULTRA EDITION V8.0</p>
         
-        <div id="auth-form-master">
-            <input type="text" id="ipt-turma" class="mídia-input" placeholder="Nome da Equipe / Turma">
-            <input type="text" id="ipt-serie" class="mídia-input" placeholder="Ano / Série (Ex: 1º Médio)">
-            <input type="text" id="ipt-escola" class="mídia-input" placeholder="Instituição de Ensino">
-            <input type="url" id="ipt-insta" class="mídia-input" placeholder="Link do Instagram">
-            <input type="password" id="ipt-pass" class="mídia-input" placeholder="Senha de Segurança">
-            <select id="ipt-aura" class="mídia-input">
-                <option value="⚡ ELÉTRICO">Aura: Elétrica</option>
-                <option value="🔥 FOGO">Aura: Flamejante</option>
-                <option value="❄️ GELO">Aura: Glacial</option>
-                <option value="🌑 VAZIO">Aura: Sombria</option>
-            </select>
-            <button class="mídia-btn btn-white" onclick="handleLogin()">INICIAR SESSÃO</button>
-            <button class="mídia-btn btn-dark" onclick="enterAsGuest()">MODO OBSERVADOR</button>
-        </div>
-        <button onclick="showAdminAccess()" style="background:none; border:none; color:#111; font-size:10px; margin-top:25px; cursor:pointer; font-weight:900;">[ ACESSAR TERMINAL ROOT ]</button>
+        <input type="text" id="reg-turma" class="input-mídia" placeholder="Nome da Turma">
+        <input type="text" id="reg-escola" class="input-mídia" placeholder="Nome da Escola">
+        <input type="text" id="reg-serie" class="input-mídia" placeholder="Série/Ano">
+        <input type="password" id="reg-pass" class="input-mídia" placeholder="Senha da Turma">
+        
+        <button class="mídia-btn btn-main" onclick="handleAuth()">ENTRAR NA ARENA</button>
+        <button class="mídia-btn btn-outline" onclick="showAdmin()">TERMINAL ADMIN</button>
     </section>
 
-    <section id="admin-auth-screen" class="hidden glass-box">
-        <h2 style="color: var(--neon); margin-bottom: 25px; letter-spacing: -1.5px; font-size: 28px;">ROOT ACCESS</h2>
-        <input type="text" id="root-user" class="mídia-input" placeholder="Identificador Root">
-        <input type="password" id="root-pass" class="mídia-input" placeholder="Chave de Segurança">
-        <button class="mídia-btn btn-white" onclick="authenticateRoot()">VALIDAR ACESSO</button>
-        <button class="mídia-btn btn-dark" onclick="location.reload()">CANCELAR</button>
-    </section>
-
-    <section id="ranking-view" class="hidden">
-        <div class="profile-card">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                <div>
-                    <span style="font-size: 10px; color: #555; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;">Sessão Ativa</span>
-                    <h2 id="me-turma-name" style="margin: 0; font-size: 26px; color: var(--neon); letter-spacing: -1.5px;">---</h2>
-                </div>
-                <div><span id="me-lvl-tag" class="lvl-badge">LVL 0</span></div>
+    <section id="screen-rank" class="hidden">
+        
+        <div class="profile-container">
+            <div id="me-avatar" class="avatar-circle"></div>
+            <div class="edit-pencil" onclick="openDrawer()">✎</div>
+            <div>
+                <h2 id="me-name" style="font-size: 28px; letter-spacing: -1px;">Turma Name</h2>
+                <p id="me-sub" style="font-size: 11px; color: #555; font-weight: 700; text-transform: uppercase;">Escola • Série</p>
             </div>
-            <div class="xp-container"><div id="me-xp-fill-bar" class="xp-fill"></div></div>
+            
+            <div style="margin-top: 20px; display: flex; gap: 15px;">
+                <div style="flex: 1; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 20px; text-align: center;">
+                    <span style="display:block; font-size: 22px; font-weight: 900;" id="me-points">0</span>
+                    <span style="font-size: 9px; color: #444; font-weight: 900;">PONTOS</span>
+                </div>
+                <div style="flex: 1; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 20px; text-align: center;">
+                    <span style="display:block; font-size: 22px; font-weight: 900;" id="me-likes">0</span>
+                    <span style="font-size: 9px; color: #444; font-weight: 900;">CURTIDAS</span>
+                </div>
+            </div>
         </div>
 
-        <div id="ranking-list-render"></div>
+        <div id="render-list"></div>
 
-        <button class="mídia-btn btn-dark" style="margin-top: 60px;" onclick="destroySession()">ENCERRAR CONEXÃO</button>
+        <button class="mídia-btn btn-outline" style="margin-top: 30px;" onclick="logout()">SAIR DA CONTA</button>
     </section>
 
-    <section id="admin-panel-view" class="hidden glass-box" style="max-width: 100%;">
-        <h2 style="color: var(--neon); margin-bottom: 30px; text-align: center; font-size: 32px; letter-spacing: -2px;">COMMAND CENTER</h2>
+    <div id="profile-drawer">
+        <h2 style="font-size: 30px; letter-spacing: -1px; margin-bottom: 20px;">Editar <span class="txt-neon">Perfil</span></h2>
         
-        <div style="background:rgba(255,255,255,0.03); padding:20px; border-radius:25px; margin-bottom:25px; border:1px solid rgba(255,255,255,0.05);">
-            <p style="font-size:11px; color:#666; font-weight:900; margin-bottom:15px; text-transform:uppercase;">Gerenciamento Global</p>
-            <button class="mídia-btn" style="background:var(--danger); color:white; font-size:11px; margin:0;" onclick="clearAllChat()">LIMPAR MENSAGENS DO CHAT</button>
+        <label style="font-size: 11px; color: #555; font-weight: 800;">URL DA FOTO DA TURMA</label>
+        <input type="text" id="edit-pic" class="input-mídia" placeholder="https://linkdafoto.com/foto.jpg">
+        
+        <label style="font-size: 11px; color: #555; font-weight: 800;">NOME DA TURMA</label>
+        <input type="text" id="edit-name" class="input-mídia">
+        
+        <label style="font-size: 11px; color: #555; font-weight: 800;">INSTAGRAM (LINK)</label>
+        <input type="text" id="edit-insta" class="input-mídia">
+
+        <button class="mídia-btn btn-main" style="margin-top: auto;" onclick="saveProfileChanges()">SALVAR ALTERAÇÕES</button>
+        <button class="mídia-btn btn-outline" onclick="closeDrawer()">CANCELAR</button>
+    </div>
+
+    <div id="chat-container">
+        <div class="chat-toggle-btn" onclick="toggleChat(true)">💬</div>
+    </div>
+
+    <div id="chat-modal">
+        <div style="padding: 20px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center;">
+            <b class="txt-neon">CHAT GLOBAL</b>
+            <span onclick="toggleChat(false)" style="font-weight: 900; cursor: pointer;">FECHAR [X]</span>
         </div>
-
-        <div id="admin-accounts-list"></div>
-        
-        <button class="mídia-btn btn-dark" onclick="location.reload()">SAIR DO MODO ROOT</button>
-    </section>
-
-    <div id="chat-omni" class="hidden">
-        <div id="chat-feed"></div>
-        <div style="padding: 20px; background: #000; display: flex; gap: 12px; border-top: 1px solid #111;">
-            <input type="text" id="chat-ipt-msg" placeholder="Escreva aqui..." style="background:#080808; border:1.5px solid #1a1a1a; padding:15px; border-radius:20px; color:#fff; flex:1; font-size:13px;">
-            <button onclick="sendChatMessage()" style="background:var(--neon); border:none; border-radius:20px; padding:0 22px; font-weight:900; color:#000;">></button>
+        <div id="chat-msgs"></div>
+        <div style="padding: 20px; background: #0a0a0a; display: flex; gap: 10px;">
+            <input type="text" id="chat-ipt" class="input-mídia" style="margin:0;" placeholder="Mande sua mensagem...">
+            <button onclick="sendChat()" style="background:var(--neon); border:none; border-radius:15px; padding: 0 20px; font-weight: 900;">></button>
         </div>
     </div>
 
-    <div class="creator-watermark">CÓDIGO FONTE POR RÔMULO | OMNI v7.0</div>
+    <section id="screen-admin" class="hidden admin-section">
+        <h2 style="font-size: 32px; letter-spacing: -2px; margin-bottom: 25px;">ROOT <span class="txt-neon">CONTROL</span></h2>
+        
+        <div class="adm-card" style="border-left: 4px solid var(--danger);">
+            <p style="font-size: 12px; font-weight: 800; margin-bottom: 10px;">AÇÕES GLOBAIS</p>
+            <button class="mídia-btn" style="background: var(--danger); font-size: 11px; padding: 15px;" onclick="clearGlobalChat()">LIMPAR TODO O CHAT</button>
+        </div>
+
+        <div id="admin-render-users"></div>
+        
+        <button class="mídia-btn btn-outline" onclick="location.reload()">FECHAR ADMIN</button>
+    </section>
+
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
 <script>
-    // ============================================================
-    // LÓGICA CORE - DATABASE & SISTEMAS
-    // ============================================================
-    const fbConfig = {
+    // CONFIGURAÇÃO FIREBASE
+    const firebaseConfig = {
         apiKey: "SUA_API_KEY",
         databaseURL: "https://gincanaescola-d4f8c-default-rtdb.firebaseio.com/",
         projectId: "gincanaescola-d4f8c"
     };
-    if (!firebase.apps.length) firebase.initializeApp(fbConfig);
-    const dbMaster = firebase.database();
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
     let myUser = null;
-    let isRoot = false;
 
-    // --- CÁLCULO DE TEMPO RELATIVO PRECISO ---
-    function getTimeFormat(ts) {
-        if(!ts) return "---";
-        const d = Date.now() - ts;
-        const s = Math.floor(d / 1000);
-        const m = Math.floor(s / 60);
-        const h = Math.floor(m / 60);
-        const dia = Math.floor(h / 24);
-
-        if (s < 45) return "AGORA";
-        if (m < 60) return m + " MIN";
-        if (h < 24) return h + " HRS";
-        return dia + " DIAS";
+    // --- SISTEMA DE GAVETA (DRAWER) ---
+    function openDrawer() {
+        document.getElementById('profile-drawer').classList.add('open');
+        document.getElementById('overlay').style.display = 'block';
+        
+        // Preencher campos
+        document.getElementById('edit-name').value = myUser.turma;
+        document.getElementById('edit-pic').value = myUser.pic || "";
+        document.getElementById('edit-insta').value = myUser.insta || "";
     }
 
-    // --- PERSISTÊNCIA E BOOT ---
+    function closeDrawer() {
+        document.getElementById('profile-drawer').classList.remove('open');
+        document.getElementById('overlay').style.display = 'none';
+    }
+
+    // --- AUTENTICAÇÃO E PERSISTÊNCIA ---
     window.onload = () => {
-        const savedData = localStorage.getItem('rank_omni_v7_session');
-        if(savedData) {
-            myUser = JSON.parse(savedData);
-            launchSystem();
+        const saved = localStorage.getItem('omni_v8_user');
+        if(saved) {
+            myUser = JSON.parse(saved);
+            startApp();
         }
-    };
+    }
 
-    function handleLogin() {
-        const t = document.getElementById('ipt-turma').value.trim();
-        const p = document.getElementById('ipt-pass').value;
-        if(!t || !p) return alert("Erro: Campos obrigatórios vazios.");
+    function handleAuth() {
+        const turma = document.getElementById('reg-turma').value.trim();
+        const pass = document.getElementById('reg-pass').value;
+        const escola = document.getElementById('reg-escola').value;
+        const serie = document.getElementById('reg-serie').value;
 
-        dbMaster.ref('ranking/' + t).once('value', snap => {
-            const current = snap.val();
-            if(current && current.pass !== p) return alert("Erro: Senha Root Inválida.");
+        if(!turma || !pass) return alert("Preencha Turma e Senha!");
 
-            const dataObject = {
-                turma: t, pass: p,
-                serie: document.getElementById('ipt-serie').value || (current ? current.serie : "NI"),
-                escola: document.getElementById('ipt-escola').value || (current ? current.escola : "NI"),
-                insta: document.getElementById('ipt-insta').value || (current ? current.insta : "#"),
-                aura: document.getElementById('ipt-aura').value,
-                pontos: current ? current.pontos : 0,
-                likes: current ? current.likes : 0,
-                lastSeen: Date.now()
+        db.ref('ranking/' + turma).once('value', snap => {
+            const exist = snap.val();
+            if(exist && exist.pass !== pass) return alert("Senha incorreta!");
+
+            const payload = exist ? exist : {
+                turma, pass, escola, serie,
+                pontos: 0, likes: 0, lastSeen: Date.now(),
+                pic: '', insta: '', seguidores: 0, videos: 0
             };
 
-            dbMaster.ref('ranking/' + t).update(dataObject).then(() => {
-                myUser = dataObject;
-                localStorage.setItem('rank_omni_v7_session', JSON.stringify(dataObject));
-                launchSystem();
+            db.ref('ranking/' + turma).update(payload).then(() => {
+                myUser = payload;
+                localStorage.setItem('omni_v8_user', JSON.stringify(payload));
+                startApp();
             });
         });
     }
 
-    function launchSystem() {
-        document.getElementById('auth-screen').classList.add('hidden');
-        document.getElementById('ranking-view').classList.remove('hidden');
-        document.getElementById('chat-omni').classList.remove('hidden');
+    function startApp() {
+        document.getElementById('screen-auth').classList.add('hidden');
+        document.getElementById('screen-rank').classList.remove('hidden');
+        document.getElementById('chat-container').classList.remove('hidden');
         
-        if(myUser.turma !== "Guest") {
-            // HEARTBEAT (Online Status Update)
-            setInterval(() => {
-                dbMaster.ref('ranking/' + myUser.turma).update({ lastSeen: Date.now() });
-            }, 15000);
-        }
-        syncRanking();
+        // Heartbeat
+        setInterval(() => {
+            db.ref('ranking/' + myUser.turma).update({ lastSeen: Date.now() });
+        }, 10000);
+
+        syncData();
+        syncChat();
     }
 
-    // --- SINCRONIZAÇÃO EM TEMPO REAL ---
-    function syncRanking() {
-        dbMaster.ref('ranking').on('value', snap => {
+    // --- SINCRONIZAÇÃO DE RANKING ---
+    function syncData() {
+        db.ref('ranking').on('value', snap => {
             const data = snap.val();
             if(!data) return;
-            const target = document.getElementById('ranking-list-render');
-            const rankArray = Object.values(data).sort((a,b) => b.pontos - a.pontos);
+
+            const listArea = document.getElementById('render-list');
+            const arr = Object.values(data).sort((a,b) => b.pontos - a.pontos);
             
-            target.innerHTML = "";
-            rankArray.forEach((item, i) => {
-                const isOnline = (Date.now() - (item.lastSeen || 0)) < 45000;
-                const relTime = getTimeFormat(item.lastSeen);
-                const calcLvl = Math.floor((item.pontos || 0) / 10);
+            listArea.innerHTML = "";
+            arr.forEach((item, i) => {
+                const isOnline = (Date.now() - (item.lastSeen || 0)) < 40000;
+                const timeStr = isOnline ? "ONLINE AGORA" : "OFFLINE";
+                
+                // Medalhas 3D
+                let medal = `<span style="font-weight:900; color:#333;">#${i+1}</span>`;
+                if(i === 0) medal = `<span class="medal-3d">🥇</span>`;
+                if(i === 1) medal = `<span class="medal-3d">🥈</span>`;
+                if(i === 2) medal = `<span class="medal-3d">🥉</span>`;
 
-                // MEDALHAS DINÂMICAS
-                let medalIcon = "";
-                if(i === 0) medalIcon = `<span class="medal medal-gold">🥇</span>`;
-                else if(i === 1) medalIcon = `<span class="medal">🥈</span>`;
-                else if(i === 2) medalIcon = `<span class="medal">🥉</span>`;
-                else medalIcon = `<span class="medal" style="font-size:14px; color:#333; font-weight:900;">#${i+1}</span>`;
-
-                // ATUALIZA PERFIL DO USUÁRIO ATUAL
+                // Update Header se for eu
                 if(myUser && item.turma === myUser.turma) {
-                    document.getElementById('me-turma-name').innerText = item.turma;
-                    document.getElementById('me-lvl-tag').innerText = "LVL " + calcLvl;
-                    document.getElementById('me-xp-fill-bar').style.width = ((item.pontos % 10) * 10) + "%";
+                    document.getElementById('me-name').innerText = item.turma;
+                    document.getElementById('me-sub').innerText = `${item.escola} • ${item.serie}`;
+                    document.getElementById('me-points').innerText = item.pontos;
+                    document.getElementById('me-likes').innerText = item.likes;
+                    if(item.pic) document.getElementById('me-avatar').style.backgroundImage = `url(${item.pic})`;
                 }
 
-                target.innerHTML += `
-                    <div class="rank-row ${i === 0 ? 'row-top' : ''}">
-                        <div style="flex:1; display:flex; align-items:center;">
-                            ${medalIcon}
+                listArea.innerHTML += `
+                    <div class="rank-card">
+                        <div class="rank-info-main">
+                            <div style="text-align:center; min-width:40px;">${medal}</div>
+                            <div class="avatar-circle" style="width:50px; height:50px; margin:0; border-width:2px; background-image:url(${item.pic || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'})"></div>
                             <div>
-                                <div class="status-box">
-                                    <span class="dot ${isOnline ? 'dot-online' : 'dot-offline'}"></span>
-                                    <span class="status-txt ${isOnline ? 'txt-neon' : 'txt-danger'}">Online: ${relTime}</span>
-                                </div>
-                                <b style="font-size: 20px; display:block; letter-spacing:-1px;">${item.turma}</b>
-                                <span style="font-size: 10px; color: #444; font-weight:900; text-transform:uppercase;">${item.escola}</span>
-                                <br><a href="${item.insta}" target="_blank" class="insta-btn">INSTAGRAM</a>
-                                <div style="margin-top: 15px;">
-                                    <button class="adm-small-btn" style="background:rgba(255,255,255,0.03); border:1px solid #1a1a1a; color:#fff;" onclick="giveLove('${item.turma}')">🔥 ${item.likes || 0}</button>
-                                </div>
+                                <b style="font-size:16px; display:block;">${item.turma}</b>
+                                <span style="font-size:9px; color:${isOnline ? 'var(--neon)' : '#555'}; font-weight:900;">${timeStr}</span>
+                                <p style="font-size:9px; color:#444;">${item.escola} | ${item.serie}</p>
                             </div>
                         </div>
-                        <div style="text-align: right;">
-                            <div style="font-size: 32px; font-weight: 900; color: var(--ouro); line-height:0.8;">${item.pontos || 0}</div>
-                            <div style="font-size: 10px; color: #222; font-weight:900; letter-spacing:1px; margin-top:5px;">PONTOS</div>
+                        <div style="text-align:right">
+                            <span style="font-size:22px; font-weight:900; color:var(--ouro); display:block;">${item.pontos}</span>
+                            <button onclick="giveLike('${item.turma}')" style="background:none; border:none; color:#ff4444; font-size:12px; font-weight:800;">🔥 ${item.likes}</button>
                         </div>
                     </div>
                 `;
@@ -499,49 +431,86 @@
         });
     }
 
-    // --- TERMINAL ROOT (ADMIN) ---
-    function showAdminAccess() {
-        document.getElementById('auth-screen').classList.add('hidden');
-        document.getElementById('admin-auth-screen').classList.remove('hidden');
+    // --- EDIÇÃO DE PERFIL ---
+    function saveProfileChanges() {
+        const newName = document.getElementById('edit-name').value;
+        const newPic = document.getElementById('edit-pic').value;
+        const newInsta = document.getElementById('edit-insta').value;
+
+        db.ref('ranking/' + myUser.turma).update({
+            turma: newName,
+            pic: newPic,
+            insta: newInsta
+        }).then(() => {
+            myUser.turma = newName;
+            myUser.pic = newPic;
+            myUser.insta = newInsta;
+            localStorage.setItem('omni_v8_user', JSON.stringify(myUser));
+            closeDrawer();
+            alert("Perfil Atualizado, Mídia!");
+        });
     }
 
-    function authenticateRoot() {
-        const u = document.getElementById('root-user').value;
-        const p = document.getElementById('root-pass').value;
-        // CREDENCIAIS DE ADMIN PADRÃO
-        if(u === "admin" && p === "admin123") {
-            isRoot = true;
-            document.getElementById('admin-auth-screen').classList.add('hidden');
-            document.getElementById('admin-panel-view').classList.remove('hidden');
-            renderAdminTools();
-        } else {
-            alert("ERRO DE AUTENTICAÇÃO: ACESSO NEGADO.");
+    // --- CHAT SYSTEM ---
+    function toggleChat(open) {
+        document.getElementById('chat-modal').style.display = open ? 'flex' : 'none';
+    }
+
+    function sendChat() {
+        const ipt = document.getElementById('chat-ipt');
+        if(!ipt.value) return;
+        db.ref('omni_chat').push({ u: myUser.turma, t: ipt.value, ts: Date.now() });
+        ipt.value = "";
+    }
+
+    function syncChat() {
+        db.ref('omni_chat').limitToLast(40).on('value', snap => {
+            const area = document.getElementById('chat-msgs');
+            area.innerHTML = "";
+            snap.forEach(m => {
+                const msg = m.val();
+                area.innerHTML += `
+                    <div class="chat-bubble">
+                        <b>@${msg.u}</b><br>
+                        <span style="font-size:13px;">${msg.t}</span>
+                    </div>
+                `;
+            });
+            area.scrollTop = area.scrollHeight;
+        });
+    }
+
+    // --- ADMIN DASHBOARD ---
+    function showAdmin() {
+        const p = prompt("SENHA DE ACESSO ROOT:");
+        if(p === "admin123") {
+            document.getElementById('screen-auth').classList.add('hidden');
+            document.getElementById('screen-admin').classList.remove('hidden');
+            renderAdmin();
         }
     }
 
-    function renderAdminTools() {
-        dbMaster.ref('ranking').on('value', snap => {
-            const area = document.getElementById('admin-accounts-list');
+    function renderAdmin() {
+        db.ref('ranking').on('value', snap => {
+            const area = document.getElementById('admin-render-users');
             area.innerHTML = "";
-            const users = snap.val();
-            if(!users) return;
+            const data = snap.val();
+            
+            Object.values(data).forEach(user => {
+                // Lógica da Borda Verde (se atualizado nos últimos 10s)
+                const isRecentlyUpdated = (Date.now() - (user.lastSeen || 0)) < 10000;
 
-            Object.values(users).forEach(acc => {
                 area.innerHTML += `
-                    <div class="adm-tool-card">
+                    <div class="adm-card ${isRecentlyUpdated ? 'admin-active' : ''}">
                         <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <b style="color:var(--neon); font-size:20px; letter-spacing:-1px;">${acc.turma}</b>
-                            <span style="font-size:10px; color:#444;">ID: ${acc.pass}</span>
+                            <b>${user.turma}</b>
+                            <span style="font-size:10px; color:#555;">ID: ${user.pass}</span>
                         </div>
-                        <p style="font-size:10px; color:#555; margin: 5px 0;">Escola: ${acc.escola} | Pontos: ${acc.pontos}</p>
-                        
-                        <div class="adm-grid-tools">
-                            <button class="adm-small-btn" style="background:var(--neon); color:#000;" onclick="modPts('${acc.turma}', 1)">+1 PT</button>
-                            <button class="adm-small-btn" style="background:var(--sky); color:#000;" onclick="modPts('${acc.turma}', 10)">+10 PTS</button>
-                            <button class="adm-small-btn" style="background:#222; color:#fff;" onclick="modPts('${acc.turma}', -1)">-1 PT</button>
-                            <button class="adm-small-btn" style="background:#222; color:#fff;" onclick="modPts('${acc.turma}', -10)">-10 PTS</button>
-                            <button class="adm-small-btn" style="background:var(--ouro); color:#000; grid-column: span 2;" onclick="resetAccLikes('${acc.turma}')">ZERAR LIKES</button>
-                            <button class="adm-small-btn" style="background:var(--danger); color:#fff; grid-column: span 2;" onclick="deleteAccount('${acc.turma}')">BANIR CONTA E DELETAR DADOS</button>
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:15px;">
+                            <button class="mídia-btn btn-main" style="padding:10px; font-size:10px;" onclick="modPoints('${user.turma}', 10)">+10 PTS</button>
+                            <button class="mídia-btn btn-main" style="padding:10px; font-size:10px;" onclick="modPoints('${user.turma}', -10)">-10 PTS</button>
+                            <button class="mídia-btn btn-outline" style="padding:10px; font-size:10px;" onclick="deleteTurma('${user.turma}')">EXCLUIR</button>
+                            <button class="mídia-btn btn-outline" style="padding:10px; font-size:10px;" onclick="window.open('${user.insta}')">INSTA</button>
                         </div>
                     </div>
                 `;
@@ -549,34 +518,12 @@
         });
     }
 
-    // --- FUNÇÕES DE ADMINISTRAÇÃO ---
-    function modPts(t, v) { dbMaster.ref('ranking/' + t + '/pontos').transaction(c => (c || 0) + v); }
-    function resetAccLikes(t) { dbMaster.ref('ranking/' + t + '/likes').set(0); }
-    function deleteAccount(t) { if(confirm("ALERTA: Deseja deletar permanentemente a conta de "+t+"?")) dbMaster.ref('ranking/'+t).remove(); }
-    function clearAllChat() { if(confirm("Deseja apagar TODO o histórico de conversas?")) dbMaster.ref('omni_chat').remove(); }
+    function modPoints(t, v) { db.ref('ranking/' + t + '/pontos').transaction(c => (c || 0) + v); }
+    function deleteTurma(t) { if(confirm("Apagar " + t + "?")) db.ref('ranking/' + t).remove(); }
+    function clearGlobalChat() { if(confirm("Limpar chat?")) db.ref('omni_chat').remove(); }
+    function giveLike(t) { db.ref('ranking/' + t + '/likes').transaction(c => (c || 0) + 1); }
+    function logout() { localStorage.clear(); location.reload(); }
 
-    // --- SISTEMA DE CHAT OMNI ---
-    function sendChatMessage() {
-        const inputMsg = document.getElementById('chat-ipt-msg');
-        if(!inputMsg.value || !myUser) return;
-        dbMaster.ref('omni_chat').push({ u: myUser.turma, t: inputMsg.value });
-        inputMsg.value = "";
-    }
-
-    dbMaster.ref('omni_chat').limitToLast(30).on('value', snap => {
-        const box = document.getElementById('chat-feed');
-        box.innerHTML = "";
-        snap.forEach(m => {
-            box.innerHTML += `<div class="msg-line"><b>${m.val().u}:</b> ${m.val().t}</div>`;
-        });
-        box.scrollTop = box.scrollHeight;
-    });
-
-    // --- UTILITÁRIOS ---
-    function giveLove(t) { dbMaster.ref('ranking/' + t + '/likes').transaction(c => (c || 0) + 1); }
-    function enterAsGuest() { myUser = { turma: "Guest" }; launchSystem(); }
-    function destroySession() { localStorage.clear(); location.reload(); }
 </script>
-
 </body>
 </html>

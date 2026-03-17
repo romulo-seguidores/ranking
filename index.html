@@ -161,20 +161,21 @@
 
         let sessao = null;
 
-        // AUTO-LOGIN E RECUPERAR TUDO
+        // AUTO-LOGIN E PREENCHIMENTO VISÍVEL DOS CAMPOS
         window.onload = () => {
             const data = localStorage.getItem('user_v10_persist');
             if(data) {
                 const p = JSON.parse(data);
-                // Preenche os campos visíveis
-                document.getElementById('in-turma').value = p.turma || "";
-                document.getElementById('in-pass').value = p.pass || "";
-                document.getElementById('in-serie').value = p.serie || "";
-                document.getElementById('in-escola').value = p.escola || "";
-                document.getElementById('in-insta').value = p.insta || "";
-                document.getElementById('in-aura').value = p.aura || "aura-beta";
+                
+                // Preenche fisicamente todos os inputs da tela de login
+                if(p.turma) document.getElementById('in-turma').value = p.turma;
+                if(p.pass) document.getElementById('in-pass').value = p.pass;
+                if(p.serie) document.getElementById('in-serie').value = p.serie;
+                if(p.escola) document.getElementById('in-escola').value = p.escola;
+                if(p.insta) document.getElementById('in-insta').value = p.insta;
+                if(p.aura) document.getElementById('in-aura').value = p.aura;
 
-                // Se já tinha logado antes e tem os dados, entra direto
+                // Se houver turma e senha, faz o login automático direto
                 if(p.turma && p.pass) {
                     fazerLogin(); 
                 }
@@ -184,6 +185,11 @@
         function fazerLogin() {
             const t = document.getElementById('in-turma').value.trim();
             const p = document.getElementById('in-pass').value;
+            const s = document.getElementById('in-serie').value;
+            const e = document.getElementById('in-escola').value;
+            const i = document.getElementById('in-insta').value;
+            const a = document.getElementById('in-aura').value;
+
             if(!t || !p) return alert("Preencha!");
 
             db.ref('ranking/' + t).once('value', snap => {
@@ -192,19 +198,23 @@
                 
                 if(!user) {
                     user = {
-                        turma: t, pass: p, 
-                        escola: document.getElementById('in-escola').value,
-                        serie: document.getElementById('in-serie').value,
-                        insta: document.getElementById('in-insta').value,
-                        aura: document.getElementById('in-aura').value,
-                        pontos: 0, seguidores: 0, videos: 0, likes: 0, online: Date.now()
+                        turma: t, pass: p, escola: e, serie: s,
+                        insta: i, aura: a, pontos: 0, 
+                        seguidores: 0, videos: 0, likes: 0, online: Date.now()
                     };
                     db.ref('ranking/' + t).set(user);
+                } else {
+                    // Atualiza os dados da sessão com o que está no banco
                 }
                 
                 sessao = user;
-                // SALVA TUDO PARA A PRÓXIMA VEZ
-                localStorage.setItem('user_v10_persist', JSON.stringify(user));
+                
+                // SALVA TUDO PARA FICAR PREENCHIDO NA PRÓXIMA VISITA
+                const dadosPersistentes = {
+                    turma: t, pass: p, escola: e, serie: s, insta: i, aura: a
+                };
+                localStorage.setItem('user_v10_persist', JSON.stringify(dadosPersistentes));
+                
                 startApp();
             });
         }

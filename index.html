@@ -72,7 +72,7 @@
         .on { color: #00ff88; }
         .off { color: #ff4444; }
 
-        /* CHAT FLOATING BOX */
+        /* CHAT UI */
         #chat-ui {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; z-index: 9999; display: none; flex-direction: column;
@@ -88,7 +88,6 @@
 
         .hidden { display: none !important; }
 
-        /* ADMIN CARD */
         .adm-card { background: #0a0a0a; border: 1px solid #222; padding: 15px; border-radius: 20px; margin-bottom: 10px; }
     </style>
 </head>
@@ -145,8 +144,7 @@
             <button onclick="toggleChat(false)" style="background:none; border:none; color:red; font-weight: 800;">[X]</button>
         </div>
         <div id="msg-flow"></div>
-        <div id="chat-controls" style="padding: 15px; background: #050505; display: flex; gap: 8px;">
-            </div>
+        <div id="chat-controls" style="padding: 15px; background: #050505; display: flex; gap: 8px;"></div>
     </div>
 
     <div id="btn-chat-float" class="hidden" onclick="toggleChat(true)" style="position: fixed; bottom: 30px; right: 20px; width: 60px; height: 60px; background: var(--neon); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 25px; box-shadow: 0 10px 25px rgba(0,255,136,0.4); z-index: 1000;">💬</div>
@@ -161,13 +159,13 @@
 
         let sessao = null;
 
-        // AUTO-LOGIN E PREENCHIMENTO VISÍVEL DOS CAMPOS
-        window.onload = () => {
+        // AUTO-LOGIN E PERSISTÊNCIA REFORÇADA
+        window.addEventListener('load', () => {
             const data = localStorage.getItem('user_v10_persist');
             if(data) {
                 const p = JSON.parse(data);
                 
-                // Preenche fisicamente todos os inputs da tela de login
+                // Preenche os campos visualmente
                 if(p.turma) document.getElementById('in-turma').value = p.turma;
                 if(p.pass) document.getElementById('in-pass').value = p.pass;
                 if(p.serie) document.getElementById('in-serie').value = p.serie;
@@ -175,12 +173,14 @@
                 if(p.insta) document.getElementById('in-insta').value = p.insta;
                 if(p.aura) document.getElementById('in-aura').value = p.aura;
 
-                // Se houver turma e senha, faz o login automático direto
+                // Tenta o login automático após o carregamento inicial
                 if(p.turma && p.pass) {
-                    fazerLogin(); 
+                    setTimeout(() => {
+                        fazerLogin();
+                    }, 600); 
                 }
             }
-        };
+        });
 
         function fazerLogin() {
             const t = document.getElementById('in-turma').value.trim();
@@ -190,11 +190,14 @@
             const i = document.getElementById('in-insta').value;
             const a = document.getElementById('in-aura').value;
 
-            if(!t || !p) return alert("Preencha!");
+            if(!t || !p) return;
 
             db.ref('ranking/' + t).once('value', snap => {
                 let user = snap.val();
-                if(user && user.pass !== p) return alert("Senha errada!");
+                if(user && user.pass !== p) {
+                    alert("Senha incorreta!");
+                    return;
+                }
                 
                 if(!user) {
                     user = {
@@ -203,17 +206,13 @@
                         seguidores: 0, videos: 0, likes: 0, online: Date.now()
                     };
                     db.ref('ranking/' + t).set(user);
-                } else {
-                    // Atualiza os dados da sessão com o que está no banco
                 }
                 
                 sessao = user;
                 
-                // SALVA TUDO PARA FICAR PREENCHIDO NA PRÓXIMA VISITA
-                const dadosPersistentes = {
-                    turma: t, pass: p, escola: e, serie: s, insta: i, aura: a
-                };
-                localStorage.setItem('user_v10_persist', JSON.stringify(dadosPersistentes));
+                // SALVA SEMPRE PARA PREENCHER NA VOLTA
+                const dadosParaSalvar = { turma: t, pass: p, escola: e, serie: s, insta: i, aura: a };
+                localStorage.setItem('user_v10_persist', JSON.stringify(dadosParaSalvar));
                 
                 startApp();
             });
@@ -237,7 +236,11 @@
                     <input type="text" id="msg-input" style="margin:0;" placeholder="Digite algo...">
                     <button onclick="mandarMsg()" class="btn-glow" style="width: 60px; padding: 0;">></button>
                 `;
-                setInterval(() => db.ref('ranking/'+sessao.turma).update({ online: Date.now() }), 10000);
+                setInterval(() => {
+                    if(sessao && !sessao.isVisitante) {
+                        db.ref('ranking/'+sessao.turma).update({ online: Date.now() });
+                    }
+                }, 10000);
             }
             carregarDados();
         }
@@ -248,7 +251,7 @@
                 const dados = snap.val();
                 if(!dados) return;
 
-                const lista = Object.values(dados).filter(t => t && t.turma).sort((a,b) => b.pontos - a.pontos);
+                const lista = Object.values(dados).filter(t => t && t.turma).sort((a,b) => (b.pontos || 0) - (a.pontos || 0));
                 container.innerHTML = "";
 
                 lista.forEach((t, i) => {
@@ -276,7 +279,7 @@
                                 <div style="font-size:9px; color:#888">${t.escola || ''} • ${t.serie || ''}</div>
                                 <div class="status-tag ${isOn ? 'on' : 'off'}">
                                     <div style="width:6px; height:6px; border-radius:50%; background:currentColor; margin-right:5px;"></div>
-                                    ${isOn ? 'Online agora' : (isRecente ? 'Visto a 2min' : 'Offline')}
+                                    ${isOn ? 'Online agora' : (isRecente ? 'Visto há pouco' : 'Offline')}
                                 </div>
                                 <button class="btn-like" onclick="darLike('${t.turma}')">❤️ ${t.likes || 0}</button>
                             </div>
@@ -298,9 +301,10 @@
         }
 
         function toggleChat(s) { document.getElementById('chat-ui').style.display = s ? 'flex' : 'none'; }
+        
         function mandarMsg() {
             const m = document.getElementById('msg-input').value;
-            if(!m || sessao.isVisitante) return;
+            if(!m || !sessao || sessao.isVisitante) return;
             db.ref('elite_chat').push({ t: sessao.turma, a: sessao.aura, m: m });
             document.getElementById('msg-input').value = "";
         }
@@ -323,14 +327,15 @@
             db.ref('ranking').on('value', snap => {
                 const list = document.getElementById('admin-list');
                 list.innerHTML = "";
-                if(!snap.val()) return;
-                Object.values(snap.val()).filter(t => t && t.turma).forEach(t => {
+                const val = snap.val();
+                if(!val) return;
+                Object.values(val).filter(t => t && t.turma).forEach(t => {
                     list.innerHTML += `
                         <div class="adm-card">
                             <b>${t.turma}</b><br>
                             <div style="display:flex; gap:10px; margin: 10px 0;">
-                                <input type="number" id="a-s-${t.turma}" value="${t.seguidores}" placeholder="Seg">
-                                <input type="number" id="a-v-${t.turma}" value="${t.videos}" placeholder="Vid">
+                                <input type="number" id="a-s-${t.turma}" value="${t.seguidores || 0}" placeholder="Seg">
+                                <input type="number" id="a-v-${t.turma}" value="${t.videos || 0}" placeholder="Vid">
                             </div>
                             <div style="display:flex; gap:5px;">
                                 <button onclick="saveAdm('${t.turma}')" style="flex:1; background:var(--neon); border:none; padding:10px; border-radius:10px; font-weight:bold;">SALVAR</button>
@@ -344,16 +349,20 @@
         }
 
         function saveAdm(turma) {
-            const s = parseInt(document.getElementById('a-s-'+turma).value);
-            const v = parseInt(document.getElementById('a-v-'+turma).value);
+            const s = parseInt(document.getElementById('a-s-'+turma).value) || 0;
+            const v = parseInt(document.getElementById('a-v-'+turma).value) || 0;
             const p = (Math.floor(s / 100) * 2) + (v * 1);
             db.ref('ranking/' + turma).update({ seguidores: s, videos: v, pontos: p });
-            alert("OK!");
+            alert("Atualizado!");
         }
 
         function excluirTurma(t) { if(confirm("Apagar "+t+"?")) db.ref('ranking/'+t).remove(); }
         function limparTudoChat() { if(confirm("Limpar mensagens?")) db.ref('elite_chat').remove(); }
-        function sair() { localStorage.removeItem('user_v10_persist'); window.location.reload(); }
+        
+        function sair() { 
+            localStorage.removeItem('user_v10_persist'); 
+            window.location.reload(); 
+        }
     </script>
 </body>
 </html>

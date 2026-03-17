@@ -3,273 +3,252 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <title>Rank Classe - Elite V8</title>
+    <title>Rank Classe - Elite Mídia V9</title>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;900&display=swap');
 
-        /* CONFIGURAÇÕES DE CORES E AURAS */
         :root {
             --neon: #00ff88;
-            --ouro: linear-gradient(135deg, #ffd700, #b8860b);
-            --prata: linear-gradient(135deg, #e0e0e0, #707070);
-            --bronze: linear-gradient(135deg, #cd7f32, #8b4513);
-            --bg: #030303;
-            --glass: rgba(255, 255, 255, 0.03);
+            --bg: #020202;
+            --glass: rgba(255, 255, 255, 0.05);
             --border: rgba(255, 255, 255, 0.1);
         }
 
-        /* AURAS ESPECÍFICAS */
-        .aura-beta { filter: drop-shadow(0 0 10px #00d4ff); color: #00d4ff !important; }
-        .aura-elite { filter: drop-shadow(0 0 10px #ffd700); color: #ffd700 !important; }
-        .aura-sigma { filter: drop-shadow(0 0 15px #ff0055); color: #ff0055 !important; }
-        .aura-omega { filter: drop-shadow(0 0 15px #a855f7); color: #a855f7 !important; }
+        /* AURAS COM BRILHO REAL */
+        .aura-beta { color: #00d4ff !important; text-shadow: 0 0 15px #00d4ff; }
+        .aura-elite { color: #ffd700 !important; text-shadow: 0 0 15px #ffd700; }
+        .aura-sigma { color: #ff0055 !important; text-shadow: 0 0 15px #ff0055; }
+        .aura-omega { color: #a855f7 !important; text-shadow: 0 0 20px #a855f7; }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
         body { background: var(--bg); color: white; overflow-x: hidden; }
 
-        #app { width: 100%; max-width: 450px; margin: 0 auto; padding: 20px; min-height: 100vh; }
+        #app { width: 100%; max-width: 450px; margin: 0 auto; padding: 15px; }
 
-        /* GLASSMORPHISM */
-        .glass-card {
-            background: var(--glass); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            border: 1px solid var(--border); border-radius: 35px; padding: 30px;
-            margin-bottom: 25px; animation: slideUp 0.6s ease-out;
+        /* CARDS COM ANIMAÇÃO */
+        .glass {
+            background: var(--glass); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--border); border-radius: 25px; padding: 20px;
+            margin-bottom: 15px; animation: popIn 0.5s ease backwards;
         }
 
-        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes popIn { 
+            from { opacity: 0; transform: scale(0.9) translateY(20px); } 
+            to { opacity: 1; transform: scale(1) translateY(0); } 
+        }
 
-        /* LOGO E TEXTO */
-        .logo { font-size: 35px; font-weight: 900; letter-spacing: -2px; text-align: center; }
-        .logo span { color: var(--neon); }
-
-        /* INPUTS ESTILIZADOS */
+        /* INPUTS MÍDIA */
         input, select {
-            width: 100%; padding: 18px; margin-bottom: 12px; border-radius: 18px;
-            border: 1px solid #1a1a1a; background: #080808; color: white; font-size: 14px;
+            width: 100%; padding: 16px; margin-bottom: 10px; border-radius: 15px;
+            border: 1px solid #111; background: #080808; color: white; font-size: 14px;
         }
-        input:focus { border-color: var(--neon); }
 
-        .btn-main {
-            width: 100%; padding: 20px; border-radius: 18px; border: none;
+        .btn-glow {
+            width: 100%; padding: 18px; border-radius: 15px; border: none;
             background: linear-gradient(90deg, #00ff88, #00d4ff); color: black;
-            font-weight: 900; cursor: pointer; text-transform: uppercase;
+            font-weight: 900; cursor: pointer; transition: 0.3s;
+        }
+        .btn-glow:active { transform: scale(0.96); }
+
+        /* RANKING LIST */
+        .rank-card {
+            display: flex; align-items: center; padding: 15px; border-radius: 22px;
+            background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+            margin-bottom: 10px; position: relative; overflow: hidden;
         }
 
-        /* MEDALHAS 3D */
         .medal {
-            width: 45px; height: 45px; border-radius: 50%; display: flex;
+            width: 40px; height: 40px; border-radius: 12px; display: flex;
             align-items: center; justify-content: center; font-weight: 900;
-            font-size: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-            border: 2px solid rgba(255,255,255,0.2);
+            background: #111; border: 1px solid #222; margin-right: 12px;
         }
-        .m-1 { background: var(--ouro); color: #4b3b00; }
-        .m-2 { background: var(--prata); color: #333; }
-        .m-3 { background: var(--bronze); color: #3d1f00; }
-        .m-normal { background: #1a1a1a; color: #555; }
+        .gold { background: linear-gradient(135deg, #ffd700, #ff8c00); color: #000; box-shadow: 0 0 15px rgba(255,215,0,0.4); }
+        .silver { background: linear-gradient(135deg, #e0e0e0, #888); color: #000; }
+        .bronze { background: linear-gradient(135deg, #cd7f32, #5e2f00); color: #fff; }
 
-        /* LISTA RANKING */
-        .rank-item {
-            display: flex; align-items: center; background: rgba(255,255,255,0.02);
-            padding: 15px; border-radius: 25px; margin-bottom: 12px; border: 1px solid var(--border);
-        }
+        /* STATUS DOT */
+        .status-tag { font-size: 9px; font-weight: 800; display: flex; align-items: center; margin-top: 4px; }
+        .on { color: #00ff88; }
+        .off { color: #ff4444; }
 
-        /* STATUS */
-        .status-box { font-size: 10px; font-weight: 800; text-transform: uppercase; display: flex; align-items: center; }
-        .online-now { color: var(--neon); }
-        .offline-now { color: #ff4444; }
-        .dot { width: 6px; height: 6px; border-radius: 50%; margin-right: 5px; }
-
-        /* LEVEL UP ANIMATION */
-        #level-up-alert {
-            position: fixed; top: 20%; left: 50%; transform: translateX(-50%);
-            background: var(--neon); color: black; padding: 20px 40px; border-radius: 50px;
-            font-weight: 900; z-index: 1000; box-shadow: 0 0 30px var(--neon); display: none;
-        }
-
-        /* CHAT WINDOW */
-        #chat-window {
+        /* CHAT FLOATING BOX */
+        #chat-ui {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 2000; display: none; flex-direction: column;
+            background: #000; z-index: 9999; display: none; flex-direction: column;
         }
-        #chat-msgs { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
-        .chat-bubble { background: #111; padding: 12px 18px; border-radius: 20px; max-width: 80%; border: 1px solid #222; }
+        #msg-flow { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+        .msg-bubble { background: #111; padding: 10px 15px; border-radius: 18px; border-left: 4px solid var(--neon); max-width: 85%; }
 
         .hidden { display: none !important; }
+
+        /* ADMIN CARD */
+        .adm-card { background: #0a0a0a; border: 1px solid #222; padding: 15px; border-radius: 20px; margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
-    <div id="level-up-alert">🚀 LEVEL UP! NÍVEL <span id="lv-num">2</span></div>
-
     <div id="app">
-        <section id="auth-screen" class="glass-card">
-            <h1 class="logo">RANK<span>CLASSE</span></h1>
-            <p style="text-align: center; font-size: 10px; color: #555; margin-bottom: 25px;">SINCRONIZANDO CONTA...</p>
+        <section id="login-view" class="glass">
+            <h1 style="text-align: center; font-weight: 900; font-size: 32px; letter-spacing: -2px;">RANK<span style="color:var(--neon)">CLASSE</span></h1>
+            <p style="text-align: center; font-size: 10px; color: #444; margin-bottom: 20px;">SISTEMA DE ELITE REGIONAL</p>
             
-            <input type="text" id="reg-turma" placeholder="Nome da Sala (ex: 3º A)">
-            <input type="text" id="reg-serie" placeholder="Série/Ano">
-            <input type="url" id="reg-insta" placeholder="Link do Instagram da Turma">
-            <input type="password" id="reg-pass" placeholder="Senha">
-            <select id="reg-aura">
-                <option value="aura-beta">🔹 Aura Beta</option>
-                <option value="aura-elite">👑 Aura Elite</option>
-                <option value="aura-sigma">🗿 Aura Sigma</option>
-                <option value="aura-omega">🌌 Aura Omega</option>
+            <input type="text" id="in-turma" placeholder="Nome da Turma">
+            <input type="text" id="in-serie" placeholder="Série/Ano">
+            <input type="text" id="in-escola" placeholder="Nome da Escola">
+            <input type="url" id="in-insta" placeholder="Instagram (URL)">
+            <input type="password" id="in-pass" placeholder="Senha">
+            <select id="in-aura">
+                <option value="aura-beta">🔵 Aura Beta</option>
+                <option value="aura-elite">🟡 Aura Elite</option>
+                <option value="aura-sigma">🔴 Aura Sigma</option>
+                <option value="aura-omega">🟣 Aura Omega</option>
             </select>
             
-            <button onclick="logar()" class="btn-main">ENTRAR NA ELITE</button>
-            <button onclick="visitante()" style="background:none; border:none; color:#555; width:100%; margin-top:15px; font-weight:bold;">Entrar como Visitante</button>
-            <p onclick="irAdmin()" style="text-align:center; color:#222; font-size:9px; margin-top:30px;">PAINEL CENTRAL</p>
+            <button onclick="fazerLogin()" class="btn-glow">ACESSAR RANKING</button>
+            <button onclick="entrarVisitante()" style="background:none; border:none; color:#333; width:100%; margin-top:15px; font-size: 12px;">Entrar como Visitante</button>
+            <p onclick="abrirAdmin()" style="text-align: center; font-size: 9px; margin-top: 30px; color: #111; cursor: pointer;">PAINEL ADMIN</p>
         </section>
 
-        <section id="rank-screen" class="hidden">
-            <div class="glass-card" style="text-align: center;">
-                <h2 id="display-turma" class="aura-elite">---</h2>
-                <p id="display-serie" style="font-size: 12px; color: #888;">Série ---</p>
-                <div style="background: rgba(0,255,136,0.1); padding: 5px 15px; border-radius: 50px; display: inline-block; margin-top: 10px;">
-                    <span style="font-weight: 900; color: var(--neon);">NÍVEL <span id="meu-nivel">1</span></span>
+        <section id="rank-view" class="hidden">
+            <div class="glass" style="text-align: center; border-bottom: 4px solid var(--neon);">
+                <h2 id="meu-nome" class="aura-elite">---</h2>
+                <p id="minha-info" style="font-size: 11px; color: #888; margin-top: 5px;">Escola --- | Série ---</p>
+                <div style="margin-top: 15px; display: flex; justify-content: space-around;">
+                    <div><b id="meu-pts" style="font-size: 22px; color: var(--neon);">0</b><br><small>PTS</small></div>
+                    <div><b id="meu-nivel" style="font-size: 22px;">1</b><br><small>NÍVEL</small></div>
                 </div>
-                
-                <div style="display: flex; justify-content: space-around; margin-top: 25px;">
-                    <div><b id="pts-val" style="font-size: 24px; color: var(--neon);">0</b><br><small>PONTOS</small></div>
-                    <div><b id="seg-val" style="font-size: 24px;">0</b><br><small>SEGUIDORES</small></div>
-                </div>
+                <button onclick="sair()" style="margin-top: 15px; background: rgba(255,0,0,0.1); border: 1px solid rgba(255,0,0,0.2); color: red; padding: 5px 15px; border-radius: 10px; font-size: 10px; font-weight: bold;">SAIR DA CONTA</button>
             </div>
 
-            <h3 style="margin-bottom: 15px; font-size: 14px; letter-spacing: 2px;">🏆 CLASSIFICAÇÃO</h3>
-            <div id="lista-ranking"></div>
-
+            <div id="ranking-container"></div>
             <div style="height: 100px;"></div>
         </section>
 
-        <section id="admin-panel" class="hidden glass-card">
-            <h2>🛠 GERENCIADOR</h2>
-            <div id="admin-list" style="margin-top: 20px;"></div>
-            <button onclick="window.location.reload()" class="btn-main" style="background:#222; color:white; margin-top:20px;">SAIR</button>
+        <section id="admin-view" class="hidden glass">
+            <h2 style="margin-bottom: 20px;">SISTEMA CENTRAL</h2>
+            <button onclick="limparTudoChat()" style="background: red; color: white; border: none; padding: 10px; border-radius: 10px; width: 100%; font-weight: bold; margin-bottom: 20px;">🧨 LIMPAR TODO O CHAT</button>
+            <div id="admin-list"></div>
+            <button onclick="window.location.reload()" class="btn-glow" style="background:#222; color:white; margin-top: 20px;">FECHAR PAINEL</button>
         </section>
     </div>
 
-    <div id="btn-chat" class="hidden" onclick="toggleChat(true)" style="position: fixed; bottom: 30px; right: 20px; width: 65px; height: 65px; background: var(--neon); border-radius: 22px; display: flex; align-items: center; justify-content: center; font-size: 28px; box-shadow: 0 10px 20px rgba(0,255,136,0.3); z-index: 1000;">💬</div>
-
-    <div id="chat-window">
-        <div style="padding: 25px; border-bottom: 1px solid #111; display:flex; justify-content:space-between;">
-            <b style="color: var(--neon);">ELITE CHAT</b>
-            <span onclick="toggleChat(false)" style="color: red; font-weight: 900;">FECHAR</span>
+    <div id="chat-ui">
+        <div style="padding: 20px; background: #050505; border-bottom: 1px solid #111; display: flex; justify-content: space-between; align-items: center;">
+            <b style="color: var(--neon);">CHAT DA ELITE</b>
+            <button onclick="toggleChat(false)" style="background:none; border:none; color:red; font-weight: 800;">[X]</button>
         </div>
-        <div id="chat-msgs"></div>
-        <div style="padding: 20px; display: flex; gap: 10px; background: #050505;">
-            <input type="text" id="chat-input" style="margin:0" placeholder="Mande a mensagem...">
-            <button onclick="enviarChat()" class="btn-main" style="width: 70px; padding:0;">></button>
+        <div id="msg-flow"></div>
+        <div style="padding: 15px; background: #050505; display: flex; gap: 8px;">
+            <input type="text" id="msg-input" style="margin:0;" placeholder="Digite algo...">
+            <button onclick="mandarMsg()" class="btn-glow" style="width: 60px; padding: 0;">></button>
         </div>
     </div>
+
+    <div id="btn-chat-float" class="hidden" onclick="toggleChat(true)" style="position: fixed; bottom: 30px; right: 20px; width: 60px; height: 60px; background: var(--neon); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 25px; box-shadow: 0 10px 25px rgba(0,255,136,0.4); z-index: 1000;">💬</div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <script>
-        const config = { databaseURL: "https://gincanaescola-d4f8c-default-rtdb.firebaseio.com/" };
-        if (!firebase.apps.length) firebase.initializeApp(config);
-        const database = firebase.database();
+        const firebaseConfig = { databaseURL: "https://gincanaescola-d4f8c-default-rtdb.firebaseio.com/" };
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
 
-        let userAtivo = null;
-        let lastLevel = 1;
+        let sessao = null;
 
-        // VERIFICAR LOGIN SALVO
+        // AUTO-LOGIN
         window.onload = () => {
-            const salvo = localStorage.getItem('elite_rank_user');
-            if(salvo) {
-                const dados = JSON.parse(salvo);
-                document.getElementById('reg-turma').value = dados.turma;
-                document.getElementById('reg-pass').value = dados.pass;
+            const data = localStorage.getItem('user_v9');
+            if(data) {
+                const p = JSON.parse(data);
+                document.getElementById('in-turma').value = p.turma;
+                document.getElementById('in-pass').value = p.pass;
             }
         };
 
-        function logar() {
-            const t = document.getElementById('reg-turma').value.trim();
-            const p = document.getElementById('reg-pass').value;
-            const i = document.getElementById('reg-insta').value;
-            const s = document.getElementById('reg-serie').value;
-            const a = document.getElementById('reg-aura').value;
+        function fazerLogin() {
+            const t = document.getElementById('in-turma').value.trim();
+            const p = document.getElementById('in-pass').value;
+            if(!t || !p) return alert("Preencha!");
 
-            if(!t || !p) return alert("Preencha Turma e Senha!");
-
-            database.ref('ranking/' + t).once('value', snap => {
-                let dados = snap.val();
-                if(dados && dados.pass !== p) return alert("Senha Incorreta!");
-
-                if(!dados) {
-                    dados = { turma: t, pass: p, insta: i, serie: s, aura: a, pontos: 0, seguidores: 0, videos: 0, online: Date.now() };
-                    database.ref('ranking/' + t).set(dados);
+            db.ref('ranking/' + t).once('value', snap => {
+                let user = snap.val();
+                if(user && user.pass !== p) return alert("Senha errada!");
+                
+                if(!user) {
+                    user = {
+                        turma: t, pass: p, 
+                        escola: document.getElementById('in-escola').value,
+                        serie: document.getElementById('in-serie').value,
+                        insta: document.getElementById('in-insta').value,
+                        aura: document.getElementById('in-aura').value,
+                        pontos: 0, seguidores: 0, videos: 0, online: Date.now()
+                    };
+                    db.ref('ranking/' + t).set(user);
                 }
                 
-                userAtivo = dados;
-                localStorage.setItem('elite_rank_user', JSON.stringify({turma:t, pass:p}));
-                iniciarApp();
+                sessao = user;
+                localStorage.setItem('user_v9', JSON.stringify({turma:t, pass:p}));
+                startApp();
             });
         }
 
-        function visitante() {
-            userAtivo = { turma: "Visitante", ponto: 0 };
-            iniciarApp(true);
+        function entrarVisitante() {
+            sessao = { turma: "Visitante", aura: "aura-beta" };
+            startApp(true);
         }
 
-        function iniciarApp(isVisit = false) {
-            document.getElementById('auth-screen').classList.add('hidden');
-            document.getElementById('rank-screen').classList.remove('hidden');
-            if(!isVisit) {
-                document.getElementById('btn-chat').classList.remove('hidden');
-                setInterval(() => database.ref('ranking/' + userAtivo.turma).update({ online: Date.now() }), 10000);
+        function startApp(isVis = false) {
+            document.getElementById('login-view').classList.add('hidden');
+            document.getElementById('rank-view').classList.remove('hidden');
+            if(!isVis) {
+                document.getElementById('btn-chat-float').classList.remove('hidden');
+                setInterval(() => db.ref('ranking/'+sessao.turma).update({ online: Date.now() }), 10000);
             }
-            carregarRanking();
+            carregarDados();
         }
 
-        function carregarRanking() {
-            database.ref('ranking').on('value', snap => {
-                const lista = document.getElementById('lista-ranking');
+        function carregarDados() {
+            db.ref('ranking').on('value', snap => {
+                const container = document.getElementById('ranking-container');
                 const dados = snap.val();
                 if(!dados) return;
 
-                const ordenado = Object.values(dados).sort((a,b) => b.pontos - a.pontos);
-                lista.innerHTML = "";
+                const lista = Object.values(dados).sort((a,b) => b.pontos - a.pontos);
+                container.innerHTML = "";
 
-                ordenado.forEach((t, i) => {
+                lista.forEach((t, i) => {
+                    const timeDiff = Date.now() - t.online;
+                    const isOn = timeDiff < 25000;
+                    const isRecente = timeDiff < 125000;
+                    
                     const level = Math.floor(t.pontos / 10) + 1;
-                    const diff = Date.now() - t.online;
-                    const isOnline = diff < 20000;
-                    const isRecente = diff < 120000; // 2 min
+                    const medalClass = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
+                    const medalIcon = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : i+1;
 
-                    // Medalhas
-                    let mClass = i === 0 ? 'm-1' : i === 1 ? 'm-2' : i === 2 ? 'm-3' : 'm-normal';
-                    let mText = i < 3 ? '' : i + 1;
-
-                    if(userAtivo && t.turma === userAtivo.turma) {
-                        document.getElementById('display-turma').innerText = t.turma;
-                        document.getElementById('display-turma').className = t.aura;
-                        document.getElementById('display-serie').innerText = "Série: " + t.serie;
-                        document.getElementById('pts-val').innerText = t.pontos;
-                        document.getElementById('seg-val').innerText = t.seguidores;
+                    if(sessao && t.turma === sessao.turma) {
+                        document.getElementById('meu-nome').innerText = t.turma;
+                        document.getElementById('meu-nome').className = t.aura;
+                        document.getElementById('minha-info').innerText = `${t.escola} | ${t.serie}`;
+                        document.getElementById('meu-pts').innerText = t.pontos;
                         document.getElementById('meu-nivel').innerText = level;
-
-                        if(level > lastLevel) {
-                            showLevelUp(level);
-                            lastLevel = level;
-                        }
                     }
 
-                    lista.innerHTML += `
-                        <div class="rank-item">
-                            <div class="medal ${mClass}">${i < 3 ? ['🥇','🥈','🥉'][i] : i+1}</div>
-                            <div style="flex: 1; margin-left: 15px;">
-                                <b class="${t.aura}">${t.turma}</b> <small style="color:#444">LV ${level}</small><br>
-                                <div class="status-box ${isOnline ? 'online-now' : 'offline-now'}">
-                                    <div class="dot" style="background:${isOnline?'#00ff88':'#ff4444'}"></div>
-                                    ${isOnline ? 'Online agora' : (isRecente ? 'Online a 2min' : 'Offline')}
+                    container.innerHTML += `
+                        <div class="rank-card" style="animation-delay: ${i * 0.1}s">
+                            <div class="medal ${medalClass}">${medalIcon}</div>
+                            <div style="flex:1">
+                                <b class="${t.aura}">${t.turma}</b> <small style="color:#555">LV ${level}</small>
+                                <div style="font-size:9px; color:#888">${t.escola} • ${t.serie}</div>
+                                <div class="status-tag ${isOn ? 'on' : 'off'}">
+                                    <div style="width:6px; height:6px; border-radius:50%; background:currentColor; margin-right:5px;"></div>
+                                    ${isOn ? 'Online agora' : (isRecente ? 'Visto a 2min' : 'Offline')}
                                 </div>
                             </div>
-                            <div style="text-align: right">
-                                <b style="color:var(--neon); font-size: 18px;">${t.pontos}</b><br>
-                                <small style="font-size:8px; color:#333">${t.serie}</small>
+                            <div style="text-align:right">
+                                <b style="color:var(--neon); font-size:18px;">${t.pontos}</b><br>
+                                <small style="font-size:8px; color:#333">PONTOS</small>
                             </div>
                         </div>
                     `;
@@ -277,67 +256,64 @@
             });
         }
 
-        function showLevelUp(lv) {
-            const el = document.getElementById('level-up-alert');
-            document.getElementById('lv-num').innerText = lv;
-            el.style.display = 'block';
-            setTimeout(() => el.style.display = 'none', 4000);
+        // CHAT
+        function toggleChat(s) { document.getElementById('chat-ui').style.display = s ? 'flex' : 'none'; }
+        function mandarMsg() {
+            const m = document.getElementById('msg-input').value;
+            if(!m) return;
+            db.ref('elite_chat').push({ t: sessao.turma, a: sessao.aura, m: m });
+            document.getElementById('msg-input').value = "";
         }
 
-        // ADMIN FUNCTIONS
-        function irAdmin() {
-            const p = prompt("SENHA MASTER:");
-            if(p !== "admin123") return;
-            document.getElementById('auth-screen').classList.add('hidden');
-            document.getElementById('admin-panel').classList.remove('hidden');
-
-            database.ref('ranking').on('value', snap => {
-                const container = document.getElementById('admin-list');
-                container.innerHTML = "";
-                Object.values(snap.val()).forEach(t => {
-                    container.innerHTML += `
-                        <div style="background:#000; padding:15px; border-radius:20px; margin-bottom:10px; border:1px solid #222;">
-                            <b>${t.turma}</b> <br>
-                            <a href="${t.insta}" target="_blank" style="color:var(--neon); font-size:10px;">ABRIR INSTAGRAM 🔗</a>
-                            <div style="display:flex; gap:10px; margin-top:10px;">
-                                <input type="number" id="adm-s-${t.turma}" value="${t.seguidores}" placeholder="Segs">
-                                <input type="number" id="adm-v-${t.turma}" value="${t.videos}" placeholder="Vids">
-                            </div>
-                            <button onclick="updateAdmin('${t.turma}')" class="btn-main" style="padding:10px; font-size:11px;">ATUALIZAR DADOS</button>
-                        </div>
-                    `;
-                });
-            });
-        }
-
-        function updateAdmin(turma) {
-            const s = parseInt(document.getElementById('adm-s-'+turma).value);
-            const v = parseInt(document.getElementById('adm-v-'+turma).value);
-            const pts = (Math.floor(s / 100) * 2) + (v * 1); // Exemplo de cálculo
-
-            database.ref('ranking/' + turma).update({ seguidores: s, videos: v, pontos: pts });
-            alert(turma + " ATUALIZADA!");
-        }
-
-        // CHAT LOGIC
-        function toggleChat(show) { document.getElementById('chat-window').style.display = show ? 'flex' : 'none'; }
-        function enviarChat() {
-            const msg = document.getElementById('chat-input').value;
-            if(!msg) return;
-            database.ref('chat').push({ turma: userAtivo.turma, msg: msg, aura: userAtivo.aura });
-            document.getElementById('chat-input').value = "";
-        }
-
-        database.ref('chat').limitToLast(30).on('value', snap => {
-            const box = document.getElementById('chat-msgs');
+        db.ref('elite_chat').limitToLast(40).on('value', snap => {
+            const box = document.getElementById('msg-flow');
             box.innerHTML = "";
-            snap.forEach(m => {
-                const d = m.val();
-                box.innerHTML += `<div class="chat-bubble"><b class="${d.aura}" style="font-size:10px">${d.turma}</b><br>${d.msg}</div>`;
+            snap.forEach(d => {
+                const v = d.val();
+                box.innerHTML += `<div class="msg-bubble"><b class="${v.a}" style="font-size:10px">${v.t}</b><br>${v.m}</div>`;
             });
             box.scrollTop = box.scrollHeight;
         });
 
+        // ADMIN
+        function abrirAdmin() {
+            if(prompt("SENHA:") !== "123") return;
+            document.getElementById('login-view').classList.add('hidden');
+            document.getElementById('admin-view').classList.remove('hidden');
+
+            db.ref('ranking').on('value', snap => {
+                const list = document.getElementById('admin-list');
+                list.innerHTML = "";
+                Object.values(snap.val()).forEach(t => {
+                    list.innerHTML += `
+                        <div class="adm-card">
+                            <b>${t.turma}</b><br>
+                            <div style="display:flex; gap:10px; margin: 10px 0;">
+                                <input type="number" id="a-s-${t.turma}" value="${t.seguidores}" placeholder="Seg">
+                                <input type="number" id="a-v-${t.turma}" value="${t.videos}" placeholder="Vid">
+                            </div>
+                            <div style="display:flex; gap:5px;">
+                                <button onclick="saveAdm('${t.turma}')" style="flex:1; background:var(--neon); border:none; padding:10px; border-radius:10px; font-weight:bold;">SALVAR</button>
+                                <button onclick="window.open('${t.insta}')" style="flex:1; background:#111; color:white; border:1px solid #333; border-radius:10px;">INSTA 🔗</button>
+                                <button onclick="excluirTurma('${t.turma}')" style="background:red; color:white; border:none; padding:10px; border-radius:10px;">🗑️</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            });
+        }
+
+        function saveAdm(turma) {
+            const s = parseInt(document.getElementById('a-s-'+turma).value);
+            const v = parseInt(document.getElementById('a-v-'+turma).value);
+            const p = (Math.floor(s / 100) * 2) + (v * 1);
+            db.ref('ranking/' + turma).update({ seguidores: s, videos: v, pontos: p });
+            alert("OK!");
+        }
+
+        function excluirTurma(t) { if(confirm("Apagar "+t+"?")) db.ref('ranking/'+t).remove(); }
+        function limparTudoChat() { if(confirm("Limpar mensagens?")) db.ref('elite_chat').remove(); }
+        function sair() { localStorage.removeItem('user_v9'); window.location.reload(); }
     </script>
 </body>
 </html>

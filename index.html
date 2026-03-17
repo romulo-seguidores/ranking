@@ -3,13 +3,13 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <title>RANK CLASSE V8 - ULTRA EDITION</title>
+    <title>RANK CLASSE V8 - TITANIUM OMNI EDITION</title>
 
     <style>
         /* ============================================================
-           SISTEMA VISUAL "MÍDIA" EVOLVED - MOBILE FOCUS
+           SISTEMA VISUAL "MÍDIA" - DESIGN DE ALTA PERFORMANCE
            ============================================================ */
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;500;700&display=swap');
 
         :root {
             --ouro: #ffd700;
@@ -18,286 +18,328 @@
             --neon: #00ff88;
             --sky: #00d4ff;
             --danger: #ff4444;
-            --bg-master: #050505;
+            --warning: #ffaa00;
+            --bg-master: #030303;
             --glass-base: rgba(255, 255, 255, 0.02);
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --drawer-bg: #0a0a0a;
+            --glass-border: rgba(255, 255, 255, 0.07);
+            --drawer-bg: #080808;
+            --card-bg: rgba(10, 10, 10, 0.98);
         }
 
-        /* RESET GERAL */
-        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg-master); color: #fff; overflow-x: hidden; min-height: 100vh; }
+        /* RESET TOTAL */
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+            outline: none; font-family: 'Poppins', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-        /* SCROLL ESTILIZADO */
-        ::-webkit-scrollbar { width: 0px; } /* Escondido para parecer App */
+        body {
+            background-color: var(--bg-master);
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 5% 5%, rgba(0, 255, 136, 0.04) 0%, transparent 35%),
+                radial-gradient(circle at 95% 95%, rgba(0, 212, 255, 0.04) 0%, transparent 35%);
+        }
 
-        #app { width: 100%; max-width: 500px; margin: 0 auto; padding: 15px; position: relative; min-height: 100vh; }
+        /* SCROLLBAR ESTILO MÍDIA */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: var(--neon); border-radius: 10px; }
 
-        /* ANIMAÇÕES */
-        @keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes pulseAdmin { 0% { box-shadow: 0 0 5px var(--neon); } 50% { box-shadow: 0 0 20px var(--neon); } 100% { box-shadow: 0 0 5px var(--neon); } }
-        @keyframes float3d { 0% { transform: translateY(0px) rotateY(0deg); } 50% { transform: translateY(-5px) rotateY(15deg); } 100% { transform: translateY(0px) rotateY(0deg); } }
+        #app {
+            width: 100%;
+            max-width: 550px;
+            margin: 0 auto;
+            padding: 15px;
+            position: relative;
+        }
 
-        /* COMPONENTES DE INTERFACE */
+        /* AURAS DE TURMA (SISTEMA DE CORES PERSONALIZADAS) */
+        .aura-neon { filter: drop-shadow(0 0 15px var(--neon)); border-color: var(--neon) !important; }
+        .aura-ouro { filter: drop-shadow(0 0 15px var(--ouro)); border-color: var(--ouro) !important; }
+        .aura-sky { filter: drop-shadow(0 0 15px var(--sky)); border-color: var(--sky) !important; }
+        .aura-danger { filter: drop-shadow(0 0 15px var(--danger)); border-color: var(--danger) !important; }
+
+        /* ANIMAÇÕES CINEMATOGRÁFICAS */
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(60px) scale(0.9); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        @keyframes pulseOnline {
+            0% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 15px var(--neon); }
+            100% { transform: scale(1); opacity: 0.5; }
+        }
+
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* CONTAINERS GLASSMORPHISM */
         .glass-box {
             background: var(--glass-base);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
+            backdrop-filter: blur(50px);
+            -webkit-backdrop-filter: blur(50px);
             border: 1px solid var(--glass-border);
-            border-radius: 35px;
+            border-radius: 45px;
+            padding: 35px;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.7);
+            animation: slideUp 0.8s cubic-bezier(0.2, 1, 0.3, 1);
+        }
+
+        /* HEADER & PERFIL */
+        .profile-card {
+            background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(0,0,0,0));
+            border-radius: 40px;
             padding: 30px;
-            animation: fadeIn 0.5s ease;
-        }
-
-        /* PERFIL & AVATAR */
-        .profile-container {
-            position: relative;
-            background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, transparent 100%);
-            border-radius: 35px;
-            padding: 25px;
-            margin-bottom: 20px;
             border: 1px solid var(--glass-border);
+            margin-bottom: 25px;
+            text-align: center;
+            position: relative;
         }
 
-        .avatar-circle {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            border: 3px solid var(--neon);
+        .avatar-main {
+            width: 120px;
+            height: 120px;
+            border-radius: 40px;
             background-size: cover;
             background-position: center;
-            background-image: url('https://cdn-icons-png.flaticon.com/512/3135/3135715.png'); /* Default */
-            margin-bottom: 15px;
-            box-shadow: 0 10px 25px rgba(0, 255, 136, 0.2);
+            border: 3px solid var(--neon);
+            margin: 0 auto 15px auto;
+            box-shadow: 0 20px 40px rgba(0,255,136,0.15);
+            transition: 0.5s;
         }
 
-        .edit-pencil {
-            position: absolute;
-            top: 25px;
-            right: 25px;
-            background: var(--neon);
-            color: #000;
-            width: 35px;
-            height: 35px;
+        /* RANKING ROWS */
+        .rank-row {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 35px;
+            padding: 22px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+
+        .rank-row:hover { transform: scale(1.03); border-color: #fff; }
+
+        .medal-slot { width: 60px; display: flex; justify-content: center; }
+        .medal-icon { font-size: 38px; animation: floating 3s infinite ease-in-out; }
+
+        /* STATUS TAGS */
+        .status-badge {
+            font-size: 9px;
+            font-weight: 900;
+            text-transform: uppercase;
+            padding: 5px 12px;
             border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .online { color: var(--neon); background: rgba(0,255,136,0.1); }
+        .offline { color: var(--danger); background: rgba(255,68,68,0.1); }
+        .dot { width: 7px; height: 7px; border-radius: 50%; }
+        .dot-online { background: var(--neon); animation: pulseOnline 1.5s infinite; }
+
+        /* INPUTS & BOTÕES MÍDIA */
+        .mídia-input {
+            width: 100%;
+            background: #0a0a0a;
+            border: 2px solid #1a1a1a;
+            padding: 22px 28px;
+            border-radius: 25px;
+            color: #fff;
+            margin-bottom: 18px;
+            font-size: 15px;
+            transition: 0.3s;
+        }
+
+        .mídia-input:focus { border-color: var(--neon); background: #000; box-shadow: 0 0 25px rgba(0,255,136,0.1); }
+
+        .mídia-btn {
+            width: 100%;
+            padding: 22px;
+            border-radius: 25px;
+            border: none;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: 0.3s;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
-            cursor: pointer;
-            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.4);
+            gap: 12px;
         }
 
-        /* GAVETA DE EDIÇÃO (SIDE DRAWER) */
-        #profile-drawer {
+        .btn-neon { background: var(--neon); color: #000; box-shadow: 0 20px 40px rgba(0,255,136,0.3); }
+        .btn-dark { background: transparent; border: 2px solid #333; color: #fff; }
+        .btn-visit { background: #1a1a1a; color: #777; font-size: 11px; margin-top: 10px; }
+
+        /* ADMIN SECTION */
+        .admin-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid #222;
+            border-radius: 35px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .admin-stat-edit {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .admin-label { font-size: 9px; font-weight: 900; color: #555; margin-left: 10px; text-transform: uppercase; }
+
+        /* CHAT SYSTEM */
+        #chat-window {
             position: fixed;
-            top: 0; right: 0;
-            width: 85%; height: 100%;
-            background: var(--drawer-bg);
-            z-index: 10000;
-            padding: 40px 25px;
-            box-shadow: -20px 0 60px rgba(0,0,0,0.8);
-            transform: translateX(101%);
-            transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #000;
+            z-index: 9999;
+            display: none;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            padding: 30px;
+            border-bottom: 1px solid #111;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #chat-feed {
+            flex: 1;
+            padding: 25px;
+            overflow-y: auto;
             display: flex;
             flex-direction: column;
             gap: 15px;
         }
 
-        #profile-drawer.open { transform: translateX(0); }
-
-        .drawer-overlay {
-            position: fixed;
-            top:0; left:0; width:100%; height:100%;
-            background: rgba(0,0,0,0.7);
-            z-index: 9999;
-            display: none;
-            backdrop-filter: blur(5px);
+        .msg-bubble {
+            background: #0a0a0a;
+            padding: 18px 22px;
+            border-radius: 25px;
+            max-width: 85%;
+            border: 1px solid #1a1a1a;
+            position: relative;
         }
 
-        /* RANKING CARDS */
-        .rank-card {
-            background: rgba(255,255,255,0.03);
-            border-radius: 28px;
-            padding: 20px;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border: 1px solid var(--glass-border);
-            transition: 0.3s;
-        }
+        .msg-bubble b { color: var(--neon); font-size: 11px; display: block; margin-bottom: 4px; }
 
-        .rank-card.admin-active {
-            border: 2px solid var(--neon) !important;
-            animation: pulseAdmin 2s infinite;
-        }
-
-        .rank-info-main { display: flex; align-items: center; gap: 15px; }
-
-        /* MEDALHAS 3D */
-        .medal-3d {
-            font-size: 35px;
-            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5));
-            animation: float3d 3s infinite ease-in-out;
-            display: block;
-        }
-
-        /* BOTÕES MÍDIA */
-        .mídia-btn {
-            width: 100%;
-            padding: 20px;
-            border-radius: 20px;
-            border: none;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            cursor: pointer;
-            transition: 0.3s;
-            margin-bottom: 10px;
-        }
-
-        .btn-main { background: #fff; color: #000; }
-        .btn-outline { background: transparent; border: 1px solid #333; color: #fff; }
-
-        /* CHAT FLOATING MOBILE REWORK */
-        #chat-container {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 900;
-        }
-
-        .chat-toggle-btn {
-            width: 60px; height: 60px;
-            border-radius: 50%;
-            background: var(--neon);
-            color: #000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            box-shadow: 0 10px 30px rgba(0,255,136,0.4);
-        }
-
-        #chat-modal {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: #000;
-            z-index: 2000;
-            display: none;
-            flex-direction: column;
-        }
-
-        #chat-msgs { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-        .chat-bubble { background: rgba(255,255,255,0.05); padding: 12px 18px; border-radius: 20px; border-left: 3px solid var(--neon); }
-        .chat-bubble b { color: var(--neon); font-size: 12px; }
-
-        /* ADMIN PANEL */
-        .admin-section { padding-bottom: 100px; }
-        .adm-card { background: #111; border-radius: 25px; padding: 20px; margin-bottom: 15px; border: 1px solid #222; }
-
-        /* UTILITÁRIOS */
+        /* UTILS */
         .hidden { display: none !important; }
         .txt-neon { color: var(--neon); }
-        .input-mídia {
-            width: 100%; background: #151515; border: 1px solid #222; 
-            padding: 18px; border-radius: 18px; color: #fff; margin-bottom: 10px;
-        }
-        
+        .aura-picker { display: flex; gap: 10px; margin-bottom: 20px; justify-content: center; }
+        .aura-opt { width: 35px; height: 35px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; }
+
     </style>
 </head>
 <body>
 
 <div id="app">
 
-    <div id="overlay" class="drawer-overlay" onclick="closeDrawer()"></div>
+    <section id="auth-screen" class="glass-box">
+        <div style="text-align: center; margin-bottom: 40px;">
+            <h1 style="font-size: 50px; font-weight: 900; letter-spacing: -3px; line-height: 0.85;">OMNI<br><span class="txt-neon">RANK</span></h1>
+            <p style="font-size: 10px; letter-spacing: 6px; color: #444; font-weight: 900; margin-top: 15px;">SUPREME V8 TITANIUM</p>
+        </div>
 
-    <section id="screen-auth" class="glass-box">
-        <h1 style="font-size: 45px; font-weight: 900; letter-spacing: -3px; line-height: 1;">RANK<br><span class="txt-neon">CLASSE</span></h1>
-        <p style="font-size: 10px; color: #666; font-weight: 800; margin-bottom: 30px;">ULTRA EDITION V8.0</p>
-        
-        <input type="text" id="reg-turma" class="input-mídia" placeholder="Nome da Turma">
-        <input type="text" id="reg-escola" class="input-mídia" placeholder="Nome da Escola">
-        <input type="text" id="reg-serie" class="input-mídia" placeholder="Série/Ano">
-        <input type="password" id="reg-pass" class="input-mídia" placeholder="Senha da Turma">
-        
-        <button class="mídia-btn btn-main" onclick="handleAuth()">ENTRAR NA ARENA</button>
-        <button class="mídia-btn btn-outline" onclick="showAdmin()">TERMINAL ADMIN</button>
+        <div id="login-form">
+            <input type="text" id="reg-turma" class="mídia-input" placeholder="NOME DA TURMA">
+            <input type="text" id="reg-escola" class="mídia-input" placeholder="NOME DA ESCOLA">
+            <input type="text" id="reg-insta" class="mídia-input" placeholder="LINK DO INSTAGRAM">
+            
+            <p class="admin-label">Escolha a Aura da Turma:</p>
+            <div class="aura-picker">
+                <div class="aura-opt" style="background: var(--neon);" onclick="setAura('aura-neon', this)"></div>
+                <div class="aura-opt" style="background: var(--ouro);" onclick="setAura('aura-ouro', this)"></div>
+                <div class="aura-opt" style="background: var(--sky);" onclick="setAura('aura-sky', this)"></div>
+                <div class="aura-opt" style="background: var(--danger);" onclick="setAura('aura-danger', this)"></div>
+            </div>
+
+            <input type="password" id="reg-pass" class="mídia-input" placeholder="SENHA">
+            
+            <button class="mídia-btn btn-neon" onclick="handleAuth()">ENTRAR NA ELITE</button>
+            <button class="mídia-btn btn-visit" onclick="visitorAccess()">ENTRAR COMO VISITANTE</button>
+            <button class="mídia-btn btn-dark" style="margin-top: 15px;" onclick="showAdminAccess()">ROOT PANEL</button>
+        </div>
     </section>
 
-    <section id="screen-rank" class="hidden">
+    <section id="rank-screen" class="hidden">
         
-        <div class="profile-container">
-            <div id="me-avatar" class="avatar-circle"></div>
-            <div class="edit-pencil" onclick="openDrawer()">✎</div>
-            <div>
-                <h2 id="me-name" style="font-size: 28px; letter-spacing: -1px;">Turma Name</h2>
-                <p id="me-sub" style="font-size: 11px; color: #555; font-weight: 700; text-transform: uppercase;">Escola • Série</p>
+        <div id="my-profile-area" class="profile-card">
+            <div id="me-pic" class="avatar-main"></div>
+            <h2 id="me-turma" style="font-size: 38px; letter-spacing: -2px;">---</h2>
+            <p id="me-specs" style="font-size: 11px; color: #555; font-weight: 800; text-transform: uppercase; margin-bottom: 20px;">---</p>
+            
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+                <div style="background: rgba(255,255,255,0.02); padding: 15px; border-radius: 20px; border: 1px solid var(--glass-border);">
+                    <b id="me-pts" class="txt-neon" style="font-size: 24px;">0</b>
+                    <span style="display:block; font-size: 8px; font-weight: 900; color: #444;">PONTOS GINCANA</span>
+                </div>
+                <div style="background: rgba(255,255,255,0.02); padding: 15px; border-radius: 20px; border: 1px solid var(--glass-border);">
+                    <b id="me-likes" style="font-size: 24px;">0</b>
+                    <span style="display:block; font-size: 8px; font-weight: 900; color: #444;">LIKES RECEBIDOS</span>
+                </div>
+                <div style="background: rgba(255,255,255,0.02); padding: 15px; border-radius: 20px; border: 1px solid var(--glass-border);">
+                    <b id="me-followers" style="font-size: 24px;">0</b>
+                    <span style="display:block; font-size: 8px; font-weight: 900; color: #444;">SEGUIDORES INSTA</span>
+                </div>
+                <div style="background: rgba(255,255,255,0.02); padding: 15px; border-radius: 20px; border: 1px solid var(--glass-border);">
+                    <b id="me-videos" style="font-size: 24px;">0</b>
+                    <span style="display:block; font-size: 8px; font-weight: 900; color: #444;">VÍDEOS POSTADOS</span>
+                </div>
             </div>
             
-            <div style="margin-top: 20px; display: flex; gap: 15px;">
-                <div style="flex: 1; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 20px; text-align: center;">
-                    <span style="display:block; font-size: 22px; font-weight: 900;" id="me-points">0</span>
-                    <span style="font-size: 9px; color: #444; font-weight: 900;">PONTOS</span>
-                </div>
-                <div style="flex: 1; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 20px; text-align: center;">
-                    <span style="display:block; font-size: 22px; font-weight: 900;" id="me-likes">0</span>
-                    <span style="font-size: 9px; color: #444; font-weight: 900;">CURTIDAS</span>
-                </div>
+            <button class="mídia-btn btn-dark" style="margin-top: 25px; height: 50px; font-size: 10px;" onclick="toggleDrawer(true)">EDITAR MEU MÍDIA</button>
+        </div>
+
+        <h3 style="font-size: 12px; font-weight: 900; color: #333; text-transform: uppercase; margin-bottom: 15px; padding-left: 10px;">Ranking Global da Elite</h3>
+        <div id="ranking-render"></div>
+
+        <div style="height: 120px;"></div>
+    </section>
+
+    <section id="admin-screen" class="hidden glass-box">
+        <h2 style="font-size: 32px; letter-spacing: -2px; margin-bottom: 30px;">ROOT <span class="txt-neon">CONTROL</span></h2>
+        
+        <div id="admin-user-list">
             </div>
-        </div>
 
-        <div id="render-list"></div>
-
-        <button class="mídia-btn btn-outline" style="margin-top: 30px;" onclick="logout()">SAIR DA CONTA</button>
+        <button class="mídia-btn btn-dark" onclick="exitAdmin()">FECHAR TERMINAL</button>
     </section>
 
-    <div id="profile-drawer">
-        <h2 style="font-size: 30px; letter-spacing: -1px; margin-bottom: 20px;">Editar <span class="txt-neon">Perfil</span></h2>
-        
-        <label style="font-size: 11px; color: #555; font-weight: 800;">URL DA FOTO DA TURMA</label>
-        <input type="text" id="edit-pic" class="input-mídia" placeholder="https://linkdafoto.com/foto.jpg">
-        
-        <label style="font-size: 11px; color: #555; font-weight: 800;">NOME DA TURMA</label>
-        <input type="text" id="edit-name" class="input-mídia">
-        
-        <label style="font-size: 11px; color: #555; font-weight: 800;">INSTAGRAM (LINK)</label>
-        <input type="text" id="edit-insta" class="input-mídia">
+    <div id="chat-trigger" onclick="toggleChat(true)" style="position: fixed; bottom: 30px; right: 30px; width: 75px; height: 75px; background: var(--neon); border-radius: 28px; display: flex; align-items: center; justify-content: center; font-size: 32px; box-shadow: 0 20px 40px rgba(0,255,136,0.4); z-index: 5000; cursor: pointer;">💬</div>
 
-        <button class="mídia-btn btn-main" style="margin-top: auto;" onclick="saveProfileChanges()">SALVAR ALTERAÇÕES</button>
-        <button class="mídia-btn btn-outline" onclick="closeDrawer()">CANCELAR</button>
-    </div>
-
-    <div id="chat-container">
-        <div class="chat-toggle-btn" onclick="toggleChat(true)">💬</div>
-    </div>
-
-    <div id="chat-modal">
-        <div style="padding: 20px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center;">
-            <b class="txt-neon">CHAT GLOBAL</b>
-            <span onclick="toggleChat(false)" style="font-weight: 900; cursor: pointer;">FECHAR [X]</span>
+    <div id="chat-window">
+        <div class="chat-header">
+            <div>
+                <b class="txt-neon" style="font-size: 24px; letter-spacing: -1px;">OMNI CHAT</b>
+                <p style="font-size: 9px; color: #444; font-weight: 900;">CONNECTED TO V8 SERVER</p>
+            </div>
+            <span onclick="toggleChat(false)" style="font-weight: 900; color: var(--danger); cursor: pointer;">[ SAIR ]</span>
         </div>
-        <div id="chat-msgs"></div>
-        <div style="padding: 20px; background: #0a0a0a; display: flex; gap: 10px;">
-            <input type="text" id="chat-ipt" class="input-mídia" style="margin:0;" placeholder="Mande sua mensagem...">
-            <button onclick="sendChat()" style="background:var(--neon); border:none; border-radius:15px; padding: 0 20px; font-weight: 900;">></button>
+        <div id="chat-feed"></div>
+        <div style="padding: 25px; background: #080808; display: flex; gap: 15px; border-top: 1px solid #111;">
+            <input type="text" id="chat-ipt" class="mídia-input" style="margin: 0; border-radius: 20px;" placeholder="Diga algo...">
+            <button onclick="sendMsg()" class="mídia-btn btn-neon" style="width: 80px; padding: 0; border-radius: 20px;">➤</button>
         </div>
     </div>
-
-    <section id="screen-admin" class="hidden admin-section">
-        <h2 style="font-size: 32px; letter-spacing: -2px; margin-bottom: 25px;">ROOT <span class="txt-neon">CONTROL</span></h2>
-        
-        <div class="adm-card" style="border-left: 4px solid var(--danger);">
-            <p style="font-size: 12px; font-weight: 800; margin-bottom: 10px;">AÇÕES GLOBAIS</p>
-            <button class="mídia-btn" style="background: var(--danger); font-size: 11px; padding: 15px;" onclick="clearGlobalChat()">LIMPAR TODO O CHAT</button>
-        </div>
-
-        <div id="admin-render-users"></div>
-        
-        <button class="mídia-btn btn-outline" onclick="location.reload()">FECHAR ADMIN</button>
-    </section>
 
 </div>
 
@@ -305,125 +347,137 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
 <script>
-    // CONFIGURAÇÃO FIREBASE
-    const firebaseConfig = {
-        apiKey: "SUA_API_KEY",
+    // ============================================================
+    // CONFIGURAÇÃO CORE & LÓGICA V8
+    // ============================================================
+    const config = {
+        apiKey: "AIzaSyAs-SUA-CHAVE-AQUI", 
         databaseURL: "https://gincanaescola-d4f8c-default-rtdb.firebaseio.com/",
         projectId: "gincanaescola-d4f8c"
     };
-    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    if (!firebase.apps.length) firebase.initializeApp(config);
     const db = firebase.database();
 
     let myUser = null;
+    let selectedAura = 'aura-neon';
+    let isVisitor = false;
 
-    // --- SISTEMA DE GAVETA (DRAWER) ---
-    function openDrawer() {
-        document.getElementById('profile-drawer').classList.add('open');
-        document.getElementById('overlay').style.display = 'block';
-        
-        // Preencher campos
-        document.getElementById('edit-name').value = myUser.turma;
-        document.getElementById('edit-pic').value = myUser.pic || "";
-        document.getElementById('edit-insta').value = myUser.insta || "";
-    }
-
-    function closeDrawer() {
-        document.getElementById('profile-drawer').classList.remove('open');
-        document.getElementById('overlay').style.display = 'none';
-    }
-
-    // --- AUTENTICAÇÃO E PERSISTÊNCIA ---
+    // --- AUTO LOGIN (AQUI SALVA AS INFORMAÇÕES) ---
     window.onload = () => {
-        const saved = localStorage.getItem('omni_v8_user');
-        if(saved) {
-            myUser = JSON.parse(saved);
-            startApp();
+        const savedSession = localStorage.getItem('omni_v8_session');
+        if(savedSession) {
+            myUser = JSON.parse(savedSession);
+            launch();
         }
+    };
+
+    function setAura(aura, el) {
+        selectedAura = aura;
+        document.querySelectorAll('.aura-opt').forEach(opt => opt.style.borderColor = 'transparent');
+        el.style.borderColor = '#fff';
     }
 
+    // --- FUNÇÃO DE LOGIN E CADASTRO ---
     function handleAuth() {
-        const turma = document.getElementById('reg-turma').value.trim();
-        const pass = document.getElementById('reg-pass').value;
-        const escola = document.getElementById('reg-escola').value;
-        const serie = document.getElementById('reg-serie').value;
+        const t = document.getElementById('reg-turma').value.trim();
+        const e = document.getElementById('reg-escola').value.trim();
+        const i = document.getElementById('reg-insta').value.trim();
+        const p = document.getElementById('reg-pass').value;
 
-        if(!turma || !pass) return alert("Preencha Turma e Senha!");
+        if(!t || !p) return alert("Erro: Nome da Turma e Senha são obrigatórios!");
 
-        db.ref('ranking/' + turma).once('value', snap => {
-            const exist = snap.val();
-            if(exist && exist.pass !== pass) return alert("Senha incorreta!");
+        db.ref('ranking/' + t).once('value', snap => {
+            const data = snap.val();
+            
+            // Se já existe e a senha tá errada
+            if(data && data.pass !== p) return alert("Senha incorreta para esta turma!");
 
-            const payload = exist ? exist : {
-                turma, pass, escola, serie,
-                pontos: 0, likes: 0, lastSeen: Date.now(),
-                pic: '', insta: '', seguidores: 0, videos: 0
+            // Criar ou Carregar
+            const userObj = data ? data : {
+                turma: t, escola: e, insta: i, pass: p, aura: selectedAura,
+                pontos: 0, likes: 0, seguidores: 0, videos: 0,
+                pic: '', lastSeen: Date.now()
             };
 
-            db.ref('ranking/' + turma).update(payload).then(() => {
-                myUser = payload;
-                localStorage.setItem('omni_v8_user', JSON.stringify(payload));
-                startApp();
+            db.ref('ranking/' + t).update(userObj).then(() => {
+                myUser = userObj;
+                localStorage.setItem('omni_v8_session', JSON.stringify(userObj));
+                launch();
             });
         });
     }
 
-    function startApp() {
-        document.getElementById('screen-auth').classList.add('hidden');
-        document.getElementById('screen-rank').classList.remove('hidden');
-        document.getElementById('chat-container').classList.remove('hidden');
-        
-        // Heartbeat
-        setInterval(() => {
-            db.ref('ranking/' + myUser.turma).update({ lastSeen: Date.now() });
-        }, 10000);
-
-        syncData();
-        syncChat();
+    function visitorAccess() {
+        isVisitor = true;
+        document.getElementById('auth-screen').classList.add('hidden');
+        document.getElementById('rank-screen').classList.remove('hidden');
+        document.getElementById('my-profile-area').classList.add('hidden');
+        document.getElementById('chat-trigger').classList.add('hidden');
+        loadRanking();
     }
 
-    // --- SINCRONIZAÇÃO DE RANKING ---
-    function syncData() {
+    function launch() {
+        document.getElementById('auth-screen').classList.add('hidden');
+        document.getElementById('rank-screen').classList.remove('hidden');
+        
+        // Sistema de Status Online
+        setInterval(() => {
+            if(!isVisitor) db.ref('ranking/' + myUser.turma).update({ lastSeen: Date.now() });
+        }, 10000);
+
+        loadRanking();
+        loadChat();
+    }
+
+    // --- CARREGAMENTO DO RANKING (PARTE VITAL) ---
+    function loadRanking() {
         db.ref('ranking').on('value', snap => {
+            const area = document.getElementById('ranking-render');
             const data = snap.val();
             if(!data) return;
 
-            const listArea = document.getElementById('render-list');
-            const arr = Object.values(data).sort((a,b) => b.pontos - a.pontos);
-            
-            listArea.innerHTML = "";
-            arr.forEach((item, i) => {
-                const isOnline = (Date.now() - (item.lastSeen || 0)) < 40000;
-                const timeStr = isOnline ? "ONLINE AGORA" : "OFFLINE";
-                
-                // Medalhas 3D
-                let medal = `<span style="font-weight:900; color:#333;">#${i+1}</span>`;
-                if(i === 0) medal = `<span class="medal-3d">🥇</span>`;
-                if(i === 1) medal = `<span class="medal-3d">🥈</span>`;
-                if(i === 2) medal = `<span class="medal-3d">🥉</span>`;
+            const list = Object.values(data).sort((a,b) => b.pontos - a.pontos);
+            area.innerHTML = "";
 
-                // Update Header se for eu
-                if(myUser && item.turma === myUser.turma) {
-                    document.getElementById('me-name').innerText = item.turma;
-                    document.getElementById('me-sub').innerText = `${item.escola} • ${item.serie}`;
-                    document.getElementById('me-points').innerText = item.pontos;
-                    document.getElementById('me-likes').innerText = item.likes;
-                    if(item.pic) document.getElementById('me-avatar').style.backgroundImage = `url(${item.pic})`;
+            list.forEach((u, index) => {
+                const isOnline = (Date.now() - (u.lastSeen || 0)) < 30000;
+                
+                // Atualiza meu perfil topo se for eu
+                if(myUser && u.turma === myUser.turma) {
+                    document.getElementById('me-pts').innerText = u.pontos;
+                    document.getElementById('me-likes').innerText = u.likes;
+                    document.getElementById('me-followers').innerText = u.seguidores;
+                    document.getElementById('me-videos').innerText = u.videos;
+                    document.getElementById('me-turma').innerText = u.turma;
+                    document.getElementById('me-specs').innerText = u.escola;
+                    if(u.pic) {
+                        document.getElementById('me-pic').style.backgroundImage = `url(${u.pic})`;
+                        document.getElementById('me-pic').className = `avatar-main ${u.aura}`;
+                    }
                 }
 
-                listArea.innerHTML += `
-                    <div class="rank-card">
-                        <div class="rank-info-main">
-                            <div style="text-align:center; min-width:40px;">${medal}</div>
-                            <div class="avatar-circle" style="width:50px; height:50px; margin:0; border-width:2px; background-image:url(${item.pic || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'})"></div>
+                // Renderiza a linha do ranking
+                let medal = `<span style="font-weight:900; color:#333;">#${index+1}</span>`;
+                if(index === 0) medal = `<span class="medal-icon">🥇</span>`;
+                if(index === 1) medal = `<span class="medal-icon">🥈</span>`;
+                if(index === 2) medal = `<span class="medal-icon">🥉</span>`;
+
+                area.innerHTML += `
+                    <div class="rank-row ${u.aura}">
+                        <div class="medal-slot">${medal}</div>
+                        <div style="flex: 1; display: flex; align-items: center; gap: 15px;">
+                            <div style="width:55px; height:55px; border-radius:18px; background-image:url(${u.pic || 'https://i.pinimg.com/736x/8b/16/7a/8b167af653c2399dd93b952a48740620.jpg'}); background-size:cover; border:1px solid var(--glass-border);"></div>
                             <div>
-                                <b style="font-size:16px; display:block;">${item.turma}</b>
-                                <span style="font-size:9px; color:${isOnline ? 'var(--neon)' : '#555'}; font-weight:900;">${timeStr}</span>
-                                <p style="font-size:9px; color:#444;">${item.escola} | ${item.serie}</p>
+                                <b style="font-size: 17px; display: block; letter-spacing:-1px;">${u.turma}</b>
+                                <div class="status-badge ${isOnline ? 'online' : 'offline'}">
+                                    <span class="dot ${isOnline ? 'dot-online' : ''}"></span>
+                                    ${isOnline ? 'Mídia Agora' : 'Offline'}
+                                </div>
                             </div>
                         </div>
-                        <div style="text-align:right">
-                            <span style="font-size:22px; font-weight:900; color:var(--ouro); display:block;">${item.pontos}</span>
-                            <button onclick="giveLike('${item.turma}')" style="background:none; border:none; color:#ff4444; font-size:12px; font-weight:800;">🔥 ${item.likes}</button>
+                        <div style="text-align: right;">
+                            <b class="txt-neon" style="font-size: 22px; display: block; line-height:1;">${u.pontos}</b>
+                            <span style="font-size: 8px; color: #444; font-weight: 900;">PONTOS</span>
                         </div>
                     </div>
                 `;
@@ -431,99 +485,4 @@
         });
     }
 
-    // --- EDIÇÃO DE PERFIL ---
-    function saveProfileChanges() {
-        const newName = document.getElementById('edit-name').value;
-        const newPic = document.getElementById('edit-pic').value;
-        const newInsta = document.getElementById('edit-insta').value;
-
-        db.ref('ranking/' + myUser.turma).update({
-            turma: newName,
-            pic: newPic,
-            insta: newInsta
-        }).then(() => {
-            myUser.turma = newName;
-            myUser.pic = newPic;
-            myUser.insta = newInsta;
-            localStorage.setItem('omni_v8_user', JSON.stringify(myUser));
-            closeDrawer();
-            alert("Perfil Atualizado, Mídia!");
-        });
-    }
-
-    // --- CHAT SYSTEM ---
-    function toggleChat(open) {
-        document.getElementById('chat-modal').style.display = open ? 'flex' : 'none';
-    }
-
-    function sendChat() {
-        const ipt = document.getElementById('chat-ipt');
-        if(!ipt.value) return;
-        db.ref('omni_chat').push({ u: myUser.turma, t: ipt.value, ts: Date.now() });
-        ipt.value = "";
-    }
-
-    function syncChat() {
-        db.ref('omni_chat').limitToLast(40).on('value', snap => {
-            const area = document.getElementById('chat-msgs');
-            area.innerHTML = "";
-            snap.forEach(m => {
-                const msg = m.val();
-                area.innerHTML += `
-                    <div class="chat-bubble">
-                        <b>@${msg.u}</b><br>
-                        <span style="font-size:13px;">${msg.t}</span>
-                    </div>
-                `;
-            });
-            area.scrollTop = area.scrollHeight;
-        });
-    }
-
-    // --- ADMIN DASHBOARD ---
-    function showAdmin() {
-        const p = prompt("SENHA DE ACESSO ROOT:");
-        if(p === "admin123") {
-            document.getElementById('screen-auth').classList.add('hidden');
-            document.getElementById('screen-admin').classList.remove('hidden');
-            renderAdmin();
-        }
-    }
-
-    function renderAdmin() {
-        db.ref('ranking').on('value', snap => {
-            const area = document.getElementById('admin-render-users');
-            area.innerHTML = "";
-            const data = snap.val();
-            
-            Object.values(data).forEach(user => {
-                // Lógica da Borda Verde (se atualizado nos últimos 10s)
-                const isRecentlyUpdated = (Date.now() - (user.lastSeen || 0)) < 10000;
-
-                area.innerHTML += `
-                    <div class="adm-card ${isRecentlyUpdated ? 'admin-active' : ''}">
-                        <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <b>${user.turma}</b>
-                            <span style="font-size:10px; color:#555;">ID: ${user.pass}</span>
-                        </div>
-                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:15px;">
-                            <button class="mídia-btn btn-main" style="padding:10px; font-size:10px;" onclick="modPoints('${user.turma}', 10)">+10 PTS</button>
-                            <button class="mídia-btn btn-main" style="padding:10px; font-size:10px;" onclick="modPoints('${user.turma}', -10)">-10 PTS</button>
-                            <button class="mídia-btn btn-outline" style="padding:10px; font-size:10px;" onclick="deleteTurma('${user.turma}')">EXCLUIR</button>
-                            <button class="mídia-btn btn-outline" style="padding:10px; font-size:10px;" onclick="window.open('${user.insta}')">INSTA</button>
-                        </div>
-                    </div>
-                `;
-            });
-        });
-    }
-
-    function modPoints(t, v) { db.ref('ranking/' + t + '/pontos').transaction(c => (c || 0) + v); }
-    function deleteTurma(t) { if(confirm("Apagar " + t + "?")) db.ref('ranking/' + t).remove(); }
-    function clearGlobalChat() { if(confirm("Limpar chat?")) db.ref('omni_chat').remove(); }
-    function giveLike(t) { db.ref('ranking/' + t + '/likes').transaction(c => (c || 0) + 1); }
-    function logout() { localStorage.clear(); location.reload(); }
-
-</script>
-</body>
-</html>
+    // CONTINUAÇÃO NO PRÓXIMO BLOCO: ADMIN PANEL, CHAT E EDIT...

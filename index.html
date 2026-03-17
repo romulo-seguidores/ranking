@@ -193,13 +193,11 @@
             db.ref('ranking/' + t).once('value', snap => {
                 let user = snap.val();
                 
-                // Caso a conta exista e a senha esteja errada
                 if(user && user.pass !== p) {
                     alert("Senha incorreta!");
                     return;
                 }
                 
-                // Caso a conta não exista, cria uma nova
                 if(!user) {
                     user = {
                         turma: t, pass: p, escola: e, serie: s,
@@ -211,7 +209,6 @@
                 
                 sessao = user;
                 
-                // ATUALIZA O STORAGE COM OS DADOS ATUAIS PARA PERSISTIR SEMPRE
                 const dadosParaSalvar = { turma: t, pass: p, escola: e, serie: s, insta: i, aura: a };
                 localStorage.setItem('user_v10_persist', JSON.stringify(dadosParaSalvar));
                 
@@ -361,7 +358,7 @@
         function limparTudoChat() { if(confirm("Limpar mensagens?")) db.ref('elite_chat').remove(); }
         
         function sair() { 
-            localStorage.removeItem('user_v10_persist'); 
+            // Apenas recarrega a página. Os dados do localStorage permanecem para o preenchimento automático.
             window.location.reload(); 
         }
     </script>

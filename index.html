@@ -159,24 +159,19 @@
 
         let sessao = null;
 
-        // AUTO-LOGIN E PERSISTÊNCIA REFORÇADA
+        // PREENCHIMENTO AUTOMÁTICO (SEM LOGIN DIRETO)
         window.addEventListener('load', () => {
             const data = localStorage.getItem('user_v10_persist');
             if(data) {
                 const p = JSON.parse(data);
                 
-                // Preenche os campos visualmente IMEDIATAMENTE
+                // Apenas preenche os campos para facilitar
                 document.getElementById('in-turma').value = p.turma || "";
                 document.getElementById('in-pass').value = p.pass || "";
                 document.getElementById('in-serie').value = p.serie || "";
                 document.getElementById('in-escola').value = p.escola || "";
                 document.getElementById('in-insta').value = p.insta || "";
                 document.getElementById('in-aura').value = p.aura || "aura-elite";
-
-                // Tenta o login automático garantindo que o Firebase carregou
-                if(p.turma && p.pass) {
-                   fazerLogin();
-                }
             }
         });
 
@@ -358,7 +353,6 @@
         function limparTudoChat() { if(confirm("Limpar mensagens?")) db.ref('elite_chat').remove(); }
         
         function sair() { 
-            // Apenas recarrega a página. Os dados do localStorage permanecem para o preenchimento automático.
             window.location.reload(); 
         }
     </script>

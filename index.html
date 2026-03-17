@@ -3,481 +3,238 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <title>RANK CLASSE V8 - TITANIUM OMNI EDITION</title>
+    <title>RANK CLASSE V8 - SUPREME EDITION</title>
 
     <style>
         /* ============================================================
-           SISTEMA VISUAL "MÍDIA" - DESIGN DE ALTA PERFORMANCE
+           DESIGN SISTEMA MÍDIA V8 - O RETORNO DA ESTÉTICA PERFEITA
            ============================================================ */
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
 
         :root {
-            --ouro: #ffd700;
-            --prata: #e0e0e0;
-            --bronze: #cd7f32;
             --neon: #00ff88;
-            --sky: #00d4ff;
-            --danger: #ff4444;
-            --warning: #ffaa00;
-            --bg-master: #030303;
-            --glass-base: rgba(255, 255, 255, 0.02);
-            --glass-border: rgba(255, 255, 255, 0.07);
-            --drawer-bg: #080808;
-            --card-bg: rgba(10, 10, 10, 0.98);
+            --ouro: #ffd700;
+            --bg: #050505;
+            --card: rgba(20, 20, 20, 0.8);
+            --border: rgba(255, 255, 255, 0.1);
         }
 
-        /* RESET TOTAL */
-        * {
-            margin: 0; padding: 0; box-sizing: border-box;
-            outline: none; font-family: 'Poppins', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; outline: none; }
 
         body {
-            background-color: var(--bg-master);
-            color: #ffffff;
+            background-color: var(--bg);
+            color: #fff;
+            background-image: radial-gradient(circle at top right, rgba(0, 255, 136, 0.05), transparent);
             min-height: 100vh;
-            overflow-x: hidden;
-            background-image: 
-                radial-gradient(circle at 5% 5%, rgba(0, 255, 136, 0.04) 0%, transparent 35%),
-                radial-gradient(circle at 95% 95%, rgba(0, 212, 255, 0.04) 0%, transparent 35%);
         }
 
-        /* SCROLLBAR ESTILO MÍDIA */
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: #000; }
-        ::-webkit-scrollbar-thumb { background: var(--neon); border-radius: 10px; }
+        #app { width: 100%; max-width: 500px; margin: 0 auto; padding: 20px; }
 
-        #app {
-            width: 100%;
-            max-width: 550px;
-            margin: 0 auto;
-            padding: 15px;
-            position: relative;
+        /* GLASSMORPHISM CARDS */
+        .glass {
+            background: var(--card);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            padding: 25px;
+            margin-bottom: 20px;
+            animation: fadeIn 0.5s ease;
         }
 
-        /* AURAS DE TURMA (SISTEMA DE CORES PERSONALIZADAS) */
-        .aura-neon { filter: drop-shadow(0 0 15px var(--neon)); border-color: var(--neon) !important; }
-        .aura-ouro { filter: drop-shadow(0 0 15px var(--ouro)); border-color: var(--ouro) !important; }
-        .aura-sky { filter: drop-shadow(0 0 15px var(--sky)); border-color: var(--sky) !important; }
-        .aura-danger { filter: drop-shadow(0 0 15px var(--danger)); border-color: var(--danger) !important; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* ANIMAÇÕES CINEMATOGRÁFICAS */
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(60px) scale(0.9); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
+        /* INPUTS & BUTTONS STYLE */
+        .mídia-input {
+            width: 100%; background: #000; border: 1px solid #222;
+            padding: 18px; border-radius: 15px; color: #fff; margin-bottom: 12px;
         }
 
-        @keyframes pulseOnline {
-            0% { transform: scale(1); opacity: 0.5; }
-            50% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 15px var(--neon); }
-            100% { transform: scale(1); opacity: 0.5; }
+        .btn-neon {
+            width: 100%; padding: 18px; border-radius: 15px; border: none;
+            background: var(--neon); color: #000; font-weight: 800;
+            text-transform: uppercase; cursor: pointer; transition: 0.3s;
         }
 
-        @keyframes floating {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
-        }
-
-        /* CONTAINERS GLASSMORPHISM */
-        .glass-box {
-            background: var(--glass-base);
-            backdrop-filter: blur(50px);
-            -webkit-backdrop-filter: blur(50px);
-            border: 1px solid var(--glass-border);
-            border-radius: 45px;
-            padding: 35px;
-            box-shadow: 0 40px 100px rgba(0,0,0,0.7);
-            animation: slideUp 0.8s cubic-bezier(0.2, 1, 0.3, 1);
-        }
-
-        /* HEADER & PERFIL */
-        .profile-card {
-            background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(0,0,0,0));
-            border-radius: 40px;
-            padding: 30px;
-            border: 1px solid var(--glass-border);
-            margin-bottom: 25px;
-            text-align: center;
-            position: relative;
-        }
-
-        .avatar-main {
-            width: 120px;
-            height: 120px;
-            border-radius: 40px;
-            background-size: cover;
-            background-position: center;
-            border: 3px solid var(--neon);
-            margin: 0 auto 15px auto;
-            box-shadow: 0 20px 40px rgba(0,255,136,0.15);
-            transition: 0.5s;
-        }
+        .btn-neon:active { transform: scale(0.95); }
 
         /* RANKING ROWS */
         .rank-row {
-            background: var(--card-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 35px;
-            padding: 22px;
-            margin-bottom: 20px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 15px;
             display: flex;
             align-items: center;
-            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-        }
-
-        .rank-row:hover { transform: scale(1.03); border-color: #fff; }
-
-        .medal-slot { width: 60px; display: flex; justify-content: center; }
-        .medal-icon { font-size: 38px; animation: floating 3s infinite ease-in-out; }
-
-        /* STATUS TAGS */
-        .status-badge {
-            font-size: 9px;
-            font-weight: 900;
-            text-transform: uppercase;
-            padding: 5px 12px;
-            border-radius: 12px;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .online { color: var(--neon); background: rgba(0,255,136,0.1); }
-        .offline { color: var(--danger); background: rgba(255,68,68,0.1); }
-        .dot { width: 7px; height: 7px; border-radius: 50%; }
-        .dot-online { background: var(--neon); animation: pulseOnline 1.5s infinite; }
-
-        /* INPUTS & BOTÕES MÍDIA */
-        .mídia-input {
-            width: 100%;
-            background: #0a0a0a;
-            border: 2px solid #1a1a1a;
-            padding: 22px 28px;
-            border-radius: 25px;
-            color: #fff;
-            margin-bottom: 18px;
-            font-size: 15px;
+            margin-bottom: 12px;
             transition: 0.3s;
         }
 
-        .mídia-input:focus { border-color: var(--neon); background: #000; box-shadow: 0 0 25px rgba(0,255,136,0.1); }
+        .rank-row:hover { border-color: var(--neon); }
 
-        .mídia-btn {
-            width: 100%;
-            padding: 22px;
-            border-radius: 25px;
-            border: none;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            cursor: pointer;
-            transition: 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
+        .avatar {
+            width: 50px; height: 50px; border-radius: 15px;
+            background-size: cover; background-position: center;
+            border: 2px solid var(--neon); margin-right: 15px;
         }
 
-        .btn-neon { background: var(--neon); color: #000; box-shadow: 0 20px 40px rgba(0,255,136,0.3); }
-        .btn-dark { background: transparent; border: 2px solid #333; color: #fff; }
-        .btn-visit { background: #1a1a1a; color: #777; font-size: 11px; margin-top: 10px; }
-
-        /* ADMIN SECTION */
-        .admin-card {
-            background: rgba(255,255,255,0.02);
-            border: 1px solid #222;
-            border-radius: 35px;
-            padding: 25px;
-            margin-bottom: 25px;
+        .status-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            display: inline-block; margin-right: 5px;
         }
 
-        .admin-stat-edit {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 15px;
+        .online { background: var(--neon); box-shadow: 0 0 10px var(--neon); }
+        .offline { background: #555; }
+
+        /* CHAT FLOATING */
+        #chat-btn {
+            position: fixed; bottom: 30px; right: 30px;
+            width: 60px; height: 60px; background: var(--neon);
+            border-radius: 20px; display: flex; align-items: center;
+            justify-content: center; font-size: 25px; cursor: pointer; z-index: 100;
         }
 
-        .admin-label { font-size: 9px; font-weight: 900; color: #555; margin-left: 10px; text-transform: uppercase; }
-
-        /* CHAT SYSTEM */
-        #chat-window {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: #000;
-            z-index: 9999;
-            display: none;
-            flex-direction: column;
+        #chat-box {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 200; display: none; flex-direction: column;
         }
 
-        .chat-header {
-            padding: 30px;
-            border-bottom: 1px solid #111;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        /* ADMIN PANEL DETAILS */
+        .admin-edit-box {
+            background: #111; padding: 15px; border-radius: 15px; margin-top: 10px;
         }
 
-        #chat-feed {
-            flex: 1;
-            padding: 25px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .msg-bubble {
-            background: #0a0a0a;
-            padding: 18px 22px;
-            border-radius: 25px;
-            max-width: 85%;
-            border: 1px solid #1a1a1a;
-            position: relative;
-        }
-
-        .msg-bubble b { color: var(--neon); font-size: 11px; display: block; margin-bottom: 4px; }
-
-        /* UTILS */
-        .hidden { display: none !important; }
-        .txt-neon { color: var(--neon); }
-        .aura-picker { display: flex; gap: 10px; margin-bottom: 20px; justify-content: center; }
-        .aura-opt { width: 35px; height: 35px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; }
-
+        .hidden { display: none; }
     </style>
 </head>
 <body>
 
 <div id="app">
 
-    <section id="auth-screen" class="glass-box">
-        <div style="text-align: center; margin-bottom: 40px;">
-            <h1 style="font-size: 50px; font-weight: 900; letter-spacing: -3px; line-height: 0.85;">OMNI<br><span class="txt-neon">RANK</span></h1>
-            <p style="font-size: 10px; letter-spacing: 6px; color: #444; font-weight: 900; margin-top: 15px;">SUPREME V8 TITANIUM</p>
-        </div>
-
-        <div id="login-form">
-            <input type="text" id="reg-turma" class="mídia-input" placeholder="NOME DA TURMA">
-            <input type="text" id="reg-escola" class="mídia-input" placeholder="NOME DA ESCOLA">
-            <input type="text" id="reg-insta" class="mídia-input" placeholder="LINK DO INSTAGRAM">
-            
-            <p class="admin-label">Escolha a Aura da Turma:</p>
-            <div class="aura-picker">
-                <div class="aura-opt" style="background: var(--neon);" onclick="setAura('aura-neon', this)"></div>
-                <div class="aura-opt" style="background: var(--ouro);" onclick="setAura('aura-ouro', this)"></div>
-                <div class="aura-opt" style="background: var(--sky);" onclick="setAura('aura-sky', this)"></div>
-                <div class="aura-opt" style="background: var(--danger);" onclick="setAura('aura-danger', this)"></div>
-            </div>
-
-            <input type="password" id="reg-pass" class="mídia-input" placeholder="SENHA">
-            
-            <button class="mídia-btn btn-neon" onclick="handleAuth()">ENTRAR NA ELITE</button>
-            <button class="mídia-btn btn-visit" onclick="visitorAccess()">ENTRAR COMO VISITANTE</button>
-            <button class="mídia-btn btn-dark" style="margin-top: 15px;" onclick="showAdminAccess()">ROOT PANEL</button>
-        </div>
+    <section id="login-screen" class="glass">
+        <h1 style="text-align: center; margin-bottom: 30px; font-size: 40px; letter-spacing: -2px;">OMNI<span style="color:var(--neon)">RANK</span></h1>
+        <input type="text" id="log-turma" class="mídia-input" placeholder="NOME DA TURMA">
+        <input type="text" id="log-insta" class="mídia-input" placeholder="LINK DO INSTAGRAM">
+        <input type="password" id="log-pass" class="mídia-input" placeholder="SENHA">
+        <button class="btn-neon" onclick="entrar()">ENTRAR NO RANK</button>
+        <p onclick="irAdmin()" style="text-align: center; font-size: 10px; margin-top: 20px; color: #444; cursor: pointer;">PAINEL ADMIN</p>
     </section>
 
     <section id="rank-screen" class="hidden">
-        
-        <div id="my-profile-area" class="profile-card">
-            <div id="me-pic" class="avatar-main"></div>
-            <h2 id="me-turma" style="font-size: 38px; letter-spacing: -2px;">---</h2>
-            <p id="me-specs" style="font-size: 11px; color: #555; font-weight: 800; text-transform: uppercase; margin-bottom: 20px;">---</p>
-            
-            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
-                <div style="background: rgba(255,255,255,0.02); padding: 15px; border-radius: 20px; border: 1px solid var(--glass-border);">
-                    <b id="me-pts" class="txt-neon" style="font-size: 24px;">0</b>
-                    <span style="display:block; font-size: 8px; font-weight: 900; color: #444;">PONTOS GINCANA</span>
-                </div>
-                <div style="background: rgba(255,255,255,0.02); padding: 15px; border-radius: 20px; border: 1px solid var(--glass-border);">
-                    <b id="me-likes" style="font-size: 24px;">0</b>
-                    <span style="display:block; font-size: 8px; font-weight: 900; color: #444;">LIKES RECEBIDOS</span>
-                </div>
-                <div style="background: rgba(255,255,255,0.02); padding: 15px; border-radius: 20px; border: 1px solid var(--glass-border);">
-                    <b id="me-followers" style="font-size: 24px;">0</b>
-                    <span style="display:block; font-size: 8px; font-weight: 900; color: #444;">SEGUIDORES INSTA</span>
-                </div>
-                <div style="background: rgba(255,255,255,0.02); padding: 15px; border-radius: 20px; border: 1px solid var(--glass-border);">
-                    <b id="me-videos" style="font-size: 24px;">0</b>
-                    <span style="display:block; font-size: 8px; font-weight: 900; color: #444;">VÍDEOS POSTADOS</span>
-                </div>
+        <div class="glass" style="text-align: center;">
+            <div id="me-avatar" class="avatar" style="margin: 0 auto 15px auto; width: 80px; height: 80px;"></div>
+            <h2 id="me-nome">TURMA ---</h2>
+            <div style="display: flex; justify-content: space-around; margin-top: 20px;">
+                <div><b id="me-pts" style="color:var(--neon)">0</b><br><small>PTS</small></div>
+                <div><b id="me-seg">0</b><br><small>SEG</small></div>
+                <div><b id="me-vid">0</b><br><small>VIDS</small></div>
             </div>
-            
-            <button class="mídia-btn btn-dark" style="margin-top: 25px; height: 50px; font-size: 10px;" onclick="toggleDrawer(true)">EDITAR MEU MÍDIA</button>
         </div>
 
-        <h3 style="font-size: 12px; font-weight: 900; color: #333; text-transform: uppercase; margin-bottom: 15px; padding-left: 10px;">Ranking Global da Elite</h3>
-        <div id="ranking-render"></div>
-
-        <div style="height: 120px;"></div>
+        <div id="ranking-list"></div>
     </section>
 
-    <section id="admin-screen" class="hidden glass-box">
-        <h2 style="font-size: 32px; letter-spacing: -2px; margin-bottom: 30px;">ROOT <span class="txt-neon">CONTROL</span></h2>
-        
-        <div id="admin-user-list">
-            </div>
-
-        <button class="mídia-btn btn-dark" onclick="exitAdmin()">FECHAR TERMINAL</button>
+    <section id="admin-screen" class="hidden glass">
+        <h2>CONTROLE MÍDIA</h2>
+        <div id="admin-list" style="margin-top: 20px;"></div>
+        <button class="btn-neon" style="background:#222; color:#fff; margin-top: 20px;" onclick="voltar()">SAIR DO ADMIN</button>
     </section>
 
-    <div id="chat-trigger" onclick="toggleChat(true)" style="position: fixed; bottom: 30px; right: 30px; width: 75px; height: 75px; background: var(--neon); border-radius: 28px; display: flex; align-items: center; justify-content: center; font-size: 32px; box-shadow: 0 20px 40px rgba(0,255,136,0.4); z-index: 5000; cursor: pointer;">💬</div>
+</div>
 
-    <div id="chat-window">
-        <div class="chat-header">
-            <div>
-                <b class="txt-neon" style="font-size: 24px; letter-spacing: -1px;">OMNI CHAT</b>
-                <p style="font-size: 9px; color: #444; font-weight: 900;">CONNECTED TO V8 SERVER</p>
-            </div>
-            <span onclick="toggleChat(false)" style="font-weight: 900; color: var(--danger); cursor: pointer;">[ SAIR ]</span>
-        </div>
-        <div id="chat-feed"></div>
-        <div style="padding: 25px; background: #080808; display: flex; gap: 15px; border-top: 1px solid #111;">
-            <input type="text" id="chat-ipt" class="mídia-input" style="margin: 0; border-radius: 20px;" placeholder="Diga algo...">
-            <button onclick="sendMsg()" class="mídia-btn btn-neon" style="width: 80px; padding: 0; border-radius: 20px;">➤</button>
-        </div>
+<div id="chat-btn" onclick="abrirChat()">💬</div>
+<div id="chat-box">
+    <div style="padding: 20px; border-bottom: 1px solid #222; display: flex; justify-content: space-between;">
+        <b>CHAT GLOBAL</b> <span onclick="fecharChat()">[X]</span>
     </div>
-
+    <div id="chat-content" style="flex: 1; overflow-y: auto; padding: 20px;"></div>
+    <div style="padding: 20px; display: flex; gap: 10px;">
+        <input type="text" id="chat-msg" class="mídia-input" style="margin: 0;" placeholder="Mande a braba...">
+        <button class="btn-neon" style="width: 60px;" onclick="enviarMensagem()">></button>
+    </div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
 <script>
-    // ============================================================
-    // CONFIGURAÇÃO CORE & LÓGICA V8
-    // ============================================================
-    const config = {
-        apiKey: "AIzaSyAs-SUA-CHAVE-AQUI", 
-        databaseURL: "https://gincanaescola-d4f8c-default-rtdb.firebaseio.com/",
-        projectId: "gincanaescola-d4f8c"
+    const firebaseConfig = {
+        databaseURL: "https://gincanaescola-d4f8c-default-rtdb.firebaseio.com/"
     };
-    if (!firebase.apps.length) firebase.initializeApp(config);
+    firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    let myUser = null;
-    let selectedAura = 'aura-neon';
-    let isVisitor = false;
+    let minhaTurma = null;
 
-    // --- AUTO LOGIN (AQUI SALVA AS INFORMAÇÕES) ---
+    // AUTO-LOGIN (SALVA AS INFORMAÇÕES)
     window.onload = () => {
-        const savedSession = localStorage.getItem('omni_v8_session');
-        if(savedSession) {
-            myUser = JSON.parse(savedSession);
-            launch();
+        const salvo = localStorage.getItem('omni_user');
+        if(salvo) {
+            minhaTurma = JSON.parse(salvo);
+            logarSucesso();
         }
-    };
-
-    function setAura(aura, el) {
-        selectedAura = aura;
-        document.querySelectorAll('.aura-opt').forEach(opt => opt.style.borderColor = 'transparent');
-        el.style.borderColor = '#fff';
     }
 
-    // --- FUNÇÃO DE LOGIN E CADASTRO ---
-    function handleAuth() {
-        const t = document.getElementById('reg-turma').value.trim();
-        const e = document.getElementById('reg-escola').value.trim();
-        const i = document.getElementById('reg-insta').value.trim();
-        const p = document.getElementById('reg-pass').value;
+    function entrar() {
+        const t = document.getElementById('log-turma').value;
+        const s = document.getElementById('log-pass').value;
+        const i = document.getElementById('log-insta').value;
 
-        if(!t || !p) return alert("Erro: Nome da Turma e Senha são obrigatórios!");
+        if(!t || !s) return alert("Preencha tudo!");
 
         db.ref('ranking/' + t).once('value', snap => {
-            const data = snap.val();
+            const d = snap.val();
+            if(d && d.pass !== s) return alert("Senha errada!");
             
-            // Se já existe e a senha tá errada
-            if(data && data.pass !== p) return alert("Senha incorreta para esta turma!");
-
-            // Criar ou Carregar
-            const userObj = data ? data : {
-                turma: t, escola: e, insta: i, pass: p, aura: selectedAura,
-                pontos: 0, likes: 0, seguidores: 0, videos: 0,
-                pic: '', lastSeen: Date.now()
-            };
-
-            db.ref('ranking/' + t).update(userObj).then(() => {
-                myUser = userObj;
-                localStorage.setItem('omni_v8_session', JSON.stringify(userObj));
-                launch();
-            });
+            const user = d || { turma: t, pass: s, insta: i, pontos: 0, seg: 0, vids: 0, pic: '', online: Date.now() };
+            db.ref('ranking/' + t).update(user);
+            minhaTurma = user;
+            localStorage.setItem('omni_user', JSON.stringify(user));
+            logarSucesso();
         });
     }
 
-    function visitorAccess() {
-        isVisitor = true;
-        document.getElementById('auth-screen').classList.add('hidden');
-        document.getElementById('rank-screen').classList.remove('hidden');
-        document.getElementById('my-profile-area').classList.add('hidden');
-        document.getElementById('chat-trigger').classList.add('hidden');
-        loadRanking();
-    }
-
-    function launch() {
-        document.getElementById('auth-screen').classList.add('hidden');
+    function logarSucesso() {
+        document.getElementById('login-screen').classList.add('hidden');
         document.getElementById('rank-screen').classList.remove('hidden');
         
-        // Sistema de Status Online
+        // Status Online a cada 10 seg
         setInterval(() => {
-            if(!isVisitor) db.ref('ranking/' + myUser.turma).update({ lastSeen: Date.now() });
+            db.ref('ranking/' + minhaTurma.turma).update({ online: Date.now() });
         }, 10000);
 
-        loadRanking();
-        loadChat();
+        carregarRanking();
     }
 
-    // --- CARREGAMENTO DO RANKING (PARTE VITAL) ---
-    function loadRanking() {
+    function carregarRanking() {
         db.ref('ranking').on('value', snap => {
-            const area = document.getElementById('ranking-render');
+            const list = document.getElementById('ranking-list');
             const data = snap.val();
-            if(!data) return;
-
-            const list = Object.values(data).sort((a,b) => b.pontos - a.pontos);
-            area.innerHTML = "";
-
-            list.forEach((u, index) => {
-                const isOnline = (Date.now() - (u.lastSeen || 0)) < 30000;
+            list.innerHTML = "";
+            
+            const ordenado = Object.values(data).sort((a,b) => b.pontos - a.pontos);
+            
+            ordenado.forEach((u, i) => {
+                const isOn = (Date.now() - u.online) < 30000;
                 
-                // Atualiza meu perfil topo se for eu
-                if(myUser && u.turma === myUser.turma) {
+                if(u.turma === minhaTurma.turma) {
+                    document.getElementById('me-nome').innerText = u.turma;
                     document.getElementById('me-pts').innerText = u.pontos;
-                    document.getElementById('me-likes').innerText = u.likes;
-                    document.getElementById('me-followers').innerText = u.seguidores;
-                    document.getElementById('me-videos').innerText = u.videos;
-                    document.getElementById('me-turma').innerText = u.turma;
-                    document.getElementById('me-specs').innerText = u.escola;
-                    if(u.pic) {
-                        document.getElementById('me-pic').style.backgroundImage = `url(${u.pic})`;
-                        document.getElementById('me-pic').className = `avatar-main ${u.aura}`;
-                    }
+                    document.getElementById('me-seg').innerText = u.seg;
+                    document.getElementById('me-vid').innerText = u.vids;
+                    document.getElementById('me-avatar').style.backgroundImage = `url(${u.pic || 'https://via.placeholder.com/150'})`;
                 }
 
-                // Renderiza a linha do ranking
-                let medal = `<span style="font-weight:900; color:#333;">#${index+1}</span>`;
-                if(index === 0) medal = `<span class="medal-icon">🥇</span>`;
-                if(index === 1) medal = `<span class="medal-icon">🥈</span>`;
-                if(index === 2) medal = `<span class="medal-icon">🥉</span>`;
-
-                area.innerHTML += `
-                    <div class="rank-row ${u.aura}">
-                        <div class="medal-slot">${medal}</div>
-                        <div style="flex: 1; display: flex; align-items: center; gap: 15px;">
-                            <div style="width:55px; height:55px; border-radius:18px; background-image:url(${u.pic || 'https://i.pinimg.com/736x/8b/16/7a/8b167af653c2399dd93b952a48740620.jpg'}); background-size:cover; border:1px solid var(--glass-border);"></div>
-                            <div>
-                                <b style="font-size: 17px; display: block; letter-spacing:-1px;">${u.turma}</b>
-                                <div class="status-badge ${isOnline ? 'online' : 'offline'}">
-                                    <span class="dot ${isOnline ? 'dot-online' : ''}"></span>
-                                    ${isOnline ? 'Mídia Agora' : 'Offline'}
-                                </div>
-                            </div>
+                list.innerHTML += `
+                    <div class="rank-row">
+                        <div class="avatar" style="background-image: url(${u.pic || 'https://via.placeholder.com/150'})"></div>
+                        <div style="flex:1">
+                            <b>#${i+1} ${u.turma}</b><br>
+                            <small><span class="status-dot ${isOn?'online':'offline'}"></span> ${isOn?'Ativo':'Offline'}</small>
                         </div>
-                        <div style="text-align: right;">
-                            <b class="txt-neon" style="font-size: 22px; display: block; line-height:1;">${u.pontos}</b>
-                            <span style="font-size: 8px; color: #444; font-weight: 900;">PONTOS</span>
+                        <div style="text-align:right">
+                            <b style="color:var(--neon)">${u.pontos}</b><br>
+                            <a href="${u.insta}" target="_blank" style="font-size:8px; color:#555">INSTAGRAM</a>
                         </div>
                     </div>
                 `;
@@ -485,4 +242,64 @@
         });
     }
 
-    // CONTINUAÇÃO NO PRÓXIMO BLOCO: ADMIN PANEL, CHAT E EDIT...
+    // SISTEMA ADMIN (ATUALIZAR TUDO BONITINHO)
+    function irAdmin() {
+        const pass = prompt("Senha Master:");
+        if(pass !== "123") return;
+        document.getElementById('login-screen').classList.add('hidden');
+        document.getElementById('admin-screen').classList.remove('hidden');
+
+        db.ref('ranking').on('value', snap => {
+            const div = document.getElementById('admin-list');
+            div.innerHTML = "";
+            Object.values(snap.val()).forEach(u => {
+                div.innerHTML += `
+                    <div class="admin-edit-box">
+                        <b>${u.turma}</b> <small>(${u.insta})</small>
+                        <div style="display:flex; gap:5px; margin-top:10px;">
+                            <input id="p-${u.turma}" type="number" class="mídia-input" style="padding:10px" placeholder="Pts" value="${u.pontos}">
+                            <input id="s-${u.turma}" type="number" class="mídia-input" style="padding:10px" placeholder="Seg" value="${u.seg}">
+                            <input id="v-${u.turma}" type="number" class="mídia-input" style="padding:10px" placeholder="Vids" value="${u.vids}">
+                        </div>
+                        <button class="btn-neon" style="padding:10px; font-size:10px" onclick="salvarAdmin('${u.turma}')">ATUALIZAR</button>
+                    </div>
+                `;
+            });
+        });
+    }
+
+    function salvarAdmin(turma) {
+        const p = document.getElementById('p-'+turma).value;
+        const s = document.getElementById('s-'+turma).value;
+        const v = document.getElementById('v-'+turma).value;
+        db.ref('ranking/' + turma).update({
+            pontos: parseInt(p), seg: parseInt(s), vids: parseInt(v)
+        });
+        alert("Atualizado!");
+    }
+
+    // CHAT
+    function abrirChat() { document.getElementById('chat-box').style.display = 'flex'; }
+    function fecharChat() { document.getElementById('chat-box').style.display = 'none'; }
+    function enviarMensagem() {
+        const m = document.getElementById('chat-msg').value;
+        if(!m) return;
+        db.ref('mensagens').push({ turma: minhaTurma.turma, texto: m, tempo: Date.now() });
+        document.getElementById('chat-msg').value = "";
+    }
+
+    db.ref('mensagens').limitToLast(20).on('value', snap => {
+        const cont = document.getElementById('chat-content');
+        cont.innerHTML = "";
+        snap.forEach(m => {
+            const d = m.val();
+            cont.innerHTML += `<p style="margin-bottom:10px"><b style="color:var(--neon)">${d.turma}:</b> ${d.texto}</p>`;
+        });
+        cont.scrollTop = cont.scrollHeight;
+    });
+
+    function voltar() { location.reload(); }
+</script>
+
+</body>
+</html>

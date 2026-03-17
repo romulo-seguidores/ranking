@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <title>Rank Classe - Elite Mídia V9</title>
+    <title>Rank Classe - Elite Mídia V10</title>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;900&display=swap');
@@ -26,7 +26,6 @@
 
         #app { width: 100%; max-width: 450px; margin: 0 auto; padding: 15px; }
 
-        /* CARDS COM ANIMAÇÃO */
         .glass {
             background: var(--glass); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
             border: 1px solid var(--border); border-radius: 25px; padding: 20px;
@@ -38,7 +37,6 @@
             to { opacity: 1; transform: scale(1) translateY(0); } 
         }
 
-        /* INPUTS MÍDIA */
         input, select {
             width: 100%; padding: 16px; margin-bottom: 10px; border-radius: 15px;
             border: 1px solid #111; background: #080808; color: white; font-size: 14px;
@@ -51,7 +49,6 @@
         }
         .btn-glow:active { transform: scale(0.96); }
 
-        /* RANKING LIST */
         .rank-card {
             display: flex; align-items: center; padding: 15px; border-radius: 22px;
             background: rgba(255,255,255,0.03); border: 1px solid var(--border);
@@ -67,12 +64,10 @@
         .silver { background: linear-gradient(135deg, #e0e0e0, #888); color: #000; }
         .bronze { background: linear-gradient(135deg, #cd7f32, #5e2f00); color: #fff; }
 
-        /* STATUS DOT */
         .status-tag { font-size: 9px; font-weight: 800; display: flex; align-items: center; margin-top: 4px; }
         .on { color: #00ff88; }
         .off { color: #ff4444; }
 
-        /* CHAT FLOATING BOX */
         #chat-ui {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; z-index: 9999; display: none; flex-direction: column;
@@ -80,9 +75,14 @@
         #msg-flow { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
         .msg-bubble { background: #111; padding: 10px 15px; border-radius: 18px; border-left: 4px solid var(--neon); max-width: 85%; }
 
-        .hidden { display: none !important; }
+        .btn-like {
+            background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border);
+            color: #ff4444; padding: 5px 10px; border-radius: 10px; font-size: 12px;
+            cursor: pointer; margin-top: 5px; transition: 0.2s;
+        }
+        .btn-like:active { transform: scale(0.8); }
 
-        /* ADMIN CARD */
+        .hidden { display: none !important; }
         .adm-card { background: #0a0a0a; border: 1px solid #222; padding: 15px; border-radius: 20px; margin-bottom: 10px; }
     </style>
 </head>
@@ -94,15 +94,15 @@
             <p style="text-align: center; font-size: 10px; color: #444; margin-bottom: 20px;">SISTEMA DE ELITE REGIONAL</p>
             
             <input type="text" id="in-turma" placeholder="Nome da Turma">
-            <input type="text" id="in-serie" placeholder="Série/Ano">
+            <input type="text" id="in-serie" placeholder="Série/Ano (Ex: 3º A)">
             <input type="text" id="in-escola" placeholder="Nome da Escola">
             <input type="url" id="in-insta" placeholder="Instagram (URL)">
             <input type="password" id="in-pass" placeholder="Senha">
             <select id="in-aura">
-                <option value="aura-beta">🔵 Aura Beta</option>
-                <option value="aura-elite">🟡 Aura Elite</option>
-                <option value="aura-sigma">🔴 Aura Sigma</option>
-                <option value="aura-omega">🟣 Aura Omega</option>
+                <option value="aura-beta">🥶 Aura Beta</option>
+                <option value="aura-elite">⚡ Aura Elite</option>
+                <option value="aura-sigma">🗿 Aura Sigma</option>
+                <option value="aura-omega">💀 Aura Omega</option>
             </select>
             
             <button onclick="fazerLogin()" class="btn-glow">ACESSAR RANKING</button>
@@ -139,7 +139,7 @@
             <button onclick="toggleChat(false)" style="background:none; border:none; color:red; font-weight: 800;">[X]</button>
         </div>
         <div id="msg-flow"></div>
-        <div style="padding: 15px; background: #050505; display: flex; gap: 8px;">
+        <div id="chat-controls" style="padding: 15px; background: #050505; display: flex; gap: 8px;">
             <input type="text" id="msg-input" style="margin:0;" placeholder="Digite algo...">
             <button onclick="mandarMsg()" class="btn-glow" style="width: 60px; padding: 0;">></button>
         </div>
@@ -157,53 +157,59 @@
 
         let sessao = null;
 
-        // AUTO-LOGIN
         window.onload = () => {
             const data = localStorage.getItem('user_v9');
             if(data) {
                 const p = JSON.parse(data);
-                document.getElementById('in-turma').value = p.turma;
-                document.getElementById('in-pass').value = p.pass;
+                document.getElementById('in-turma').value = p.turma || "";
+                document.getElementById('in-pass').value = p.pass || "";
+                document.getElementById('in-escola').value = p.escola || "";
+                document.getElementById('in-serie').value = p.serie || "";
             }
         };
 
         function fazerLogin() {
             const t = document.getElementById('in-turma').value.trim();
             const p = document.getElementById('in-pass').value;
-            if(!t || !p) return alert("Preencha!");
+            const esc = document.getElementById('in-escola').value;
+            const ser = document.getElementById('in-serie').value;
+            const inst = document.getElementById('in-insta').value;
+            const aur = document.getElementById('in-aura').value;
+
+            if(!t || !p) return alert("Nome e Senha obrigatórios!");
 
             db.ref('ranking/' + t).once('value', snap => {
                 let user = snap.val();
-                if(user && user.pass !== p) return alert("Senha errada!");
+                if(user && user.pass !== p) return alert("Senha incorreta!");
                 
                 if(!user) {
                     user = {
-                        turma: t, pass: p, 
-                        escola: document.getElementById('in-escola').value,
-                        serie: document.getElementById('in-serie').value,
-                        insta: document.getElementById('in-insta').value,
-                        aura: document.getElementById('in-aura').value,
-                        pontos: 0, seguidores: 0, videos: 0, online: Date.now()
+                        turma: t, pass: p, escola: esc, serie: ser,
+                        insta: inst, aura: aur, pontos: 0, seguidores: 0,
+                        videos: 0, likes: 0, online: Date.now()
                     };
                     db.ref('ranking/' + t).set(user);
                 }
                 
                 sessao = user;
-                localStorage.setItem('user_v9', JSON.stringify({turma:t, pass:p}));
+                localStorage.setItem('user_v9', JSON.stringify(user));
                 startApp();
             });
         }
 
         function entrarVisitante() {
-            sessao = { turma: "Visitante", aura: "aura-beta" };
+            sessao = { turma: "Visitante", aura: "aura-beta", isVisitante: true };
             startApp(true);
         }
 
         function startApp(isVis = false) {
             document.getElementById('login-view').classList.add('hidden');
             document.getElementById('rank-view').classList.remove('hidden');
-            if(!isVis) {
-                document.getElementById('btn-chat-float').classList.remove('hidden');
+            document.getElementById('btn-chat-float').classList.remove('hidden');
+
+            if(isVis) {
+                document.getElementById('chat-controls').innerHTML = "<p style='color:#444; width:100%; text-align:center; font-size:12px;'>Apenas turmas podem enviar mensagens.</p>";
+            } else {
                 setInterval(() => db.ref('ranking/'+sessao.turma).update({ online: Date.now() }), 10000);
             }
             carregarDados();
@@ -215,39 +221,33 @@
                 const dados = snap.val();
                 if(!dados) return;
 
-                const lista = Object.values(dados).sort((a,b) => b.pontos - a.pontos);
+                const lista = Object.values(dados).filter(t => t && t.turma).sort((a,b) => b.pontos - a.pontos);
                 container.innerHTML = "";
 
                 lista.forEach((t, i) => {
-                    const timeDiff = Date.now() - t.online;
+                    const timeDiff = Date.now() - (t.online || 0);
                     const isOn = timeDiff < 25000;
-                    const isRecente = timeDiff < 125000;
-                    
-                    const level = Math.floor(t.pontos / 10) + 1;
-                    const medalClass = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
+                    const level = Math.floor((t.pontos || 0) / 10) + 1;
                     const medalIcon = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : i+1;
 
                     if(sessao && t.turma === sessao.turma) {
                         document.getElementById('meu-nome').innerText = t.turma;
                         document.getElementById('meu-nome').className = t.aura;
-                        document.getElementById('minha-info').innerText = `${t.escola} | ${t.serie}`;
-                        document.getElementById('meu-pts').innerText = t.pontos;
+                        document.getElementById('minha-info').innerText = `${t.escola || 'Escola'} | ${t.serie || 'Série'}`;
+                        document.getElementById('meu-pts').innerText = t.pontos || 0;
                         document.getElementById('meu-nivel').innerText = level;
                     }
 
                     container.innerHTML += `
                         <div class="rank-card" style="animation-delay: ${i * 0.1}s">
-                            <div class="medal ${medalClass}">${medalIcon}</div>
+                            <div class="medal ${i<3 ? (i==0?'gold':i==1?'silver':'bronze') : ''}">${medalIcon}</div>
                             <div style="flex:1">
                                 <b class="${t.aura}">${t.turma}</b> <small style="color:#555">LV ${level}</small>
-                                <div style="font-size:9px; color:#888">${t.escola} • ${t.serie}</div>
-                                <div class="status-tag ${isOn ? 'on' : 'off'}">
-                                    <div style="width:6px; height:6px; border-radius:50%; background:currentColor; margin-right:5px;"></div>
-                                    ${isOn ? 'Online agora' : (isRecente ? 'Visto a 2min' : 'Offline')}
-                                </div>
+                                <div style="font-size:9px; color:#888">${t.escola || ''} • ${t.serie || ''}</div>
+                                <button class="btn-like" onclick="darLike('${t.turma}')">❤️ ${t.likes || 0}</button>
                             </div>
                             <div style="text-align:right">
-                                <b style="color:var(--neon); font-size:18px;">${t.pontos}</b><br>
+                                <b style="color:var(--neon); font-size:18px;">${t.pontos || 0}</b><br>
                                 <small style="font-size:8px; color:#333">PONTOS</small>
                             </div>
                         </div>
@@ -256,26 +256,33 @@
             });
         }
 
-        // CHAT
+        function darLike(turmaAlvo) {
+            const jaDeu = localStorage.getItem('like_' + turmaAlvo);
+            if(jaDeu) return alert("Você já deu like nessa turma!");
+
+            db.ref('ranking/' + turmaAlvo + '/likes').transaction(current => (current || 0) + 1);
+            localStorage.setItem('like_' + turmaAlvo, true);
+        }
+
         function toggleChat(s) { document.getElementById('chat-ui').style.display = s ? 'flex' : 'none'; }
+        
         function mandarMsg() {
             const m = document.getElementById('msg-input').value;
-            if(!m) return;
+            if(!m || sessao.isVisitante) return;
             db.ref('elite_chat').push({ t: sessao.turma, a: sessao.aura, m: m });
             document.getElementById('msg-input').value = "";
         }
 
-        db.ref('elite_chat').limitToLast(40).on('value', snap => {
+        db.ref('elite_chat').limitToLast(30).on('value', snap => {
             const box = document.getElementById('msg-flow');
             box.innerHTML = "";
             snap.forEach(d => {
                 const v = d.val();
-                box.innerHTML += `<div class="msg-bubble"><b class="${v.a}" style="font-size:10px">${v.t}</b><br>${v.m}</div>`;
+                if(v) box.innerHTML += `<div class="msg-bubble"><b class="${v.a}" style="font-size:10px">${v.t}</b><br>${v.m}</div>`;
             });
             box.scrollTop = box.scrollHeight;
         });
 
-        // ADMIN
         function abrirAdmin() {
             if(prompt("SENHA:") !== "123") return;
             document.getElementById('login-view').classList.add('hidden');
@@ -284,19 +291,16 @@
             db.ref('ranking').on('value', snap => {
                 const list = document.getElementById('admin-list');
                 list.innerHTML = "";
-                Object.values(snap.val()).forEach(t => {
+                Object.values(snap.val()).filter(t => t && t.turma).forEach(t => {
                     list.innerHTML += `
                         <div class="adm-card">
-                            <b>${t.turma}</b><br>
+                            <b>${t.turma}</b>
                             <div style="display:flex; gap:10px; margin: 10px 0;">
                                 <input type="number" id="a-s-${t.turma}" value="${t.seguidores}" placeholder="Seg">
                                 <input type="number" id="a-v-${t.turma}" value="${t.videos}" placeholder="Vid">
                             </div>
-                            <div style="display:flex; gap:5px;">
-                                <button onclick="saveAdm('${t.turma}')" style="flex:1; background:var(--neon); border:none; padding:10px; border-radius:10px; font-weight:bold;">SALVAR</button>
-                                <button onclick="window.open('${t.insta}')" style="flex:1; background:#111; color:white; border:1px solid #333; border-radius:10px;">INSTA 🔗</button>
-                                <button onclick="excluirTurma('${t.turma}')" style="background:red; color:white; border:none; padding:10px; border-radius:10px;">🗑️</button>
-                            </div>
+                            <button onclick="saveAdm('${t.turma}')" class="btn-glow" style="padding:10px; margin-bottom:5px;">SALVAR</button>
+                            <button onclick="excluirTurma('${t.turma}')" style="background:red; color:white; border:none; padding:10px; border-radius:10px; width:100%;">🗑️ EXCLUIR</button>
                         </div>
                     `;
                 });
@@ -304,11 +308,10 @@
         }
 
         function saveAdm(turma) {
-            const s = parseInt(document.getElementById('a-s-'+turma).value);
-            const v = parseInt(document.getElementById('a-v-'+turma).value);
+            const s = parseInt(document.getElementById('a-s-'+turma).value) || 0;
+            const v = parseInt(document.getElementById('a-v-'+turma).value) || 0;
             const p = (Math.floor(s / 100) * 2) + (v * 1);
             db.ref('ranking/' + turma).update({ seguidores: s, videos: v, pontos: p });
-            alert("OK!");
         }
 
         function excluirTurma(t) { if(confirm("Apagar "+t+"?")) db.ref('ranking/'+t).remove(); }

@@ -161,16 +161,23 @@
 
         let sessao = null;
 
-        // AUTO-LOGIN E RECUPERAR CAMPOS
+        // AUTO-LOGIN E RECUPERAR TUDO
         window.onload = () => {
-            const data = localStorage.getItem('user_v9');
+            const data = localStorage.getItem('user_v10_persist');
             if(data) {
                 const p = JSON.parse(data);
+                // Preenche os campos visíveis
                 document.getElementById('in-turma').value = p.turma || "";
                 document.getElementById('in-pass').value = p.pass || "";
                 document.getElementById('in-serie').value = p.serie || "";
                 document.getElementById('in-escola').value = p.escola || "";
                 document.getElementById('in-insta').value = p.insta || "";
+                document.getElementById('in-aura').value = p.aura || "aura-beta";
+
+                // Se já tinha logado antes e tem os dados, entra direto
+                if(p.turma && p.pass) {
+                    fazerLogin(); 
+                }
             }
         };
 
@@ -196,7 +203,8 @@
                 }
                 
                 sessao = user;
-                localStorage.setItem('user_v9', JSON.stringify(user));
+                // SALVA TUDO PARA A PRÓXIMA VEZ
+                localStorage.setItem('user_v10_persist', JSON.stringify(user));
                 startApp();
             });
         }
@@ -230,7 +238,6 @@
                 const dados = snap.val();
                 if(!dados) return;
 
-                // FILTRAR TURMAS UNDEFINED OU CORROMPIDAS
                 const lista = Object.values(dados).filter(t => t && t.turma).sort((a,b) => b.pontos - a.pontos);
                 container.innerHTML = "";
 
@@ -276,12 +283,10 @@
         function darLike(turmaAlvo) {
             const storageKey = 'like_v10_' + turmaAlvo;
             if(localStorage.getItem(storageKey)) return alert("Você já deu like nesta turma!");
-
             db.ref('ranking/' + turmaAlvo + '/likes').transaction(current => (current || 0) + 1);
             localStorage.setItem(storageKey, "true");
         }
 
-        // CHAT
         function toggleChat(s) { document.getElementById('chat-ui').style.display = s ? 'flex' : 'none'; }
         function mandarMsg() {
             const m = document.getElementById('msg-input').value;
@@ -300,7 +305,6 @@
             box.scrollTop = box.scrollHeight;
         });
 
-        // ADMIN (SEM ALTERAÇÕES NAS LINHAS ORIGINAIS)
         function abrirAdmin() {
             if(prompt("SENHA:") !== "123") return;
             document.getElementById('login-view').classList.add('hidden');
@@ -309,6 +313,7 @@
             db.ref('ranking').on('value', snap => {
                 const list = document.getElementById('admin-list');
                 list.innerHTML = "";
+                if(!snap.val()) return;
                 Object.values(snap.val()).filter(t => t && t.turma).forEach(t => {
                     list.innerHTML += `
                         <div class="adm-card">
@@ -338,7 +343,7 @@
 
         function excluirTurma(t) { if(confirm("Apagar "+t+"?")) db.ref('ranking/'+t).remove(); }
         function limparTudoChat() { if(confirm("Limpar mensagens?")) db.ref('elite_chat').remove(); }
-        function sair() { localStorage.removeItem('user_v9'); window.location.reload(); }
+        function sair() { localStorage.removeItem('user_v10_persist'); window.location.reload(); }
     </script>
 </body>
 </html>

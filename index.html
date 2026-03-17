@@ -165,19 +165,17 @@
             if(data) {
                 const p = JSON.parse(data);
                 
-                // Preenche os campos visualmente
-                if(p.turma) document.getElementById('in-turma').value = p.turma;
-                if(p.pass) document.getElementById('in-pass').value = p.pass;
-                if(p.serie) document.getElementById('in-serie').value = p.serie;
-                if(p.escola) document.getElementById('in-escola').value = p.escola;
-                if(p.insta) document.getElementById('in-insta').value = p.insta;
-                if(p.aura) document.getElementById('in-aura').value = p.aura;
+                // Preenche os campos visualmente IMEDIATAMENTE
+                document.getElementById('in-turma').value = p.turma || "";
+                document.getElementById('in-pass').value = p.pass || "";
+                document.getElementById('in-serie').value = p.serie || "";
+                document.getElementById('in-escola').value = p.escola || "";
+                document.getElementById('in-insta').value = p.insta || "";
+                document.getElementById('in-aura').value = p.aura || "aura-elite";
 
-                // Tenta o login automático após o carregamento inicial
+                // Tenta o login automático garantindo que o Firebase carregou
                 if(p.turma && p.pass) {
-                    setTimeout(() => {
-                        fazerLogin();
-                    }, 600); 
+                   fazerLogin();
                 }
             }
         });
@@ -194,11 +192,14 @@
 
             db.ref('ranking/' + t).once('value', snap => {
                 let user = snap.val();
+                
+                // Caso a conta exista e a senha esteja errada
                 if(user && user.pass !== p) {
                     alert("Senha incorreta!");
                     return;
                 }
                 
+                // Caso a conta não exista, cria uma nova
                 if(!user) {
                     user = {
                         turma: t, pass: p, escola: e, serie: s,
@@ -210,7 +211,7 @@
                 
                 sessao = user;
                 
-                // SALVA SEMPRE PARA PREENCHER NA VOLTA
+                // ATUALIZA O STORAGE COM OS DADOS ATUAIS PARA PERSISTIR SEMPRE
                 const dadosParaSalvar = { turma: t, pass: p, escola: e, serie: s, insta: i, aura: a };
                 localStorage.setItem('user_v10_persist', JSON.stringify(dadosParaSalvar));
                 

@@ -51,7 +51,7 @@
         }
         .btn-glow:active { transform: scale(0.96); }
 
-        /* RANKING LIST - VOLTANDO AO VISUAL ORIGINAL COM FOTO */
+        /* RANKING LIST */
         .rank-card {
             display: flex; align-items: center; padding: 15px; border-radius: 22px;
             background: rgba(255,255,255,0.03); border: 1px solid var(--border);
@@ -66,7 +66,7 @@
         }
         .user-pic { width: 100%; height: 100%; object-fit: cover; }
 
-        /* CORES DAS BORDAS MANTENDO O ESTILO GLO */
+        /* CORES DAS BORDAS */
         .gold { border-color: #ffd700; box-shadow: 0 0 15px rgba(255,215,0,0.4); }
         .silver { border-color: #e0e0e0; }
         .bronze { border-color: #cd7f32; }
@@ -80,6 +80,21 @@
         .on { color: #00ff88; }
         .off { color: #ff4444; }
 
+        /* ABA LATERAL (SIDEBAR) */
+        #sidebar {
+            position: fixed; top: 0; right: -100%; width: 280px; height: 100%;
+            background: #050505; border-left: 1px solid var(--border); z-index: 10000;
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); padding: 30px 20px;
+            box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+        }
+        #sidebar.open { right: 0; }
+        
+        .sidebar-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7); z-index: 9999; display: none;
+        }
+
+        /* CHAT UI */
         #chat-ui {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; z-index: 9999; display: none; flex-direction: column;
@@ -98,6 +113,20 @@
     </style>
 </head>
 <body>
+
+    <div class="sidebar-overlay" id="overlay" onclick="toggleSidebar(false)"></div>
+    <div id="sidebar">
+        <h3 style="margin-bottom: 20px; color: var(--neon);">EDITAR PERFIL</h3>
+        
+        <label style="font-size: 10px; color: #555;">FOTO DA GALERIA</label>
+        <input type="file" id="in-file" accept="image/*" style="padding: 10px; font-size: 10px;">
+        
+        <label style="font-size: 10px; color: #555;">NOME DA TURMA</label>
+        <input type="text" id="edit-nome" placeholder="Novo nome...">
+        
+        <button onclick="salvarPerfil()" class="btn-glow" style="margin-top: 20px; padding: 12px;">SALVAR ALTERAÇÕES</button>
+        <button onclick="toggleSidebar(false)" style="width: 100%; background: none; border: 1px solid #222; color: #444; margin-top: 10px; padding: 10px; border-radius: 10px; font-size: 12px;">FECHAR</button>
+    </div>
 
     <div id="app">
         <section id="login-view" class="glass">
@@ -122,7 +151,9 @@
         </section>
 
         <section id="rank-view" class="hidden">
-            <div class="glass" style="text-align: center; border-bottom: 4px solid var(--neon);">
+            <div class="glass" style="text-align: center; border-bottom: 4px solid var(--neon); position: relative;">
+                <button onclick="toggleSidebar(true)" style="position: absolute; top: 15px; right: 15px; background: none; border: none; font-size: 20px; cursor: pointer; filter: grayscale(1);">⚙️</button>
+                
                 <h2 id="meu-nome" class="aura-elite">---</h2>
                 <p id="minha-info" style="font-size: 11px; color: #888; margin-top: 5px;">Escola --- | Série ---</p>
                 <div style="margin-top: 15px; display: flex; justify-content: space-around;">
@@ -164,6 +195,37 @@
         const db = firebase.database();
 
         let sessao = null;
+        let base64Image = "";
+
+        // Lógica de Sidebar
+        function toggleSidebar(s) {
+            document.getElementById('sidebar').classList.toggle('open', s);
+            document.getElementById('overlay').style.display = s ? 'block' : 'none';
+            if(s && sessao) document.getElementById('edit-nome').value = sessao.turma;
+        }
+
+        // Converter foto para Base64
+        document.getElementById('in-file').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.onloadend = () => base64Image = reader.result;
+            if(file) reader.readAsDataURL(file);
+        });
+
+        async function salvarPerfil() {
+            if(!sessao || sessao.isVisitante) return;
+            const novoNome = document.getElementById('edit-nome').value.trim();
+            if(!novoNome) return;
+
+            const updates = { turma: novoNome };
+            if(base64Image) updates.foto = base64Image;
+
+            await db.ref('ranking/' + sessao.turma).update(updates);
+            
+            // Se mudou o nome, precisamos lidar com a chave do banco (simplificado aqui mantendo a chave original para não perder dados)
+            alert("Perfil Atualizado!");
+            toggleSidebar(false);
+        }
 
         window.addEventListener('load', () => {
             const data = localStorage.getItem('user_v10_persist');
@@ -248,14 +310,15 @@
                 lista.forEach((t, i) => {
                     const timeDiff = Date.now() - (t.online || 0);
                     const isOn = timeDiff < 25000;
-                    const isRecente = timeDiff < 125000;
                     
                     const level = Math.floor((t.pontos || 0) / 10) + 1;
                     const medalClass = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
                     const medalIcon = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : i+1;
 
                     const floatingMedal = i < 3 ? `<span class="top-medal-float">${medalIcon}</span>` : '';
-                    const fotoUser = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+                    
+                    // Usa a foto do banco ou a padrão
+                    const fotoUser = t.foto || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
                     if(sessao && t.turma === sessao.turma) {
                         document.getElementById('meu-nome').innerText = t.turma;
@@ -263,6 +326,7 @@
                         document.getElementById('minha-info').innerText = `${t.escola || '---'} | ${t.serie || '---'}`;
                         document.getElementById('meu-pts').innerText = t.pontos || 0;
                         document.getElementById('meu-nivel').innerText = level;
+                        sessao = t; // Atualiza sessão local com dados novos
                     }
 
                     container.innerHTML += `
@@ -275,7 +339,7 @@
                                 <div style="font-size:9px; color:#888">${t.escola || ''} • ${t.serie || ''}</div>
                                 <div class="status-tag ${isOn ? 'on' : 'off'}">
                                     <div style="width:6px; height:6px; border-radius:50%; background:currentColor; margin-right:5px;"></div>
-                                    ${isOn ? 'Online agora' : (isRecente ? 'Visto há pouco' : 'Offline')}
+                                    ${isOn ? 'Online agora' : 'Offline'}
                                 </div>
                                 <button class="btn-like" onclick="darLike('${t.turma}')">❤️ ${t.likes || 0}</button>
                             </div>

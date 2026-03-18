@@ -26,7 +26,6 @@
 
         #app { width: 100%; max-width: 450px; margin: 0 auto; padding: 15px; }
 
-        /* CARDS COM ANIMAÇÃO */
         .glass {
             background: var(--glass); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
             border: 1px solid var(--border); border-radius: 25px; padding: 20px;
@@ -38,7 +37,6 @@
             to { opacity: 1; transform: scale(1) translateY(0); } 
         }
 
-        /* INPUTS MÍDIA */
         input, select {
             width: 100%; padding: 16px; margin-bottom: 10px; border-radius: 15px;
             border: 1px solid #111; background: #080808; color: white; font-size: 14px;
@@ -51,7 +49,6 @@
         }
         .btn-glow:active { transform: scale(0.96); }
 
-        /* RANKING LIST */
         .rank-card {
             display: flex; align-items: center; padding: 15px; border-radius: 22px;
             background: rgba(255,255,255,0.03); border: 1px solid var(--border);
@@ -66,7 +63,6 @@
         }
         .user-pic { width: 100%; height: 100%; object-fit: cover; }
 
-        /* CORES DAS BORDAS */
         .gold { border-color: #ffd700; box-shadow: 0 0 15px rgba(255,215,0,0.4); }
         .silver { border-color: #e0e0e0; }
         .bronze { border-color: #cd7f32; }
@@ -80,7 +76,6 @@
         .on { color: #00ff88; }
         .off { color: #ff4444; }
 
-        /* ABA LATERAL (SIDEBAR) */
         #sidebar {
             position: fixed; top: 0; right: -100%; width: 280px; height: 100%;
             background: #050505; border-left: 1px solid var(--border); z-index: 10000;
@@ -94,7 +89,6 @@
             background: rgba(0,0,0,0.7); z-index: 9999; display: none;
         }
 
-        /* CHAT UI */
         #chat-ui {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; z-index: 9999; display: none; flex-direction: column;
@@ -110,6 +104,15 @@
 
         .hidden { display: none !important; }
         .adm-card { background: #0a0a0a; border: 1px solid #222; padding: 15px; border-radius: 20px; margin-bottom: 10px; }
+
+        /* NOTIFICAÇÃO CHAT EM TEMPO REAL */
+        #chat-badge {
+            position: absolute; top: -5px; right: -5px; width: 22px; height: 22px;
+            background: #ff0000; border-radius: 50%; display: none;
+            box-shadow: 0 0 15px #ff0000; border: 3px solid #000;
+            color: white; font-size: 10px; font-weight: 900;
+            align-items: center; justify-content: center;
+        }
     </style>
 </head>
 <body>
@@ -119,13 +122,16 @@
         <h3 style="margin-bottom: 20px; color: var(--neon);">EDITAR PERFIL</h3>
         
         <label style="font-size: 10px; color: #555;">FOTO DA GALERIA</label>
-        <input type="file" id="in-file" accept="image/*" style="padding: 10px; font-size: 10px;">
+        <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 10px;">
+            <input type="file" id="in-file" accept="image/*" style="padding: 10px; font-size: 10px; margin-bottom: 0; flex: 1;">
+            <button onclick="excluirFoto()" style="background: rgba(255,0,0,0.1); border: 1px solid red; color: red; border-radius: 12px; width: 45px; height: 45px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px;">🗑️</button>
+        </div>
         
         <label style="font-size: 10px; color: #555;">NOME DA TURMA</label>
         <input type="text" id="edit-nome" placeholder="Novo nome...">
         
         <button onclick="salvarPerfil()" class="btn-glow" style="margin-top: 20px; padding: 12px;">SALVAR ALTERAÇÕES</button>
-        <button onclick="toggleSidebar(false)" style="width: 100%; background: none; border: 1px solid #222; color: #444; margin-top: 10px; padding: 10px; border-radius: 10px; font-size: 12px;">FECHAR</button>
+        <button onclick="toggleSidebar(false)" style="width: 100%; background: none; border: 1px solid #222; color: #444; margin-top: 10px; padding: 10px; border-radius: 10px; font-size: 12px;">CANCELAR</button>
     </div>
 
     <div id="app">
@@ -153,7 +159,6 @@
         <section id="rank-view" class="hidden">
             <div class="glass" style="text-align: center; border-bottom: 4px solid var(--neon); position: relative;">
                 <button onclick="toggleSidebar(true)" style="position: absolute; top: 15px; right: 15px; background: none; border: none; font-size: 20px; cursor: pointer; filter: grayscale(1);">⚙️</button>
-                
                 <h2 id="meu-nome" class="aura-elite">---</h2>
                 <p id="minha-info" style="font-size: 11px; color: #888; margin-top: 5px;">Escola --- | Série ---</p>
                 <div style="margin-top: 15px; display: flex; justify-content: space-around;">
@@ -162,7 +167,6 @@
                 </div>
                 <button onclick="sair()" style="margin-top: 15px; background: rgba(255,0,0,0.1); border: 1px solid rgba(255,0,0,0.2); color: red; padding: 5px 15px; border-radius: 10px; font-size: 10px; font-weight: bold;">SAIR DA CONTA</button>
             </div>
-
             <div id="ranking-container"></div>
             <div style="height: 100px;"></div>
         </section>
@@ -184,7 +188,10 @@
         <div id="chat-controls" style="padding: 15px; background: #050505; display: flex; gap: 8px;"></div>
     </div>
 
-    <div id="btn-chat-float" class="hidden" onclick="toggleChat(true)" style="position: fixed; bottom: 30px; right: 20px; width: 60px; height: 60px; background: var(--neon); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 25px; box-shadow: 0 10px 25px rgba(0,255,136,0.4); z-index: 1000;">💬</div>
+    <div id="btn-chat-float" class="hidden" onclick="toggleChat(true)" style="position: fixed; bottom: 30px; right: 20px; width: 60px; height: 60px; background: var(--neon); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 25px; box-shadow: 0 10px 25px rgba(0,255,136,0.4); z-index: 1000;">
+        💬
+        <div id="chat-badge">!</div>
+    </div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
@@ -196,15 +203,22 @@
 
         let sessao = null;
         let base64Image = "";
+        let chatAberto = false;
 
-        // Lógica de Sidebar
         function toggleSidebar(s) {
             document.getElementById('sidebar').classList.toggle('open', s);
             document.getElementById('overlay').style.display = s ? 'block' : 'none';
             if(s && sessao) document.getElementById('edit-nome').value = sessao.turma;
         }
 
-        // Converter foto para Base64
+        // FUNÇÃO DE EXCLUIR FOTO
+        function excluirFoto() {
+            if(confirm("Deseja remover sua foto de perfil?")) {
+                base64Image = "delete"; // Marcador para o banco de dados
+                alert("Foto marcada para exclusão. Salve para confirmar.");
+            }
+        }
+
         document.getElementById('in-file').addEventListener('change', function(e) {
             const file = e.target.files[0];
             const reader = new FileReader();
@@ -218,12 +232,17 @@
             if(!novoNome) return;
 
             const updates = { turma: novoNome };
-            if(base64Image) updates.foto = base64Image;
+            
+            // Lógica de atualização ou remoção da foto
+            if(base64Image === "delete") {
+                updates.foto = null;
+            } else if(base64Image) {
+                updates.foto = base64Image;
+            }
 
             await db.ref('ranking/' + sessao.turma).update(updates);
-            
-            // Se mudou o nome, precisamos lidar com a chave do banco (simplificado aqui mantendo a chave original para não perder dados)
-            alert("Perfil Atualizado!");
+            alert("Perfil Atualizado com Sucesso!");
+            base64Image = ""; 
             toggleSidebar(false);
         }
 
@@ -248,7 +267,7 @@
             const i = document.getElementById('in-insta').value;
             const a = document.getElementById('in-aura').value;
 
-            if(!t || !p) return;
+            if(!t || !p) return alert("Preencha Turma e Senha!");
 
             db.ref('ranking/' + t).once('value', snap => {
                 let user = snap.val();
@@ -265,8 +284,7 @@
                     db.ref('ranking/' + t).set(user);
                 }
                 sessao = user;
-                const dadosParaSalvar = { turma: t, pass: p, escola: e, serie: s, insta: i, aura: a };
-                localStorage.setItem('user_v10_persist', JSON.stringify(dadosParaSalvar));
+                localStorage.setItem('user_v10_persist', JSON.stringify({ turma: t, pass: p, escola: e, serie: s, insta: i, aura: a }));
                 startApp();
             });
         }
@@ -283,16 +301,14 @@
 
             const chatControls = document.getElementById('chat-controls');
             if(isVis) {
-                chatControls.innerHTML = `<p style="color:#555; font-size:11px; width:100%; text-align:center">Visitantes não podem enviar mensagens.</p>`;
+                chatControls.innerHTML = `<p style="color:#555; font-size:11px; width:100%; text-align:center">Visitantes apenas observam.</p>`;
             } else {
                 chatControls.innerHTML = `
-                    <input type="text" id="msg-input" style="margin:0;" placeholder="Digite algo...">
-                    <button onclick="mandarMsg()" class="btn-glow" style="width: 60px; padding: 0;">></button>
+                    <input type="text" id="msg-input" style="margin:0;" placeholder="Mande sua mídia...">
+                    <button onclick="mandarMsg()" class="btn-glow" style="width: 60px; padding: 0; font-size:20px;">⚡</button>
                 `;
                 setInterval(() => {
-                    if(sessao && !sessao.isVisitante) {
-                        db.ref('ranking/'+sessao.turma).update({ online: Date.now() });
-                    }
+                    if(sessao && !sessao.isVisitante) db.ref('ranking/'+sessao.turma).update({ online: Date.now() });
                 }, 10000);
             }
             carregarDados();
@@ -310,14 +326,9 @@
                 lista.forEach((t, i) => {
                     const timeDiff = Date.now() - (t.online || 0);
                     const isOn = timeDiff < 25000;
-                    
                     const level = Math.floor((t.pontos || 0) / 10) + 1;
                     const medalClass = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
                     const medalIcon = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : i+1;
-
-                    const floatingMedal = i < 3 ? `<span class="top-medal-float">${medalIcon}</span>` : '';
-                    
-                    // Usa a foto do banco ou a padrão
                     const fotoUser = t.foto || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
                     if(sessao && t.turma === sessao.turma) {
@@ -326,11 +337,11 @@
                         document.getElementById('minha-info').innerText = `${t.escola || '---'} | ${t.serie || '---'}`;
                         document.getElementById('meu-pts').innerText = t.pontos || 0;
                         document.getElementById('meu-nivel').innerText = level;
-                        sessao = t; // Atualiza sessão local com dados novos
+                        sessao = t; 
                     }
 
                     container.innerHTML += `
-                        <div class="rank-card" style="animation-delay: ${i * 0.1}s">
+                        <div class="rank-card">
                             <div class="medal ${medalClass}">
                                 <img src="${fotoUser}" class="user-pic">
                             </div>
@@ -339,14 +350,13 @@
                                 <div style="font-size:9px; color:#888">${t.escola || ''} • ${t.serie || ''}</div>
                                 <div class="status-tag ${isOn ? 'on' : 'off'}">
                                     <div style="width:6px; height:6px; border-radius:50%; background:currentColor; margin-right:5px;"></div>
-                                    ${isOn ? 'Online agora' : 'Offline'}
+                                    ${isOn ? 'No toque' : 'Offline'}
                                 </div>
                                 <button class="btn-like" onclick="darLike('${t.turma}')">❤️ ${t.likes || 0}</button>
                             </div>
                             <div style="text-align:right">
-                                ${floatingMedal}
-                                <b style="color:var(--neon); font-size:18px;">${t.pontos || 0}</b><br>
-                                <small style="font-size:8px; color:#333">PONTOS</small>
+                                <span class="top-medal-float">${i < 3 ? medalIcon : '#'+(i+1)}</span>
+                                <b style="color:var(--neon); font-size:18px;">${t.pontos || 0}</b>
                             </div>
                         </div>
                     `;
@@ -356,19 +366,39 @@
 
         function darLike(turmaAlvo) {
             const storageKey = 'like_v10_' + turmaAlvo;
-            if(localStorage.getItem(storageKey)) return alert("Você já deu like nesta turma!");
-            db.ref('ranking/' + turmaAlvo + '/likes').transaction(current => (current || 0) + 1);
+            if(localStorage.getItem(storageKey)) return alert("Já deixou o like!");
+            db.ref('ranking/' + turmaAlvo + '/likes').transaction(c => (c || 0) + 1);
             localStorage.setItem(storageKey, "true");
         }
 
-        function toggleChat(s) { document.getElementById('chat-ui').style.display = s ? 'flex' : 'none'; }
+        // LÓGICA DO CHAT E NOTIFICAÇÃO
+        function toggleChat(s) { 
+            chatAberto = s;
+            document.getElementById('chat-ui').style.display = s ? 'flex' : 'none'; 
+            if(s) {
+                document.getElementById('chat-badge').style.display = 'none';
+                document.getElementById('chat-badge').innerText = "!";
+            }
+        }
         
         function mandarMsg() {
             const m = document.getElementById('msg-input').value;
             if(!m || !sessao || sessao.isVisitante) return;
-            db.ref('elite_chat').push({ t: sessao.turma, a: sessao.aura, m: m });
+            db.ref('elite_chat').push({ t: sessao.turma, a: sessao.aura, m: m, time: Date.now() });
             document.getElementById('msg-input').value = "";
         }
+
+        // ESCUTA NOTIFICAÇÕES EM TEMPO REAL
+        db.ref('elite_chat').limitToLast(1).on('child_added', (snap) => {
+            const msg = snap.val();
+            // Só mostra a bolinha se o chat estiver fechado E a mensagem não for minha
+            if(!chatAberto && sessao && msg.t !== sessao.turma) {
+                const badge = document.getElementById('chat-badge');
+                badge.style.display = 'flex';
+                // Efeito sonoro ou vibração opcional aqui
+                if(navigator.vibrate) navigator.vibrate(50);
+            }
+        });
 
         db.ref('elite_chat').limitToLast(40).on('value', snap => {
             const box = document.getElementById('msg-flow');
@@ -381,7 +411,7 @@
         });
 
         function abrirAdmin() {
-            if(prompt("SENHA:") !== "123") return;
+            if(prompt("CÓDIGO DE ACESSO:") !== "123") return;
             document.getElementById('login-view').classList.add('hidden');
             document.getElementById('admin-view').classList.remove('hidden');
 
@@ -390,19 +420,17 @@
                 list.innerHTML = "";
                 const val = snap.val();
                 if(!val) return;
-                Object.values(val).filter(t => t && t.turma).forEach(t => {
+                Object.values(val).forEach(t => {
+                    if(!t.turma) return;
                     list.innerHTML += `
                         <div class="adm-card">
-                            <b>${t.turma}</b><br>
+                            <b>${t.turma}</b>
                             <div style="display:flex; gap:10px; margin: 10px 0;">
                                 <input type="number" id="a-s-${t.turma}" value="${t.seguidores || 0}" placeholder="Seg">
                                 <input type="number" id="a-v-${t.turma}" value="${t.videos || 0}" placeholder="Vid">
                             </div>
-                            <div style="display:flex; gap:5px;">
-                                <button onclick="saveAdm('${t.turma}')" style="flex:1; background:var(--neon); border:none; padding:10px; border-radius:10px; font-weight:bold;">SALVAR</button>
-                                <button onclick="window.open('${t.insta}')" style="flex:1; background:#111; color:white; border:1px solid #333; border-radius:10px;">INSTA 🔗</button>
-                                <button onclick="excluirTurma('${t.turma}')" style="background:red; color:white; border:none; padding:10px; border-radius:10px;">🗑️</button>
-                            </div>
+                            <button onclick="saveAdm('${t.turma}')" style="width:100%; background:var(--neon); border:none; padding:10px; border-radius:10px; font-weight:bold;">ATUALIZAR STATUS</button>
+                            <button onclick="excluirTurma('${t.turma}')" style="margin-top:5px; width:100%; background:red; color:white; border:none; padding:5px; border-radius:10px; font-size:10px;">BANIR TURMA</button>
                         </div>
                     `;
                 });
@@ -414,11 +442,11 @@
             const v = parseInt(document.getElementById('a-v-'+turma).value) || 0;
             const p = (Math.floor(s / 100) * 2) + (v * 1);
             db.ref('ranking/' + turma).update({ seguidores: s, videos: v, pontos: p });
-            alert("Atualizado!");
+            alert("Dados de "+turma+" sincronizados!");
         }
 
-        function excluirTurma(t) { if(confirm("Apagar "+t+"?")) db.ref('ranking/'+t).remove(); }
-        function limparTudoChat() { if(confirm("Limpar mensagens?")) db.ref('elite_chat').remove(); }
+        function excluirTurma(t) { if(confirm("Apagar permanentemente "+t+"?")) db.ref('ranking/'+t).remove(); }
+        function limparTudoChat() { if(confirm("Limpar todo o histórico de mensagens?")) db.ref('elite_chat').remove(); }
         function sair() { window.location.reload(); }
     </script>
 </body>

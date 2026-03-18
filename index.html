@@ -67,6 +67,15 @@
         .silver { background: linear-gradient(135deg, #e0e0e0, #888); color: #000; }
         .bronze { background: linear-gradient(135deg, #cd7f32, #5e2f00); color: #fff; }
 
+        /* NOVA CLASSE PARA MEDALHA SOBRE OS PONTOS */
+        .top-medal-float {
+            display: block;
+            font-size: 16px;
+            margin-bottom: -4px;
+            text-align: center;
+            filter: drop-shadow(0 0 5px rgba(255,255,255,0.3));
+        }
+
         /* STATUS DOT */
         .status-tag { font-size: 9px; font-weight: 800; display: flex; align-items: center; margin-top: 4px; }
         .on { color: #00ff88; }
@@ -159,13 +168,10 @@
 
         let sessao = null;
 
-        // PREENCHIMENTO AUTOMÁTICO (SEM LOGIN DIRETO)
         window.addEventListener('load', () => {
             const data = localStorage.getItem('user_v10_persist');
             if(data) {
                 const p = JSON.parse(data);
-                
-                // Apenas preenche os campos para facilitar
                 document.getElementById('in-turma').value = p.turma || "";
                 document.getElementById('in-pass').value = p.pass || "";
                 document.getElementById('in-serie').value = p.serie || "";
@@ -187,12 +193,10 @@
 
             db.ref('ranking/' + t).once('value', snap => {
                 let user = snap.val();
-                
                 if(user && user.pass !== p) {
                     alert("Senha incorreta!");
                     return;
                 }
-                
                 if(!user) {
                     user = {
                         turma: t, pass: p, escola: e, serie: s,
@@ -201,12 +205,9 @@
                     };
                     db.ref('ranking/' + t).set(user);
                 }
-                
                 sessao = user;
-                
                 const dadosParaSalvar = { turma: t, pass: p, escola: e, serie: s, insta: i, aura: a };
                 localStorage.setItem('user_v10_persist', JSON.stringify(dadosParaSalvar));
-                
                 startApp();
             });
         }
@@ -256,6 +257,9 @@
                     const medalClass = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
                     const medalIcon = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : i+1;
 
+                    // Lógica para adicionar a medalha em cima dos pontos no Top 3
+                    const floatingMedal = i < 3 ? `<span class="top-medal-float">${medalIcon}</span>` : '';
+
                     if(sessao && t.turma === sessao.turma) {
                         document.getElementById('meu-nome').innerText = t.turma;
                         document.getElementById('meu-nome').className = t.aura;
@@ -277,6 +281,7 @@
                                 <button class="btn-like" onclick="darLike('${t.turma}')">❤️ ${t.likes || 0}</button>
                             </div>
                             <div style="text-align:right">
+                                ${floatingMedal}
                                 <b style="color:var(--neon); font-size:18px;">${t.pontos || 0}</b><br>
                                 <small style="font-size:8px; color:#333">PONTOS</small>
                             </div>

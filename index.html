@@ -26,6 +26,26 @@
 
         #app { width: 100%; max-width: 450px; margin: 0 auto; padding: 15px; }
 
+        /* NOTIFICAÇÕES CUSTOMIZADAS */
+        #toast-container {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            z-index: 20000; width: 90%; max-width: 350px;
+        }
+        .toast {
+            background: rgba(10, 10, 10, 0.8); backdrop-filter: blur(15px);
+            border: 1px solid var(--border); border-left: 4px solid var(--neon);
+            padding: 15px 20px; border-radius: 15px; color: white;
+            font-size: 13px; font-weight: 600; margin-bottom: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: flex; align-items: center; gap: 10px;
+            animation: slideDown 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        .toast.error { border-left-color: #ff4444; }
+        .toast.hide { animation: slideUp 0.4s forwards; }
+
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp { to { opacity: 0; transform: translateY(-20px); } }
+
         .glass {
             background: var(--glass); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
             border: 1px solid var(--border); border-radius: 25px; padding: 20px;
@@ -105,7 +125,6 @@
         .hidden { display: none !important; }
         .adm-card { background: #0a0a0a; border: 1px solid #222; padding: 15px; border-radius: 20px; margin-bottom: 10px; }
 
-        /* NOTIFICAÇÃO CHAT EM TEMPO REAL */
         #chat-badge {
             position: absolute; top: -5px; right: -5px; width: 22px; height: 22px;
             background: #ff0000; border-radius: 50%; display: none;
@@ -116,6 +135,8 @@
     </style>
 </head>
 <body>
+
+    <div id="toast-container"></div>
 
     <div class="sidebar-overlay" id="overlay" onclick="toggleSidebar(false)"></div>
     <div id="sidebar">
@@ -205,24 +226,39 @@
         let base64Image = "";
         let chatAberto = false;
 
+        // SISTEMA DE NOTIFICAÇÃO BONITA
+        function showNotify(msg, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type === 'error' ? 'error' : ''}`;
+            toast.innerHTML = `<span>${type === 'error' ? '⚠️' : '✅'}</span> ${msg}`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.add('hide');
+                setTimeout(() => toast.remove(), 400);
+            }, 3000);
+        }
+
         function toggleSidebar(s) {
             document.getElementById('sidebar').classList.toggle('open', s);
             document.getElementById('overlay').style.display = s ? 'block' : 'none';
             if(s && sessao) document.getElementById('edit-nome').value = sessao.turma;
         }
 
-        // FUNÇÃO DE EXCLUIR FOTO
         function excluirFoto() {
             if(confirm("Deseja remover sua foto de perfil?")) {
-                base64Image = "delete"; // Marcador para o banco de dados
-                alert("Foto marcada para exclusão. Salve para confirmar.");
+                base64Image = "delete";
+                showNotify("Foto marcada para exclusão!", "success");
             }
         }
 
         document.getElementById('in-file').addEventListener('change', function(e) {
             const file = e.target.files[0];
             const reader = new FileReader();
-            reader.onloadend = () => base64Image = reader.result;
+            reader.onloadend = () => {
+                base64Image = reader.result;
+                showNotify("Imagem carregada!");
+            };
             if(file) reader.readAsDataURL(file);
         });
 
@@ -232,8 +268,6 @@
             if(!novoNome) return;
 
             const updates = { turma: novoNome };
-            
-            // Lógica de atualização ou remoção da foto
             if(base64Image === "delete") {
                 updates.foto = null;
             } else if(base64Image) {
@@ -241,7 +275,7 @@
             }
 
             await db.ref('ranking/' + sessao.turma).update(updates);
-            alert("Perfil Atualizado com Sucesso!");
+            showNotify("Perfil atualizado com sucesso!");
             base64Image = ""; 
             toggleSidebar(false);
         }
@@ -267,12 +301,12 @@
             const i = document.getElementById('in-insta').value;
             const a = document.getElementById('in-aura').value;
 
-            if(!t || !p) return alert("Preencha Turma e Senha!");
+            if(!t || !p) return showNotify("Preencha Turma e Senha!", "error");
 
             db.ref('ranking/' + t).once('value', snap => {
                 let user = snap.val();
                 if(user && user.pass !== p) {
-                    alert("Senha incorreta!");
+                    showNotify("Senha incorreta!", "error");
                     return;
                 }
                 if(!user) {
@@ -285,12 +319,14 @@
                 }
                 sessao = user;
                 localStorage.setItem('user_v10_persist', JSON.stringify({ turma: t, pass: p, escola: e, serie: s, insta: i, aura: a }));
+                showNotify("Conectado na rede!");
                 startApp();
             });
         }
 
         function entrarVisitante() {
             sessao = { turma: "Visitante", aura: "aura-beta", isVisitante: true };
+            showNotify("Entrando como Visitante...");
             startApp(true);
         }
 
@@ -366,18 +402,17 @@
 
         function darLike(turmaAlvo) {
             const storageKey = 'like_v10_' + turmaAlvo;
-            if(localStorage.getItem(storageKey)) return alert("Já deixou o like!");
+            if(localStorage.getItem(storageKey)) return showNotify("Já deixou o like!", "error");
             db.ref('ranking/' + turmaAlvo + '/likes').transaction(c => (c || 0) + 1);
             localStorage.setItem(storageKey, "true");
+            showNotify("Like enviado!");
         }
 
-        // LÓGICA DO CHAT E NOTIFICAÇÃO
         function toggleChat(s) { 
             chatAberto = s;
             document.getElementById('chat-ui').style.display = s ? 'flex' : 'none'; 
             if(s) {
                 document.getElementById('chat-badge').style.display = 'none';
-                document.getElementById('chat-badge').innerText = "!";
             }
         }
         
@@ -388,14 +423,11 @@
             document.getElementById('msg-input').value = "";
         }
 
-        // ESCUTA NOTIFICAÇÕES EM TEMPO REAL
         db.ref('elite_chat').limitToLast(1).on('child_added', (snap) => {
             const msg = snap.val();
-            // Só mostra a bolinha se o chat estiver fechado E a mensagem não for minha
             if(!chatAberto && sessao && msg.t !== sessao.turma) {
                 const badge = document.getElementById('chat-badge');
                 badge.style.display = 'flex';
-                // Efeito sonoro ou vibração opcional aqui
                 if(navigator.vibrate) navigator.vibrate(50);
             }
         });
@@ -411,7 +443,7 @@
         });
 
         function abrirAdmin() {
-            if(prompt("CÓDIGO DE ACESSO:") !== "123") return;
+            if(prompt("CÓDIGO DE ACESSO:") !== "123") return showNotify("Acesso Negado", "error");
             document.getElementById('login-view').classList.add('hidden');
             document.getElementById('admin-view').classList.remove('hidden');
 
@@ -442,11 +474,11 @@
             const v = parseInt(document.getElementById('a-v-'+turma).value) || 0;
             const p = (Math.floor(s / 100) * 2) + (v * 1);
             db.ref('ranking/' + turma).update({ seguidores: s, videos: v, pontos: p });
-            alert("Dados de "+turma+" sincronizados!");
+            showNotify("Sincronizado: " + turma);
         }
 
-        function excluirTurma(t) { if(confirm("Apagar permanentemente "+t+"?")) db.ref('ranking/'+t).remove(); }
-        function limparTudoChat() { if(confirm("Limpar todo o histórico de mensagens?")) db.ref('elite_chat').remove(); }
+        function excluirTurma(t) { if(confirm("Apagar permanentemente "+t+"?")) { db.ref('ranking/'+t).remove(); showNotify("Turma banida."); } }
+        function limparTudoChat() { if(confirm("Limpar todo o histórico de mensagens?")) { db.ref('elite_chat').remove(); showNotify("Chat limpo."); } }
         function sair() { window.location.reload(); }
     </script>
 </body>

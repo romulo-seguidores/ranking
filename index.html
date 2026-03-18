@@ -462,11 +462,17 @@
                                 <input type="number" id="a-v-${t.turma}" value="${t.videos || 0}" placeholder="Vid">
                             </div>
                             <button onclick="saveAdm('${t.turma}')" style="width:100%; background:var(--neon); border:none; padding:10px; border-radius:10px; font-weight:bold;">ATUALIZAR STATUS</button>
-                            <button onclick="excluirTurma('${t.turma}')" style="margin-top:5px; width:100%; background:red; color:white; border:none; padding:5px; border-radius:10px; font-size:10px;">BANIR TURMA</button>
+                            <button onclick="abrirInsta('${t.insta}')" style="margin-top:5px; width:100%; background:#111; color:white; border:1px solid #333; padding:10px; border-radius:10px; font-size:12px; font-weight:bold;">📸 ABRIR INSTAGRAM</button>
+                            <button onclick="excluirTurma('${t.turma}')" style="margin-top:10px; width:100%; background:red; color:white; border:none; padding:5px; border-radius:10px; font-size:10px;">BANIR TURMA</button>
                         </div>
                     `;
                 });
             });
+        }
+
+        function abrirInsta(url) {
+            if(!url || url === "") return showNotify("Instagram não cadastrado", "error");
+            window.open(url, '_blank');
         }
 
         function saveAdm(turma) {

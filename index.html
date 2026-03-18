@@ -67,11 +67,11 @@
         .silver { background: linear-gradient(135deg, #e0e0e0, #888); color: #000; }
         .bronze { background: linear-gradient(135deg, #cd7f32, #5e2f00); color: #fff; }
 
-        /* NOVA CLASSE PARA MEDALHA SOBRE OS PONTOS */
+        /* NOVA CLASSE PARA MEDALHA SOBRE OS PONTOS (SEM FUNDO/BORDA) */
         .top-medal-float {
             display: block;
-            font-size: 16px;
-            margin-bottom: -4px;
+            font-size: 18px;
+            margin-bottom: 2px;
             text-align: center;
             filter: drop-shadow(0 0 5px rgba(255,255,255,0.3));
         }
@@ -257,7 +257,7 @@
                     const medalClass = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
                     const medalIcon = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : i+1;
 
-                    // Lógica para adicionar a medalha em cima dos pontos no Top 3
+                    // Apenas o ícone/medalha sem o fundo quadrado para o Top 3 à direita
                     const floatingMedal = i < 3 ? `<span class="top-medal-float">${medalIcon}</span>` : '';
 
                     if(sessao && t.turma === sessao.turma) {

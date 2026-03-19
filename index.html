@@ -562,10 +562,8 @@
 
             db.ref('ranking/' + turma).once('value', snap => {
                 const data = snap.val();
-                // Pega os pontos extras que a turma já tinha no banco de dados
                 const ptsExtraAtuais = (data.pts_extra || 0) + extraBonus;
                 
-                // Lógica de cálculo: (Seguidores/100 * 2) + (Videos * 1) + Pontos Extras Acumulados
                 const p = (Math.floor(s / 100) * 2) + (v * 1) + ptsExtraAtuais;
                 
                 db.ref('ranking/' + turma).update({ 
@@ -575,7 +573,7 @@
                     pts_extra: ptsExtraAtuais 
                 });
                 
-                extraInput.value = 0; // Reseta o campo de digitar para não somar duas vezes sem querer
+                extraInput.value = 0;
                 showNotify("Sincronizado: " + turma);
             });
         }

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <title>RANK X - Elite Mídia V10</title>
+    <title>RANK X - Elite Mídia V11</title>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;900&display=swap');
@@ -101,6 +101,7 @@
             background: #050505; border-left: 1px solid var(--border); z-index: 10000;
             transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); padding: 30px 20px;
             box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+            overflow-y: auto;
         }
         #sidebar.open { right: 0; }
         
@@ -125,12 +126,18 @@
         .hidden { display: none !important; }
         .adm-card { background: #0a0a0a; border: 1px solid #222; padding: 15px; border-radius: 20px; margin-bottom: 10px; }
 
-        #chat-badge {
+        #chat-badge, #notif-badge {
             position: absolute; top: -5px; right: -5px; width: 22px; height: 22px;
             background: #ff0000; border-radius: 50%; display: none;
             box-shadow: 0 0 15px #ff0000; border: 3px solid #000;
             color: white; font-size: 10px; font-weight: 900;
             align-items: center; justify-content: center;
+        }
+        
+        /* ESTILO MISSÃO */
+        .missao-box {
+            background: rgba(0, 255, 136, 0.05); border: 1px dashed var(--neon);
+            padding: 15px; border-radius: 15px; margin-top: 20px;
         }
     </style>
 </head>
@@ -151,6 +158,13 @@
         <label style="font-size: 10px; color: #555;">NOME DA TURMA</label>
         <input type="text" id="edit-nome" placeholder="Novo nome...">
         
+        <div id="missao-recebida" class="missao-box hidden">
+            <b style="color: var(--neon); font-size: 12px;">🎯 MISSÃO ATUAL:</b>
+            <p id="txt-missao" style="font-size: 12px; margin: 5px 0; color: #ccc;">Carregando...</p>
+            <input type="url" id="link-missao" placeholder="Link do vídeo feito" style="font-size: 11px; padding: 10px; margin-top: 10px;">
+            <button onclick="enviarTarefa()" class="btn-glow" style="padding: 10px; font-size: 11px;">ENVIAR PARA AVALIAÇÃO</button>
+        </div>
+
         <button onclick="salvarPerfil()" class="btn-glow" style="margin-top: 20px; padding: 12px;">SALVAR ALTERAÇÕES</button>
         <button onclick="toggleSidebar(false)" style="width: 100%; background: none; border: 1px solid #222; color: #444; margin-top: 10px; padding: 10px; border-radius: 10px; font-size: 12px;">CANCELAR</button>
     </div>
@@ -179,7 +193,14 @@
 
         <section id="rank-view" class="hidden">
             <div class="glass" style="text-align: center; border-bottom: 4px solid var(--neon); position: relative;">
-                <button onclick="toggleSidebar(true)" style="position: absolute; top: 15px; right: 15px; background: none; border: none; font-size: 20px; cursor: pointer; filter: grayscale(1);">⚙️</button>
+                <div style="position: absolute; top: 15px; right: 15px; display: flex; gap: 15px;">
+                    <div style="position: relative;" onclick="toggleSidebar(true)">
+                        <span style="font-size: 20px; cursor: pointer; filter: grayscale(1);">🔔</span>
+                        <div id="notif-badge">!</div>
+                    </div>
+                    <button onclick="toggleSidebar(true)" style="background: none; border: none; font-size: 20px; cursor: pointer; filter: grayscale(1);">⚙️</button>
+                </div>
+                
                 <h2 id="meu-nome" class="aura-elite">---</h2>
                 <p id="minha-info" style="font-size: 11px; color: #888; margin-top: 5px;">Escola --- | Série ---</p>
                 <div style="margin-top: 15px; display: flex; justify-content: space-around;">
@@ -193,8 +214,16 @@
         </section>
 
         <section id="admin-view" class="hidden glass">
-            <h2 style="margin-bottom: 20px;">SISTEMA CENTRAL</h2>
+            <h2 style="margin-bottom: 20px; color: var(--neon);">SISTEMA CENTRAL</h2>
+            
+            <div class="adm-card" style="border-color: var(--neon);">
+                <b style="font-size: 12px;">📢 DISPARAR MISSÃO PARA TODOS</b>
+                <input type="text" id="adm-missao-txt" placeholder="Ex: Poste um vídeo dançando no pátio..." style="margin-top:10px;">
+                <button onclick="postarMissao()" class="btn-glow" style="padding:10px; font-size:12px;">ENVIAR AGORA ⚡</button>
+            </div>
+
             <button onclick="limparTudoChat()" style="background: red; color: white; border: none; padding: 10px; border-radius: 10px; width: 100%; font-weight: bold; margin-bottom: 20px;">🧨 LIMPAR TODO O CHAT</button>
+            
             <div id="admin-list"></div>
             <button onclick="window.location.reload()" class="btn-glow" style="background:#222; color:white; margin-top: 20px;">FECHAR PAINEL</button>
         </section>
@@ -226,7 +255,6 @@
         let base64Image = "";
         let chatAberto = false;
 
-        // SISTEMA DE NOTIFICAÇÃO BONITA
         function showNotify(msg, type = 'success') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
@@ -242,7 +270,29 @@
         function toggleSidebar(s) {
             document.getElementById('sidebar').classList.toggle('open', s);
             document.getElementById('overlay').style.display = s ? 'block' : 'none';
-            if(s && sessao) document.getElementById('edit-nome').value = sessao.turma;
+            if(s) document.getElementById('notif-badge').style.display = 'none';
+            if(s && sessao) {
+                document.getElementById('edit-nome').value = sessao.turma;
+                if(!sessao.isVisitante) document.getElementById('missao-recebida').classList.remove('hidden');
+            }
+        }
+
+        // NOVO: SISTEMA DE MISSÕES ADMIN
+        function postarMissao() {
+            const txt = document.getElementById('adm-missao-txt').value;
+            if(!txt) return;
+            db.ref('missao_global').set({ txt: txt, time: Date.now() });
+            showNotify("Missão disparada!");
+            document.getElementById('adm-missao-txt').value = "";
+        }
+
+        // NOVO: ENVIAR TAREFA PELA TURMA
+        function enviarTarefa() {
+            const link = document.getElementById('link-missao').value;
+            if(!link) return showNotify("Cole o link do vídeo!", "error");
+            db.ref('entregas/' + sessao.turma).set({ link: link, time: Date.now() });
+            showNotify("Vídeo enviado ao Admin!");
+            document.getElementById('link-missao').value = "";
         }
 
         function excluirFoto() {
@@ -275,7 +325,7 @@
             }
 
             await db.ref('ranking/' + sessao.turma).update(updates);
-            showNotify("Perfil atualizado com sucesso!");
+            showNotify("Perfil atualizado!");
             base64Image = ""; 
             toggleSidebar(false);
         }
@@ -347,6 +397,16 @@
                     if(sessao && !sessao.isVisitante) db.ref('ranking/'+sessao.turma).update({ online: Date.now() });
                 }, 10000);
             }
+
+            // OUVIR MISSÕES
+            db.ref('missao_global').on('value', snap => {
+                const m = snap.val();
+                if(m) {
+                    document.getElementById('txt-missao').innerText = m.txt;
+                    if(sessao && !isVis) document.getElementById('notif-badge').style.display = 'flex';
+                }
+            });
+
             carregarDados();
         }
 
@@ -411,9 +471,7 @@
         function toggleChat(s) { 
             chatAberto = s;
             document.getElementById('chat-ui').style.display = s ? 'flex' : 'none'; 
-            if(s) {
-                document.getElementById('chat-badge').style.display = 'none';
-            }
+            if(s) document.getElementById('chat-badge').style.display = 'none';
         }
         
         function mandarMsg() {
@@ -447,25 +505,44 @@
             document.getElementById('login-view').classList.add('hidden');
             document.getElementById('admin-view').classList.remove('hidden');
 
-            db.ref('ranking').on('value', snap => {
-                const list = document.getElementById('admin-list');
-                list.innerHTML = "";
-                const val = snap.val();
-                if(!val) return;
-                Object.values(val).forEach(t => {
-                    if(!t.turma) return;
-                    list.innerHTML += `
-                        <div class="adm-card">
-                            <b>${t.turma}</b>
-                            <div style="display:flex; gap:10px; margin: 10px 0;">
-                                <input type="number" id="a-s-${t.turma}" value="${t.seguidores || 0}" placeholder="Seg">
-                                <input type="number" id="a-v-${t.turma}" value="${t.videos || 0}" placeholder="Vid">
+            // OUVIR ENTREGAS
+            db.ref('entregas').on('value', snap => {
+                const entregas = snap.val();
+                const adminList = document.getElementById('admin-list');
+                
+                db.ref('ranking').once('value', rSnap => {
+                    const ranking = rSnap.val();
+                    adminList.innerHTML = "<h3 style='margin:15px 0 10px; font-size:12px;'>📥 ENTREGAS DE MISSÕES:</h3>";
+                    
+                    if(entregas) {
+                        Object.keys(entregas).forEach(turma => {
+                            adminList.innerHTML += `
+                                <div class="adm-card" style="border-color: #00d4ff;">
+                                    <small style="color:#00d4ff">MISSÃO ENTREGUE POR:</small><br>
+                                    <b>${turma}</b><br>
+                                    <button onclick="window.open('${entregas[turma].link}', '_blank')" style="margin-top:10px; width:100%; padding:8px; border-radius:10px; border:none; background:#222; color:white; font-size:10px;"> assistir vídeo entregue 🔗</button>
+                                    <button onclick="db.ref('entregas/${turma}').remove()" style="margin-top:5px; width:100%; padding:5px; border:none; background:none; color:#444; font-size:9px;">Remover da lista</button>
+                                </div>
+                            `;
+                        });
+                    }
+
+                    adminList.innerHTML += "<h3 style='margin:25px 0 10px; font-size:12px;'>👥 GESTÃO DE TURMAS:</h3>";
+                    Object.values(ranking).forEach(t => {
+                        if(!t.turma) return;
+                        adminList.innerHTML += `
+                            <div class="adm-card">
+                                <b>${t.turma}</b>
+                                <div style="display:flex; gap:10px; margin: 10px 0;">
+                                    <input type="number" id="a-s-${t.turma}" value="${t.seguidores || 0}" placeholder="Seg">
+                                    <input type="number" id="a-v-${t.turma}" value="${t.videos || 0}" placeholder="Vid">
+                                </div>
+                                <button onclick="saveAdm('${t.turma}')" style="width:100%; background:var(--neon); border:none; padding:10px; border-radius:10px; font-weight:bold;">ATUALIZAR STATUS</button>
+                                <button onclick="abrirInsta('${t.insta}')" style="margin-top:5px; width:100%; background:#111; color:white; border:1px solid #333; padding:10px; border-radius:10px; font-size:12px; font-weight:bold;">📸 ABRIR INSTAGRAM</button>
+                                <button onclick="excluirTurma('${t.turma}')" style="margin-top:10px; width:100%; background:red; color:white; border:none; padding:5px; border-radius:10px; font-size:10px;">BANIR TURMA</button>
                             </div>
-                            <button onclick="saveAdm('${t.turma}')" style="width:100%; background:var(--neon); border:none; padding:10px; border-radius:10px; font-weight:bold;">ATUALIZAR STATUS</button>
-                            <button onclick="abrirInsta('${t.insta}')" style="margin-top:5px; width:100%; background:#111; color:white; border:1px solid #333; padding:10px; border-radius:10px; font-size:12px; font-weight:bold;">📸 ABRIR INSTAGRAM</button>
-                            <button onclick="excluirTurma('${t.turma}')" style="margin-top:10px; width:100%; background:red; color:white; border:none; padding:5px; border-radius:10px; font-size:10px;">BANIR TURMA</button>
-                        </div>
-                    `;
+                        `;
+                    });
                 });
             });
         }

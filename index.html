@@ -536,10 +536,12 @@
                                     <input type="number" id="a-v-${t.turma}" value="${t.videos || 0}">
                                 </div>
                                 <div style="margin-bottom:10px;">
-                                    <label style="font-size:9px; color:var(--neon)">ADICIONAR PONTOS EXTRAS:</label>
+                                    <label style="font-size:9px; color:var(--neon)">PONTOS EXTRAS ACUMULADOS: <span style="color:white">${t.pts_extra || 0}</span></label>
                                     <input type="number" id="a-e-${t.turma}" value="0" style="border: 1px solid var(--neon); padding: 10px; margin-top:5px;">
                                 </div>
-                                <button onclick="saveAdm('${t.turma}')" style="width:100%; background:var(--neon); border:none; padding:12px; border-radius:10px; font-weight:bold;">SALVAR E SOMAR PONTOS</button>
+                                <button onclick="ajustarPontos('${t.turma}', 'soma')" style="width:100%; background:var(--neon); border:none; padding:12px; border-radius:10px; font-weight:bold; margin-bottom:5px;">ADICIONAR PONTOS</button>
+                                <button onclick="ajustarPontos('${t.turma}', 'subtrai')" style="width:100%; background:#ff4444; border:none; padding:12px; border-radius:10px; font-weight:bold; color:white;">TIRAR PONTOS</button>
+                                
                                 <button onclick="abrirInsta('${t.insta}')" style="margin-top:8px; width:100%; background:#111; color:white; border:1px solid #333; padding:8px; border-radius:10px; font-size:11px;">📸 ABRIR INSTAGRAM</button>
                                 <button onclick="excluirTurma('${t.turma}')" style="margin-top:15px; width:100%; background:none; color:#444; border:none; font-size:9px;">Banir Turma</button>
                             </div>
@@ -549,33 +551,39 @@
             });
         }
 
-        function abrirInsta(url) {
-            if(!url || url === "") return showNotify("Instagram não cadastrado", "error");
-            window.open(url, '_blank');
-        }
-
-        function saveAdm(turma) {
+        function ajustarPontos(turma, operacao) {
             const s = parseInt(document.getElementById('a-s-'+turma).value) || 0;
             const v = parseInt(document.getElementById('a-v-'+turma).value) || 0;
-            const extraInput = document.getElementById('a-e-'+turma);
-            const extraBonus = parseInt(extraInput.value) || 0;
+            const inputExtra = document.getElementById('a-e-'+turma);
+            let valorAjuste = parseInt(inputExtra.value) || 0;
+
+            if (operacao === 'subtrai') {
+                valorAjuste = -valorAjuste;
+            }
 
             db.ref('ranking/' + turma).once('value', snap => {
                 const data = snap.val();
-                const ptsExtraAtuais = (data.pts_extra || 0) + extraBonus;
+                const novosPtsExtra = (data.pts_extra || 0) + valorAjuste;
                 
-                const p = (Math.floor(s / 100) * 2) + (v * 1) + ptsExtraAtuais;
+                // Cálculo total automático
+                const p = (Math.floor(s / 100) * 2) + (v * 1) + novosPtsExtra;
                 
                 db.ref('ranking/' + turma).update({ 
                     seguidores: s, 
                     videos: v, 
                     pontos: p,
-                    pts_extra: ptsExtraAtuais 
+                    pts_extra: novosPtsExtra 
+                }).then(() => {
+                    inputExtra.value = 0;
+                    showNotify(operacao === 'soma' ? "Pontos Adicionados!" : "Pontos Removidos!");
+                    abrirAdmin(); // Recarrega para atualizar o número de acumulados
                 });
-                
-                extraInput.value = 0;
-                showNotify("Sincronizado: " + turma);
             });
+        }
+
+        function abrirInsta(url) {
+            if(!url || url === "") return showNotify("Instagram não cadastrado", "error");
+            window.open(url, '_blank');
         }
 
         function excluirTurma(t) { if(confirm("Apagar permanentemente "+t+"?")) { db.ref('ranking/'+t).remove(); showNotify("Turma banida."); } }

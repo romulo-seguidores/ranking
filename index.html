@@ -15,6 +15,7 @@
             --border: rgba(255, 255, 255, 0.1);
         }
 
+        /* AURAS COM BRILHO REAL */
         .aura-beta { color: #00d4ff !important; text-shadow: 0 0 15px #00d4ff; }
         .aura-elite { color: #ffd700 !important; text-shadow: 0 0 15px #ffd700; }
         .aura-sigma { color: #ff0055 !important; text-shadow: 0 0 15px #ff0055; }
@@ -25,6 +26,7 @@
 
         #app { width: 100%; max-width: 450px; margin: 0 auto; padding: 15px; }
 
+        /* NOTIFICAÇÕES CUSTOMIZADAS */
         #toast-container {
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
             z-index: 20000; width: 90%; max-width: 350px;
@@ -174,7 +176,7 @@
             <input type="text" id="in-turma" placeholder="Nome da Turma">
             <input type="text" id="in-serie" placeholder="Série/Ano">
             <input type="text" id="in-escola" placeholder="Nome da Escola">
-            <input type="url" id="in-insta" placeholder="Instagram (URL ou @)">
+            <input type="url" id="in-insta" placeholder="Instagram (URL)">
             <input type="password" id="in-pass" placeholder="Senha">
             <select id="in-aura">
                 <option value="aura-beta">🏳️‍🌈⃤ Aura Beta</option>
@@ -212,6 +214,15 @@
 
         <section id="admin-view" class="hidden glass">
             <h2 style="margin-bottom: 20px; color: var(--neon);">SISTEMA CENTRAL</h2>
+            
+            <div class="adm-card" style="border-color: var(--neon);">
+                <b style="font-size: 12px;">🚨 DISPARAR MISSÃO PARA TODOS</b>
+                <input type="text" id="adm-missao-txt" placeholder="Ex: Poste um vídeo dançando no pátio..." style="margin-top:10px;">
+                <button onclick="postarMissao()" class="btn-glow" style="padding:10px; font-size:12px;">ENVIAR AGORA ⚡</button>
+            </div>
+
+            <button onclick="limparTudoChat()" style="background: red; color: white; border: none; padding: 10px; border-radius: 10px; width: 100%; font-weight: bold; margin-bottom: 20px;">🧨 LIMPAR TODO O CHAT</button>
+            
             <div id="admin-list"></div>
             <button onclick="window.location.reload()" class="btn-glow" style="background:#222; color:white; margin-top: 20px;">FECHAR PAINEL</button>
         </section>
@@ -255,22 +266,96 @@
             }, 3000);
         }
 
-        // --- LOGIN CORRIGIDO ---
+        function toggleSidebar(s) {
+            document.getElementById('sidebar').classList.toggle('open', s);
+            document.getElementById('overlay').style.display = s ? 'block' : 'none';
+            if(s) document.getElementById('notif-badge').style.display = 'none';
+            if(s && sessao) {
+                document.getElementById('edit-nome').value = sessao.turma;
+                if(!sessao.isVisitante) document.getElementById('missao-recebida').classList.remove('hidden');
+            }
+        }
+
+        function postarMissao() {
+            const txt = document.getElementById('adm-missao-txt').value;
+            if(!txt) return;
+            db.ref('missao_global').set({ txt: txt, time: Date.now() });
+            showNotify("Missão disparada!");
+            document.getElementById('adm-missao-txt').value = "";
+        }
+
+        function enviarTarefa() {
+            const link = document.getElementById('link-missao').value;
+            if(!link) return showNotify("Cole o link do vídeo!", "error");
+            db.ref('entregas/' + sessao.turma).set({ link: link, time: Date.now() });
+            showNotify("Vídeo enviado ao Admin!");
+            document.getElementById('link-missao').value = "";
+        }
+
+        function excluirFoto() {
+            if(confirm("Deseja remover sua foto de perfil?")) {
+                base64Image = "delete";
+                showNotify("Foto marcada para exclusão!", "success");
+            }
+        }
+
+        document.getElementById('in-file').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                base64Image = reader.result;
+                showNotify("Imagem carregada!");
+            };
+            if(file) reader.readAsDataURL(file);
+        });
+
+        async function salvarPerfil() {
+            if(!sessao || sessao.isVisitante) return;
+            const novoNome = document.getElementById('edit-nome').value.trim();
+            if(!novoNome) return;
+
+            const updates = { turma: novoNome };
+            if(base64Image === "delete") {
+                updates.foto = null;
+            } else if(base64Image) {
+                updates.foto = base64Image;
+            }
+
+            await db.ref('ranking/' + sessao.turma).update(updates);
+            showNotify("Perfil atualizado!");
+            base64Image = ""; 
+            toggleSidebar(false);
+        }
+
+        window.addEventListener('load', () => {
+            const data = localStorage.getItem('user_v10_persist');
+            if(data) {
+                const p = JSON.parse(data);
+                document.getElementById('in-turma').value = p.turma || "";
+                document.getElementById('in-pass').value = p.pass || "";
+                document.getElementById('in-serie').value = p.serie || "";
+                document.getElementById('in-escola').value = p.escola || "";
+                document.getElementById('in-insta').value = p.insta || "";
+                document.getElementById('in-aura').value = p.aura || "aura-elite";
+            }
+        });
+
         function fazerLogin() {
             const t = document.getElementById('in-turma').value.trim();
             const p = document.getElementById('in-pass').value;
             const s = document.getElementById('in-serie').value;
             const e = document.getElementById('in-escola').value;
-            let i = document.getElementById('in-insta').value.trim();
+            const i = document.getElementById('in-insta').value;
             const a = document.getElementById('in-aura').value;
 
             if(!t || !p) return showNotify("Preencha Turma e Senha!", "error");
-            if(i && !i.includes('http')) i = 'https://instagram.com/' + i.replace('@', '');
 
-            db.ref('ranking/' + t).once('value').then(snap => {
+            db.ref('ranking/' + t).once('value', snap => {
                 let user = snap.val();
-                if(user && user.pass !== p) return showNotify("Senha incorreta!", "error");
-
+                if(user && user.pass !== p) {
+                    showNotify("Senha incorreta!", "error");
+                    return;
+                }
                 if(!user) {
                     user = {
                         turma: t, pass: p, escola: e, serie: s,
@@ -278,8 +363,9 @@
                         seguidores: 0, videos: 0, likes: 0, pts_extra: 0, online: Date.now()
                     };
                     db.ref('ranking/' + t).set(user);
-                    // Manda para a fila do bot analisar
-                    db.ref('fila_aprovacao/' + t).set({ insta: i, turma: t, foto: "https://cdn-icons-png.flaticon.com/512/149/149071.png", seguidores: 0, videos: 0 });
+                    
+                    // NOVA FUNÇÃO: Envia para o Bot analisar
+                    if(i) db.ref('analises/' + t).set({ insta: i, turma: t });
                 }
                 sessao = user;
                 localStorage.setItem('user_v10_persist', JSON.stringify({ turma: t, pass: p, escola: e, serie: s, insta: i, aura: a }));
@@ -298,13 +384,28 @@
             document.getElementById('login-view').classList.add('hidden');
             document.getElementById('rank-view').classList.remove('hidden');
             document.getElementById('btn-chat-float').classList.remove('hidden');
+
             const chatControls = document.getElementById('chat-controls');
             if(isVis) {
                 chatControls.innerHTML = `<p style="color:#555; font-size:11px; width:100%; text-align:center">Visitantes apenas observam.</p>`;
             } else {
-                chatControls.innerHTML = `<input type="text" id="msg-input" style="margin:0;" placeholder="Mande sua mídia..."><button onclick="mandarMsg()" class="btn-glow" style="width: 60px; padding: 0; font-size:20px;">⚡</button>`;
-                setInterval(() => { if(sessao && !sessao.isVisitante) db.ref('ranking/'+sessao.turma).update({ online: Date.now() }); }, 10000);
+                chatControls.innerHTML = `
+                    <input type="text" id="msg-input" style="margin:0;" placeholder="Mande sua mídia...">
+                    <button onclick="mandarMsg()" class="btn-glow" style="width: 60px; padding: 0; font-size:20px;">⚡</button>
+                `;
+                setInterval(() => {
+                    if(sessao && !sessao.isVisitante) db.ref('ranking/'+sessao.turma).update({ online: Date.now() });
+                }, 10000);
             }
+
+            db.ref('missao_global').on('value', snap => {
+                const m = snap.val();
+                if(m) {
+                    document.getElementById('txt-missao').innerText = m.txt;
+                    if(sessao && !isVis) document.getElementById('notif-badge').style.display = 'flex';
+                }
+            });
+
             carregarDados();
         }
 
@@ -313,69 +414,65 @@
                 const container = document.getElementById('ranking-container');
                 const dados = snap.val();
                 if(!dados) return;
+
                 const lista = Object.values(dados).filter(t => t && t.turma).sort((a,b) => (b.pontos || 0) - (a.pontos || 0));
                 container.innerHTML = "";
+
                 lista.forEach((t, i) => {
-                    const isOn = (Date.now() - (t.online || 0)) < 25000;
+                    const timeDiff = Date.now() - (t.online || 0);
+                    const isOn = timeDiff < 25000;
                     const level = Math.floor((t.pontos || 0) / 10) + 1;
                     const medalClass = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
+                    const medalIcon = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : i+1;
+                    const fotoUser = t.foto || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+
                     if(sessao && t.turma === sessao.turma) {
                         document.getElementById('meu-nome').innerText = t.turma;
                         document.getElementById('meu-nome').className = t.aura;
                         document.getElementById('minha-info').innerText = `${t.escola || '---'} | ${t.serie || '---'}`;
                         document.getElementById('meu-pts').innerText = t.pontos || 0;
                         document.getElementById('meu-nivel').innerText = level;
+                        sessao = t; 
                     }
+
                     container.innerHTML += `
                         <div class="rank-card">
-                            <div class="medal ${medalClass}"><img src="${t.foto || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}" class="user-pic"></div>
+                            <div class="medal ${medalClass}">
+                                <img src="${fotoUser}" class="user-pic">
+                            </div>
                             <div style="flex:1">
                                 <b class="${t.aura}">${t.turma}</b> <small style="color:#555">LV ${level}</small>
-                                <div style="font-size:9px; color:#888">${t.escola || ''}</div>
-                                <div class="status-tag ${isOn ? 'on' : 'off'}"><div style="width:6px; height:6px; border-radius:50%; background:currentColor; margin-right:5px;"></div>${isOn ? 'No toque' : 'Offline'}</div>
+                                <div style="font-size:9px; color:#888">${t.escola || ''} • ${t.serie || ''}</div>
+                                <div class="status-tag ${isOn ? 'on' : 'off'}">
+                                    <div style="width:6px; height:6px; border-radius:50%; background:currentColor; margin-right:5px;"></div>
+                                    ${isOn ? 'No toque' : 'Offline'}
+                                </div>
                                 <button class="btn-like" onclick="darLike('${t.turma}')">❤️ ${t.likes || 0}</button>
                             </div>
                             <div style="text-align:right">
-                                <span class="top-medal-float">${i < 3 ? (i===0?'🥇':i===1?'🥈':'🥉') : '#'+(i+1)}</span>
+                                <span class="top-medal-float">${i < 3 ? medalIcon : '#'+(i+1)}</span>
                                 <b style="color:var(--neon); font-size:18px;">${t.pontos || 0}</b>
                             </div>
-                        </div>`;
+                        </div>
+                    `;
                 });
             });
         }
 
-        function abrirAdmin() {
-            if(prompt("CÓDIGO DE ACESSO:") !== "123") return showNotify("Acesso Negado", "error");
-            document.getElementById('login-view').classList.add('hidden');
-            document.getElementById('admin-view').classList.remove('hidden');
-            
-            db.ref('fila_aprovacao').on('value', snap => {
-                const adminList = document.getElementById('admin-list');
-                adminList.innerHTML = "<h3 style='color:var(--neon); margin-bottom:15px;'>🤖 FILA DO BOT / NOVOS LOGINS:</h3>";
-                const fila = snap.val();
-                if(fila) {
-                    Object.keys(fila).forEach(id => {
-                        const item = fila[id];
-                        adminList.innerHTML += `
-                            <div class="adm-card" style="border: 2px solid #ffd700;">
-                                <b>${item.turma}</b><br><small>${item.insta}</small><br>
-                                <input type="number" id="bot-seg-${id}" placeholder="Seguidores" style="margin-top:5px; padding:5px;">
-                                <button onclick="confirmarBot('${id}')" class="btn-glow" style="padding:10px; margin-top:5px;">VALIDAR E DAR PONTOS</button>
-                            </div>`;
-                    });
-                } else { adminList.innerHTML += "<p>Ninguém na fila.</p>"; }
-            });
+        function darLike(turmaAlvo) {
+            const storageKey = 'like_v10_' + turmaAlvo;
+            if(localStorage.getItem(storageKey)) return showNotify("Já deixou o like!", "error");
+            db.ref('ranking/' + turmaAlvo + '/likes').transaction(c => (c || 0) + 1);
+            localStorage.setItem(storageKey, "true");
+            showNotify("Like enviado!");
         }
 
-        function confirmarBot(id) {
-            const seg = parseInt(document.getElementById(`bot-seg-${id}`).value) || 0;
-            const pts = Math.floor(seg / 100) * 2;
-            db.ref('ranking/' + id).update({ seguidores: seg, pontos: pts }).then(() => {
-                db.ref('fila_aprovacao/' + id).remove();
-                showNotify("Pontos validados!");
-            });
+        function toggleChat(s) { 
+            chatAberto = s;
+            document.getElementById('chat-ui').style.display = s ? 'flex' : 'none'; 
+            if(s) document.getElementById('chat-badge').style.display = 'none';
         }
-
+        
         function mandarMsg() {
             const m = document.getElementById('msg-input').value;
             if(!m || !sessao || sessao.isVisitante) return;
@@ -383,15 +480,163 @@
             document.getElementById('msg-input').value = "";
         }
 
+        db.ref('elite_chat').limitToLast(1).on('child_added', (snap) => {
+            const msg = snap.val();
+            if(!chatAberto && sessao && msg.t !== sessao.turma) {
+                const badge = document.getElementById('chat-badge');
+                badge.style.display = 'flex';
+                if(navigator.vibrate) navigator.vibrate(50);
+            }
+        });
+
         db.ref('elite_chat').limitToLast(40).on('value', snap => {
-            const box = document.getElementById('msg-flow'); box.innerHTML = "";
-            snap.forEach(d => { const v = d.val(); box.innerHTML += `<div class="msg-bubble"><b class="${v.a}" style="font-size:10px">${v.t}</b><br>${v.m}</div>`; });
+            const box = document.getElementById('msg-flow');
+            box.innerHTML = "";
+            snap.forEach(d => {
+                const v = d.val();
+                if(v && v.t) box.innerHTML += `<div class="msg-bubble"><b class="${v.a}" style="font-size:10px">${v.t}</b><br>${v.m}</div>`;
+            });
             box.scrollTop = box.scrollHeight;
         });
 
-        function toggleChat(s) { chatAberto = s; document.getElementById('chat-ui').style.display = s ? 'flex' : 'none'; }
-        function sair() { localStorage.removeItem('user_v10_persist'); window.location.reload(); }
-        function toggleSidebar(s) { document.getElementById('sidebar').classList.toggle('open', s); document.getElementById('overlay').style.display = s ? 'block' : 'none'; }
+        function abrirAdmin() {
+            if(prompt("CÓDIGO DE ACESSO:") !== "123") return showNotify("Acesso Negado", "error");
+            document.getElementById('login-view').classList.add('hidden');
+            document.getElementById('admin-view').classList.remove('hidden');
+
+            // NOVA SEÇÃO: FILA DE APROVAÇÃO DO BOT
+            db.ref('fila_aprovacao').on('value', snap => {
+                const fila = snap.val();
+                const adminList = document.getElementById('admin-list');
+                adminList.innerHTML = "<h3 style='margin:15px 0 10px; font-size:12px; color:var(--neon)'>🤖 FILA DO BOT (AGUARDANDO APROVAÇÃO):</h3>";
+
+                if(fila) {
+                    Object.keys(fila).forEach(id => {
+                        const item = fila[id];
+                        adminList.innerHTML += `
+                            <div class="adm-card" style="border: 2px solid #ffd700; display:flex; gap:10px; align-items:center;">
+                                <img src="${item.foto}" style="width:50px; height:50px; border-radius:50%; border:1px solid #333">
+                                <div style="flex:1">
+                                    <b style="font-size:12px">${item.turma}</b><br>
+                                    <small style="font-size:10px; color:#888">Seguidores: ${item.seguidores} | Vídeos: ${item.videos}</small><br>
+                                    <button onclick="confirmarBot('${id}')" class="btn-glow" style="padding:8px; font-size:10px; margin-top:5px">✅ CONFIRMAR E DAR PONTOS</button>
+                                    <button onclick="db.ref('fila_aprovacao/${id}').remove()" style="color:red; background:none; border:none; font-size:9px; margin-left:10px">Recusar</button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    adminList.innerHTML += "<p style='font-size:10px; color:#444'>Nenhum perfil na fila do bot no momento.</p>";
+                }
+
+                // Restante do admin (Entregas e Gestão)
+                carregarAdminRestante(adminList);
+            });
+        }
+
+        // NOVA FUNÇÃO: Confirmação do BOT
+        function confirmarBot(id) {
+            db.ref('fila_aprovacao/' + id).once('value', snap => {
+                const d = snap.val();
+                // Cálculo: 100 seg = 2pts | 1 vídeo = 1pt
+                const pts = (Math.floor(d.seguidores / 100) * 2) + (d.videos * 1);
+
+                db.ref('ranking/' + d.turma).update({
+                    seguidores: d.seguidores,
+                    videos: d.videos,
+                    pontos: pts
+                }).then(() => {
+                    db.ref('fila_aprovacao/' + id).remove();
+                    showNotify("Pontos validados para " + d.turma);
+                });
+            });
+        }
+
+        function carregarAdminRestante(adminList) {
+            db.ref('entregas').on('value', snap => {
+                const entregas = snap.val();
+                db.ref('ranking').once('value', rSnap => {
+                    const ranking = rSnap.val();
+                    adminList.innerHTML += "<h3 style='margin:25px 0 10px; font-size:12px;'>📥 ENTREGAS DE MISSÕES:</h3>";
+                    
+                    if(entregas) {
+                        Object.keys(entregas).forEach(turma => {
+                            adminList.innerHTML += `
+                                <div class="adm-card" style="border-color: #00d4ff;">
+                                    <small style="color:#00d4ff">MISSÃO ENTREGUE POR:</small><br>
+                                    <b>${turma}</b><br>
+                                    <button onclick="window.open('${entregas[turma].link}', '_blank')" style="margin-top:10px; width:100%; padding:8px; border-radius:10px; border:none; background:#222; color:white; font-size:10px;"> assistir vídeo entregue 🔗</button>
+                                    <button onclick="db.ref('entregas/${turma}').remove()" style="margin-top:5px; width:100%; padding:5px; border:none; background:none; color:#444; font-size:9px;">Remover da lista</button>
+                                </div>
+                            `;
+                        });
+                    }
+
+                    adminList.innerHTML += "<h3 style='margin:25px 0 10px; font-size:12px;'>👥 GESTÃO DE TURMAS:</h3>";
+                    Object.values(ranking).forEach(t => {
+                        if(!t.turma) return;
+                        adminList.innerHTML += `
+                            <div class="adm-card">
+                                <b>${t.turma}</b>
+                                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin: 10px 0;">
+                                    <div style="font-size:9px; color:#555">Seguidores</div>
+                                    <div style="font-size:9px; color:#555">Vídeos</div>
+                                    <input type="number" id="a-s-${t.turma}" value="${t.seguidores || 0}">
+                                    <input type="number" id="a-v-${t.turma}" value="${t.videos || 0}">
+                                </div>
+                                <div style="margin-bottom:10px;">
+                                    <label style="font-size:9px; color:var(--neon)">PONTOS EXTRAS ACUMULADOS: <span style="color:white">${t.pts_extra || 0}</span></label>
+                                    <input type="number" id="a-e-${t.turma}" value="0" style="border: 1px solid var(--neon); padding: 10px; margin-top:5px;">
+                                </div>
+                                <button onclick="ajustarPontos('${t.turma}', 'soma')" style="width:100%; background:var(--neon); border:none; padding:12px; border-radius:10px; font-weight:bold; margin-bottom:5px;">ADICIONAR PONTOS</button>
+                                <button onclick="ajustarPontos('${t.turma}', 'subtrai')" style="width:100%; background:#ff4444; border:none; padding:12px; border-radius:10px; font-weight:bold; color:white;">TIRAR PONTOS</button>
+                                
+                                <button onclick="abrirInsta('${t.insta}')" style="margin-top:8px; width:100%; background:#111; color:white; border:1px solid #333; padding:8px; border-radius:10px; font-size:11px;">📸 ABRIR INSTAGRAM</button>
+                                <button onclick="excluirTurma('${t.turma}')" style="margin-top:15px; width:100%; background:none; color:#444; border:none; font-size:9px;">Banir Turma</button>
+                            </div>
+                        `;
+                    });
+                });
+            });
+        }
+
+        function ajustarPontos(turma, operacao) {
+            const s = parseInt(document.getElementById('a-s-'+turma).value) || 0;
+            const v = parseInt(document.getElementById('a-v-'+turma).value) || 0;
+            const inputExtra = document.getElementById('a-e-'+turma);
+            let valorAjuste = parseInt(inputExtra.value) || 0;
+
+            if (operacao === 'subtrai') {
+                valorAjuste = -valorAjuste;
+            }
+
+            db.ref('ranking/' + turma).once('value', snap => {
+                const data = snap.val();
+                const novosPtsExtra = (data.pts_extra || 0) + valorAjuste;
+                
+                const p = (Math.floor(s / 100) * 2) + (v * 1) + novosPtsExtra;
+                
+                db.ref('ranking/' + turma).update({ 
+                    seguidores: s, 
+                    videos: v, 
+                    pontos: p,
+                    pts_extra: novosPtsExtra 
+                }).then(() => {
+                    inputExtra.value = 0;
+                    showNotify(operacao === 'soma' ? "Pontos Adicionados!" : "Pontos Removidos!");
+                    abrirAdmin();
+                });
+            });
+        }
+
+        function abrirInsta(url) {
+            if(!url || url === "") return showNotify("Instagram não cadastrado", "error");
+            window.open(url, '_blank');
+        }
+
+        function excluirTurma(t) { if(confirm("Apagar permanentemente "+t+"?")) { db.ref('ranking/'+t).remove(); showNotify("Turma banida."); } }
+        function limparTudoChat() { if(confirm("Limpar todo o histórico de mensagens?")) { db.ref('elite_chat').remove(); showNotify("Chat limpo."); } }
+        function sair() { window.location.reload(); }
     </script>
 </body>
 </html>

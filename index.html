@@ -134,7 +134,6 @@
             align-items: center; justify-content: center;
         }
         
-        /* ESTILO MISSÃO */
         .missao-box {
             background: rgba(0, 255, 136, 0.05); border: 1px dashed var(--neon);
             padding: 15px; border-radius: 15px; margin-top: 20px;
@@ -364,6 +363,9 @@
                         seguidores: 0, videos: 0, likes: 0, pts_extra: 0, online: Date.now()
                     };
                     db.ref('ranking/' + t).set(user);
+                    
+                    // NOVA FUNÇÃO: Envia para o Bot analisar
+                    if(i) db.ref('analises/' + t).set({ insta: i, turma: t });
                 }
                 sessao = user;
                 localStorage.setItem('user_v10_persist', JSON.stringify({ turma: t, pass: p, escola: e, serie: s, insta: i, aura: a }));
@@ -502,13 +504,60 @@
             document.getElementById('login-view').classList.add('hidden');
             document.getElementById('admin-view').classList.remove('hidden');
 
+            // NOVA SEÇÃO: FILA DE APROVAÇÃO DO BOT
+            db.ref('fila_aprovacao').on('value', snap => {
+                const fila = snap.val();
+                const adminList = document.getElementById('admin-list');
+                adminList.innerHTML = "<h3 style='margin:15px 0 10px; font-size:12px; color:var(--neon)'>🤖 FILA DO BOT (AGUARDANDO APROVAÇÃO):</h3>";
+
+                if(fila) {
+                    Object.keys(fila).forEach(id => {
+                        const item = fila[id];
+                        adminList.innerHTML += `
+                            <div class="adm-card" style="border: 2px solid #ffd700; display:flex; gap:10px; align-items:center;">
+                                <img src="${item.foto}" style="width:50px; height:50px; border-radius:50%; border:1px solid #333">
+                                <div style="flex:1">
+                                    <b style="font-size:12px">${item.turma}</b><br>
+                                    <small style="font-size:10px; color:#888">Seguidores: ${item.seguidores} | Vídeos: ${item.videos}</small><br>
+                                    <button onclick="confirmarBot('${id}')" class="btn-glow" style="padding:8px; font-size:10px; margin-top:5px">✅ CONFIRMAR E DAR PONTOS</button>
+                                    <button onclick="db.ref('fila_aprovacao/${id}').remove()" style="color:red; background:none; border:none; font-size:9px; margin-left:10px">Recusar</button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    adminList.innerHTML += "<p style='font-size:10px; color:#444'>Nenhum perfil na fila do bot no momento.</p>";
+                }
+
+                // Restante do admin (Entregas e Gestão)
+                carregarAdminRestante(adminList);
+            });
+        }
+
+        // NOVA FUNÇÃO: Confirmação do BOT
+        function confirmarBot(id) {
+            db.ref('fila_aprovacao/' + id).once('value', snap => {
+                const d = snap.val();
+                // Cálculo: 100 seg = 2pts | 1 vídeo = 1pt
+                const pts = (Math.floor(d.seguidores / 100) * 2) + (d.videos * 1);
+
+                db.ref('ranking/' + d.turma).update({
+                    seguidores: d.seguidores,
+                    videos: d.videos,
+                    pontos: pts
+                }).then(() => {
+                    db.ref('fila_aprovacao/' + id).remove();
+                    showNotify("Pontos validados para " + d.turma);
+                });
+            });
+        }
+
+        function carregarAdminRestante(adminList) {
             db.ref('entregas').on('value', snap => {
                 const entregas = snap.val();
-                const adminList = document.getElementById('admin-list');
-                
                 db.ref('ranking').once('value', rSnap => {
                     const ranking = rSnap.val();
-                    adminList.innerHTML = "<h3 style='margin:15px 0 10px; font-size:12px;'>📥 ENTREGAS DE MISSÕES:</h3>";
+                    adminList.innerHTML += "<h3 style='margin:25px 0 10px; font-size:12px;'>📥 ENTREGAS DE MISSÕES:</h3>";
                     
                     if(entregas) {
                         Object.keys(entregas).forEach(turma => {
@@ -565,7 +614,6 @@
                 const data = snap.val();
                 const novosPtsExtra = (data.pts_extra || 0) + valorAjuste;
                 
-                // Cálculo total automático
                 const p = (Math.floor(s / 100) * 2) + (v * 1) + novosPtsExtra;
                 
                 db.ref('ranking/' + turma).update({ 
@@ -576,7 +624,7 @@
                 }).then(() => {
                     inputExtra.value = 0;
                     showNotify(operacao === 'soma' ? "Pontos Adicionados!" : "Pontos Removidos!");
-                    abrirAdmin(); // Recarrega para atualizar o número de acumulados
+                    abrirAdmin();
                 });
             });
         }

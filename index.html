@@ -276,6 +276,27 @@
             }
         }
 
+        function aprovarTurma(dados) {
+  // 1. Calcula os pontos (ex: seguidores * 10)
+  const pontosCalculados = parseInt(dados.seguidores.replace(/\D/g,'')) * 10;
+
+  // 2. Manda para o Ranking Oficial
+  fetch(`https://gincanaescola-d4f8c-default-rtdb.firebaseio.com/ranking_oficial/${dados.id_original}.json`, {
+    method: 'PUT',
+    body: JSON.stringify({
+      turma: dados.turma,
+      pontos: pontosCalculados,
+      insta: dados.user
+    })
+  });
+
+  // 3. Deleta da fila de espera
+  fetch(`https://gincanaescola-d4f8c-default-rtdb.firebaseio.com/analises/${dados.id_original}.json`, { method: 'DELETE' });
+  fetch(`https://gincanaescola-d4f8c-default-rtdb.firebaseio.com/fila_de_aprovacao/${dados.id_original}.json`, { method: 'DELETE' });
+
+  alert("✅ Pontos creditados com sucesso!");
+}
+
         function postarMissao() {
             const txt = document.getElementById('adm-missao-txt').value;
             if(!txt) return;

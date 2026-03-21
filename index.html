@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <title>RANK X - Elite Mídia V12</title>
+    <title>RANK X - Elite Mídia V12 (Completa)</title>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;900&display=swap');
@@ -15,6 +15,7 @@
             --border: rgba(255, 255, 255, 0.1);
         }
 
+        /* AURAS COM BRILHO REAL */
         .aura-beta { color: #00d4ff !important; text-shadow: 0 0 15px #00d4ff; }
         .aura-elite { color: #ffd700 !important; text-shadow: 0 0 15px #ffd700; }
         .aura-sigma { color: #ff0055 !important; text-shadow: 0 0 15px #ff0055; }
@@ -25,6 +26,7 @@
 
         #app { width: 100%; max-width: 450px; margin: 0 auto; padding: 15px; }
 
+        /* NOTIFICAÇÕES CUSTOMIZADAS */
         #toast-container {
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
             z-index: 20000; width: 90%; max-width: 350px;
@@ -50,7 +52,10 @@
             margin-bottom: 15px; animation: popIn 0.5s ease backwards;
         }
 
-        @keyframes popIn { from { opacity: 0; transform: scale(0.9) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        @keyframes popIn { 
+            from { opacity: 0; transform: scale(0.9) translateY(20px); } 
+            to { opacity: 1; transform: scale(1) translateY(0); } 
+        }
 
         input, select {
             width: 100%; padding: 16px; margin-bottom: 10px; border-radius: 15px;
@@ -72,7 +77,8 @@
 
         .medal {
             width: 40px; height: 40px; border-radius: 50%; display: flex;
-            align-items: center; justify-content: center; background: #111; border: 2px solid #222; margin-right: 12px;
+            align-items: center; justify-content: center; 
+            background: #111; border: 2px solid #222; margin-right: 12px;
             overflow: hidden; flex-shrink: 0;
         }
         .user-pic { width: 100%; height: 100%; object-fit: cover; }
@@ -81,7 +87,11 @@
         .silver { border-color: #e0e0e0; }
         .bronze { border-color: #cd7f32; }
 
-        .top-medal-float { display: block; font-size: 18px; margin-bottom: 2px; text-align: center; }
+        .top-medal-float {
+            display: block; font-size: 18px; margin-bottom: 2px; text-align: center;
+            filter: drop-shadow(0 0 5px rgba(255,255,255,0.3));
+        }
+
         .status-tag { font-size: 9px; font-weight: 800; display: flex; align-items: center; margin-top: 4px; }
         .on { color: #00ff88; }
         .off { color: #ff4444; }
@@ -89,16 +99,30 @@
         #sidebar {
             position: fixed; top: 0; right: -100%; width: 280px; height: 100%;
             background: #050505; border-left: 1px solid var(--border); z-index: 10000;
-            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); padding: 30px 20px; overflow-y: auto;
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); padding: 30px 20px;
+            box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+            overflow-y: auto;
         }
         #sidebar.open { right: 0; }
-        .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; display: none; }
+        
+        .sidebar-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7); z-index: 9999; display: none;
+        }
 
-        #chat-ui { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; display: none; flex-direction: column; }
+        #chat-ui {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 9999; display: none; flex-direction: column;
+        }
         #msg-flow { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
         .msg-bubble { background: #111; padding: 10px 15px; border-radius: 18px; border-left: 4px solid var(--neon); max-width: 85%; }
 
-        .btn-like { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #ff4444; padding: 4px 10px; border-radius: 10px; font-size: 11px; cursor: pointer; margin-top: 5px; }
+        .btn-like {
+            background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+            color: #ff4444; padding: 4px 10px; border-radius: 10px; font-size: 11px;
+            cursor: pointer; margin-top: 5px; transition: 0.2s;
+        }
+
         .hidden { display: none !important; }
         .adm-card { background: #0a0a0a; border: 1px solid #222; padding: 15px; border-radius: 20px; margin-bottom: 10px; }
 
@@ -106,82 +130,105 @@
             position: absolute; top: -5px; right: -5px; width: 22px; height: 22px;
             background: #ff0000; border-radius: 50%; display: none;
             box-shadow: 0 0 15px #ff0000; border: 3px solid #000;
-            color: white; font-size: 10px; font-weight: 900; align-items: center; justify-content: center;
+            color: white; font-size: 10px; font-weight: 900;
+            align-items: center; justify-content: center;
         }
         
-        .tab-btn { background: #111; border: 1px solid #222; color: #555; padding: 10px; flex: 1; border-radius: 10px; font-weight: bold; cursor: pointer; }
-        .tab-btn.active { background: var(--neon); color: black; border-color: var(--neon); }
+        .missao-box {
+            background: rgba(0, 255, 136, 0.05); border: 1px dashed var(--neon);
+            padding: 15px; border-radius: 15px; margin-top: 20px;
+        }
 
-        .btn-update { background: #111; border: 1px solid #333; color: var(--neon); font-size: 9px; padding: 5px 8px; border-radius: 8px; cursor: pointer; font-weight: 800; }
+        /* Botão Me Atualize */
+        .btn-update { 
+            background: rgba(0, 255, 136, 0.1); border: 1px solid var(--neon); 
+            color: var(--neon); padding: 5px 10px; border-radius: 10px; 
+            font-size: 9px; font-weight: 900; cursor: pointer; 
+        }
     </style>
 </head>
 <body>
 
     <div id="toast-container"></div>
-    <div class="sidebar-overlay" id="overlay" onclick="toggleSidebar(false)"></div>
 
+    <div class="sidebar-overlay" id="overlay" onclick="toggleSidebar(false)"></div>
     <div id="sidebar">
         <h3 style="margin-bottom: 20px; color: var(--neon);">EDITAR PERFIL</h3>
-        <input type="file" id="in-file" accept="image/*" style="font-size: 10px;">
-        <button onclick="excluirFoto()" style="color:red; background:none; border:none; font-size:10px; margin-bottom:15px;">🗑️ Remover Foto</button>
+        
+        <label style="font-size: 10px; color: #555;">FOTO DA GALERIA</label>
+        <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 10px;">
+            <input type="file" id="in-file" accept="image/*" style="padding: 10px; font-size: 10px; margin-bottom: 0; flex: 1;">
+            <button onclick="excluirFoto()" style="background: rgba(255,0,0,0.1); border: 1px solid red; color: red; border-radius: 12px; width: 45px; height: 45px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px;">🗑️</button>
+        </div>
+        
         <label style="font-size: 10px; color: #555;">NOME DA TURMA</label>
         <input type="text" id="edit-nome" placeholder="Novo nome...">
-        <button onclick="salvarPerfil()" class="btn-glow">SALVAR ALTERAÇÕES</button>
-        <button onclick="toggleSidebar(false)" style="width: 100%; border:none; color: #444; margin-top: 10px; background:none;">CANCELAR</button>
+        
+        <div id="missao-recebida" class="missao-box hidden">
+            <b style="color: var(--neon); font-size: 12px;">📜 MISSÃO ATUAL:</b>
+            <p id="txt-missao" style="font-size: 12px; margin: 5px 0; color: #ccc;">Carregando...</p>
+            <input type="url" id="link-missao" placeholder="Link do vídeo feito" style="font-size: 11px; padding: 10px; margin-top: 10px;">
+            <button onclick="enviarTarefa()" class="btn-glow" style="padding: 10px; font-size: 11px;">ENVIAR PARA AVALIAÇÃO</button>
+        </div>
+
+        <button onclick="salvarPerfil()" class="btn-glow" style="margin-top: 20px; padding: 12px;">SALVAR ALTERAÇÕES</button>
+        <button onclick="toggleSidebar(false)" style="width: 100%; background: none; border: 1px solid #222; color: #444; margin-top: 10px; padding: 10px; border-radius: 10px; font-size: 12px;">CANCELAR</button>
     </div>
 
     <div id="app">
         <section id="login-view" class="glass">
-            <h1 style="text-align: center; font-weight: 900; font-size: 32px;">RANK<span style="color:var(--neon)">X</span></h1>
+            <h1 style="text-align: center; font-weight: 900; font-size: 32px; letter-spacing: -2px;">RANK<span style="color:var(--neon)">X</span></h1>
+            <p style="text-align: center; font-size: 10px; color: #444; margin-bottom: 20px;">SISTEMA DE ELITE REGIONAL</p>
+            
             <input type="text" id="in-turma" placeholder="Nome da Turma">
             <input type="password" id="in-pass" placeholder="Senha">
-            <input type="text" id="in-serie" placeholder="Série (Ex: 9º A)">
-            <input type="text" id="in-escola" placeholder="Escola">
-            <input type="url" id="in-insta" placeholder="Instagram URL">
+            
             <select id="in-ensino">
                 <option value="fundamental">Ensino Fundamental</option>
                 <option value="medio">Ensino Médio</option>
             </select>
+            
+            <input type="text" id="in-serie" placeholder="Série/Ano">
+            <input type="text" id="in-escola" placeholder="Nome da Escola">
+            <input type="url" id="in-insta" placeholder="Instagram (URL)">
+            
             <select id="in-aura">
-                <option value="aura-beta">Aura Beta</option>
-                <option value="aura-elite">Aura Elite</option>
-                <option value="aura-sigma">Aura Sigma</option>
+                <option value="aura-beta">🏳️‍🌈⃤ Aura Beta</option>
+                <option value="aura-elite">⚜️ Aura Elite</option>
+                <option value="aura-sigma">🗿 Aura Sigma</option>
+                <option value="aura-omega">♾️ Aura Omega</option>
             </select>
+            
             <button onclick="fazerLogin()" class="btn-glow">ACESSAR RANKING</button>
-            <p onclick="abrirAdmin()" style="text-align: center; font-size: 9px; margin-top: 20px; cursor: pointer;">PAINEL ADMIN</p>
-        </section>
-
-        <section id="select-ensino-view" class="hidden glass" style="text-align:center">
-            <h2>QUAL RANK VOCÊ QUER VER?</h2>
-            <div style="display:flex; gap:10px; margin-top:20px;">
-                <button onclick="setEnsinoView('fundamental')" class="btn-glow">FUNDAMENTAL</button>
-                <button onclick="setEnsinoView('medio')" class="btn-glow" style="background:linear-gradient(90deg, #a855f7, #00d4ff)">MÉDIO</button>
-            </div>
+            <button onclick="entrarVisitante()" style="background:none; border:none; color:#333; width:100%; margin-top:15px; font-size: 12px;">Entrar como Visitante</button>
+            <p onclick="abrirAdmin()" style="text-align: center; font-size: 9px; margin-top: 30px; color: #111; cursor: pointer;">PAINEL ADMIN</p>
         </section>
 
         <section id="rank-view" class="hidden">
-            <div class="glass" style="text-align: center;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                    <button onclick="toggleSidebar(true)" style="background:none; border:none; font-size:22px;">⚙️</button>
-                    <button onclick="pedirAtualizacao()" class="btn-update">ME ATUALIZE 🔄</button>
+            <div class="glass" style="text-align: center; border-bottom: 4px solid var(--neon); position: relative;">
+                
+                <div style="position: absolute; top: 15px; right: 15px; display: flex; align-items: center; gap: 15px;">
+                    <button onclick="pedirUpdate()" class="btn-update" id="btn-upd">ME ATUALIZE 🔄</button>
+                    
                     <div style="position: relative;" onclick="toggleSidebar(true)">
-                        <span style="font-size: 22px;">🔔</span>
+                        <span style="font-size: 20px; cursor: pointer; filter: grayscale(1);">🔔</span>
                         <div id="notif-badge">!</div>
                     </div>
+                    <button onclick="toggleSidebar(true)" style="background: none; border: none; font-size: 20px; cursor: pointer; filter: grayscale(1);">⚙️</button>
                 </div>
                 
-                <h2 id="meu-nome" class="aura-elite">---</h2>
-                <p id="minha-info" style="font-size: 11px; color: #888;">---</p>
+                <h2 id="meu-nome" class="aura-elite" style="margin-top: 10px;">---</h2>
+                <p id="minha-info" style="font-size: 11px; color: #888; margin-top: 5px;">Escola --- | Série ---</p>
                 <div style="margin-top: 15px; display: flex; justify-content: space-around;">
                     <div><b id="meu-pts" style="font-size: 22px; color: var(--neon);">0</b><br><small>PTS</small></div>
                     <div><b id="meu-nivel" style="font-size: 22px;">1</b><br><small>NÍVEL</small></div>
                 </div>
-                <button onclick="sair()" style="color:red; background:none; border:none; font-size:10px; margin-top:10px;">SAIR</button>
+                <button onclick="sair()" style="margin-top: 15px; background: rgba(255,0,0,0.1); border: 1px solid rgba(255,0,0,0.2); color: red; padding: 5px 15px; border-radius: 10px; font-size: 10px; font-weight: bold;">SAIR DA CONTA</button>
             </div>
 
-            <div style="display:flex; gap:5px; margin-bottom:15px;">
-                <button id="btn-tab-f" onclick="setEnsinoView('fundamental')" class="tab-btn">FUNDAMENTAL</button>
-                <button id="btn-tab-m" onclick="setEnsinoView('medio')" class="tab-btn">MÉDIO</button>
+            <div style="display: flex; gap: 5px; margin-bottom: 15px;">
+                <button id="btn-fund" onclick="mudarFiltro('fundamental')" style="flex:1; padding: 10px; border-radius: 12px; border: 1px solid var(--neon); background: #111; color: white; font-size: 10px; font-weight: bold;">FUNDAMENTAL</button>
+                <button id="btn-med" onclick="mudarFiltro('medio')" style="flex:1; padding: 10px; border-radius: 12px; border: 1px solid #222; background: #111; color: white; font-size: 10px; font-weight: bold;">MÉDIO</button>
             </div>
 
             <div id="ranking-container"></div>
@@ -189,27 +236,33 @@
         </section>
 
         <section id="admin-view" class="hidden glass">
-            <h2>PAINEL ADMIN</h2>
-            <div id="admin-notificacoes"></div>
+            <h2 style="margin-bottom: 20px; color: var(--neon);">SISTEMA CENTRAL</h2>
+            
+            <div class="adm-card" style="border-color: var(--neon);">
+                <b style="font-size: 12px;">🚨 DISPARAR MISSÃO PARA TODOS</b>
+                <input type="text" id="adm-missao-txt" placeholder="Ex: Poste um vídeo dançando no pátio..." style="margin-top:10px;">
+                <button onclick="postarMissao()" class="btn-glow" style="padding:10px; font-size:12px;">ENVIAR AGORA ⚡</button>
+            </div>
+
+            <button onclick="limparTudoChat()" style="background: red; color: white; border: none; padding: 10px; border-radius: 10px; width: 100%; font-weight: bold; margin-bottom: 20px;">🧨 LIMPAR TODO O CHAT</button>
+            
             <div id="admin-list"></div>
-            <button onclick="window.location.reload()" class="btn-glow" style="margin-top:20px; background:#222; color:white;">VOLTAR</button>
+            <button onclick="window.location.reload()" class="btn-glow" style="background:#222; color:white; margin-top: 20px;">FECHAR PAINEL</button>
         </section>
     </div>
 
     <div id="chat-ui">
-        <div style="padding: 20px; background: #050505; display: flex; justify-content: space-between;">
-            <b style="color: var(--neon);">CHAT ELITE</b>
-            <button onclick="toggleChat(false)" style="color:red; background:none; border:none;">[X]</button>
+        <div style="padding: 20px; background: #050505; border-bottom: 1px solid #111; display: flex; justify-content: space-between; align-items: center;">
+            <b style="color: var(--neon);">CHAT DA ELITE</b>
+            <button onclick="toggleChat(false)" style="background:none; border:none; color:red; font-weight: 800;">[X]</button>
         </div>
         <div id="msg-flow"></div>
-        <div id="chat-controls" style="padding: 15px; display: flex; gap: 8px;">
-            <input type="text" id="msg-input" style="margin:0;" placeholder="Texto...">
-            <button onclick="mandarMsg()" class="btn-glow" style="width:60px; padding:0;">⚡</button>
-        </div>
+        <div id="chat-controls" style="padding: 15px; background: #050505; display: flex; gap: 8px;"></div>
     </div>
 
-    <div id="btn-chat-float" class="hidden" onclick="toggleChat(true)" style="position: fixed; bottom: 30px; right: 20px; width: 60px; height: 60px; background: var(--neon); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 25px; z-index: 1000;">
-        💬 <div id="chat-badge">!</div>
+    <div id="btn-chat-float" class="hidden" onclick="toggleChat(true)" style="position: fixed; bottom: 30px; right: 20px; width: 60px; height: 60px; background: var(--neon); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 25px; box-shadow: 0 10px 25px rgba(0,255,136,0.4); z-index: 1000;">
+        💬
+        <div id="chat-badge">!</div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -221,8 +274,9 @@
         const db = firebase.database();
 
         let sessao = null;
-        let ensinoAtual = 'fundamental';
         let base64Image = "";
+        let chatAberto = false;
+        let filtroEnsino = "fundamental"; // Novo Estado para o filtro
 
         function showNotify(msg, type = 'success') {
             const container = document.getElementById('toast-container');
@@ -230,185 +284,436 @@
             toast.className = `toast ${type === 'error' ? 'error' : ''}`;
             toast.innerHTML = `<span>${type === 'error' ? '⚠️' : '✅'}</span> ${msg}`;
             container.appendChild(toast);
-            setTimeout(() => { toast.classList.add('hide'); setTimeout(() => toast.remove(), 400); }, 3000);
+            setTimeout(() => {
+                toast.classList.add('hide');
+                setTimeout(() => toast.remove(), 400);
+            }, 3000);
         }
+
+        function toggleSidebar(s) {
+            document.getElementById('sidebar').classList.toggle('open', s);
+            document.getElementById('overlay').style.display = s ? 'block' : 'none';
+            if(s) document.getElementById('notif-badge').style.display = 'none';
+            if(s && sessao) {
+                document.getElementById('edit-nome').value = sessao.turma;
+                if(!sessao.isVisitante) document.getElementById('missao-recebida').classList.remove('hidden');
+            }
+        }
+
+        function aprovarTurma(dados) {
+            // 1. Calcula os pontos (ex: seguidores * 10)
+            const pontosCalculados = parseInt(dados.seguidores.replace(/\D/g,'')) * 10;
+
+            // 2. Manda para o Ranking Oficial
+            fetch(`https://gincanaescola-d4f8c-default-rtdb.firebaseio.com/ranking_oficial/${dados.id_original}.json`, {
+                method: 'PUT',
+                body: JSON.stringify({
+                    turma: dados.turma,
+                    pontos: pontosCalculados,
+                    insta: dados.user
+                })
+            });
+
+            // 3. Deleta da fila de espera
+            fetch(`https://gincanaescola-d4f8c-default-rtdb.firebaseio.com/analises/${dados.id_original}.json`, { method: 'DELETE' });
+            fetch(`https://gincanaescola-d4f8c-default-rtdb.firebaseio.com/fila_de_aprovacao/${dados.id_original}.json`, { method: 'DELETE' });
+
+            showNotify("Pontos creditados com sucesso!");
+        }
+
+        function postarMissao() {
+            const txt = document.getElementById('adm-missao-txt').value;
+            if(!txt) return;
+            db.ref('missao_global').set({ txt: txt, time: Date.now() });
+            showNotify("Missão disparada!");
+            document.getElementById('adm-missao-txt').value = "";
+        }
+
+        function enviarTarefa() {
+            const link = document.getElementById('link-missao').value;
+            if(!link) return showNotify("Cole o link do vídeo!", "error");
+            db.ref('entregas/' + sessao.turma).set({ link: link, time: Date.now() });
+            showNotify("Vídeo enviado ao Admin!");
+            document.getElementById('link-missao').value = "";
+        }
+
+        function excluirFoto() {
+            if(confirm("Deseja remover sua foto de perfil?")) {
+                base64Image = "delete";
+                showNotify("Foto marcada para exclusão!", "success");
+            }
+        }
+
+        document.getElementById('in-file').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                base64Image = reader.result;
+                showNotify("Imagem carregada!");
+            };
+            if(file) reader.readAsDataURL(file);
+        });
+
+        async function salvarPerfil() {
+            if(!sessao || sessao.isVisitante) return;
+            const novoNome = document.getElementById('edit-nome').value.trim();
+            if(!novoNome) return;
+
+            const updates = { turma: novoNome };
+            if(base64Image === "delete") {
+                updates.foto = null;
+            } else if(base64Image) {
+                updates.foto = base64Image;
+            }
+
+            await db.ref('ranking/' + sessao.turma).update(updates);
+            showNotify("Perfil atualizado!");
+            base64Image = ""; 
+            toggleSidebar(false);
+        }
+
+        window.addEventListener('load', () => {
+            const data = localStorage.getItem('user_v10_persist');
+            if(data) {
+                const p = JSON.parse(data);
+                document.getElementById('in-turma').value = p.turma || "";
+                document.getElementById('in-pass').value = p.pass || "";
+                document.getElementById('in-ensino').value = p.ensino || "fundamental";
+                document.getElementById('in-serie').value = p.serie || "";
+                document.getElementById('in-escola').value = p.escola || "";
+                document.getElementById('in-insta').value = p.insta || "";
+                document.getElementById('in-aura').value = p.aura || "aura-elite";
+            }
+        });
 
         function fazerLogin() {
             const t = document.getElementById('in-turma').value.trim();
             const p = document.getElementById('in-pass').value;
-            const ensino = document.getElementById('in-ensino').value;
-            if(!t || !p) return showNotify("Turma e Senha!", "error");
+            const ens = document.getElementById('in-ensino').value;
+            const s = document.getElementById('in-serie').value;
+            const e = document.getElementById('in-escola').value;
+            const i = document.getElementById('in-insta').value;
+            const a = document.getElementById('in-aura').value;
+
+            if(!t || !p) return showNotify("Preencha Turma e Senha!", "error");
 
             db.ref('ranking/' + t).once('value', snap => {
                 let user = snap.val();
-                if(user && user.banido) return showNotify("ESTA CONTA FOI BANIDA!", "error");
-                if(user && user.pass !== p) return showNotify("Senha Errada!", "error");
-                
+                if(user && user.pass !== p) {
+                    showNotify("Senha incorreta!", "error");
+                    return;
+                }
                 if(!user) {
                     user = {
-                        turma: t, pass: p, pontos: 0, likes: 0,
-                        ensino: ensino, aura: document.getElementById('in-aura').value,
-                        escola: document.getElementById('in-escola').value,
-                        serie: document.getElementById('in-serie').value,
-                        insta: document.getElementById('in-insta').value,
-                        online: Date.now()
+                        turma: t, pass: p, ensino: ens, escola: e, serie: s,
+                        insta: i, aura: a, pontos: 0, 
+                        seguidores: 0, videos: 0, likes: 0, pts_extra: 0, online: Date.now()
                     };
                     db.ref('ranking/' + t).set(user);
+                    
+                    if(i) db.ref('analises/' + t).set({ insta: i, turma: t });
                 }
-                sessao = user;
-                localStorage.setItem('user_v12_persist', JSON.stringify(user));
                 
-                // Vai para a tela de escolha após login
-                document.getElementById('login-view').classList.add('hidden');
-                document.getElementById('select-ensino-view').classList.remove('hidden');
+                sessao = user;
+                filtroEnsino = user.ensino || "fundamental";
+                
+                localStorage.setItem('user_v10_persist', JSON.stringify({ turma: t, pass: p, ensino: ens, escola: e, serie: s, insta: i, aura: a }));
+                showNotify("Conectado na rede!");
+                startApp();
             });
         }
 
-        function setEnsinoView(e) {
-            ensinoAtual = e;
-            document.getElementById('select-ensino-view').classList.add('hidden');
+        function entrarVisitante() {
+            sessao = { turma: "Visitante", aura: "aura-beta", isVisitante: true };
+            filtroEnsino = "fundamental";
+            showNotify("Entrando como Visitante...");
+            startApp(true);
+        }
+
+        function startApp(isVis = false) {
+            document.getElementById('login-view').classList.add('hidden');
             document.getElementById('rank-view').classList.remove('hidden');
             document.getElementById('btn-chat-float').classList.remove('hidden');
-            
-            document.getElementById('btn-tab-f').classList.toggle('active', e === 'fundamental');
-            document.getElementById('btn-tab-m').classList.toggle('active', e === 'medio');
-            
+
+            mudarFiltro(filtroEnsino); // Aplica o visual do botão selecionado
+
+            const chatControls = document.getElementById('chat-controls');
+            if(isVis) {
+                chatControls.innerHTML = `<p style="color:#555; font-size:11px; width:100%; text-align:center">Visitantes apenas observam.</p>`;
+            } else {
+                chatControls.innerHTML = `
+                    <input type="text" id="msg-input" style="margin:0;" placeholder="Mande sua mídia...">
+                    <button onclick="mandarMsg()" class="btn-glow" style="width: 60px; padding: 0; font-size:20px;">⚡</button>
+                `;
+                setInterval(() => {
+                    if(sessao && !sessao.isVisitante) db.ref('ranking/'+sessao.turma).update({ online: Date.now() });
+                }, 10000);
+            }
+
+            db.ref('missao_global').on('value', snap => {
+                const m = snap.val();
+                if(m) {
+                    document.getElementById('txt-missao').innerText = m.txt;
+                    if(sessao && !isVis) document.getElementById('notif-badge').style.display = 'flex';
+                }
+            });
+
+            carregarDados();
+        }
+
+        // LÓGICA DE FILTRO DE ENSINO
+        function mudarFiltro(tipo) {
+            filtroEnsino = tipo;
+            document.getElementById('btn-fund').style.borderColor = tipo === 'fundamental' ? 'var(--neon)' : '#222';
+            document.getElementById('btn-med').style.borderColor = tipo === 'medio' ? 'var(--neon)' : '#222';
             carregarDados();
         }
 
         function carregarDados() {
             db.ref('ranking').on('value', snap => {
-                const dados = snap.val();
                 const container = document.getElementById('ranking-container');
-                container.innerHTML = "";
-                
+                const dados = snap.val();
                 if(!dados) return;
 
-                // FILTRAGEM POR ENSINO E ORDENAÇÃO
+                // FILTRA AQUI SE É FUNDAMENTAL OU MÉDIO
                 const lista = Object.values(dados)
-                    .filter(t => t.ensino === ensinoAtual && !t.banido)
-                    .sort((a,b) => b.pontos - a.pontos);
+                    .filter(t => t && t.turma && t.ensino === filtroEnsino)
+                    .sort((a,b) => (b.pontos || 0) - (a.pontos || 0));
+                    
+                container.innerHTML = `<h3 style="font-size:11px; margin: 10px 0; color:#555">EXIBINDO: ENSINO ${filtroEnsino.toUpperCase()}</h3>`;
 
                 lista.forEach((t, i) => {
-                    const level = Math.floor(t.pontos / 10) + 1;
-                    const isOn = (Date.now() - t.online) < 25000;
-                    
+                    const timeDiff = Date.now() - (t.online || 0);
+                    const isOn = timeDiff < 25000;
+                    const level = Math.floor((t.pontos || 0) / 10) + 1;
+                    const medalClass = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
+                    const medalIcon = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : i+1;
+                    const fotoUser = t.foto || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+
                     if(sessao && t.turma === sessao.turma) {
                         document.getElementById('meu-nome').innerText = t.turma;
-                        document.getElementById('meu-pts').innerText = t.pontos;
+                        document.getElementById('meu-nome').className = t.aura;
+                        document.getElementById('minha-info').innerText = `${t.escola || '---'} | ${t.serie || '---'}`;
+                        document.getElementById('meu-pts').innerText = t.pontos || 0;
                         document.getElementById('meu-nivel').innerText = level;
+                        sessao = t; 
                     }
 
                     container.innerHTML += `
                         <div class="rank-card">
-                            <div class="medal ${i === 0 ? 'gold' : ''}">
-                                <img src="${t.foto || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}" class="user-pic">
+                            <div class="medal ${medalClass}">
+                                <img src="${fotoUser}" class="user-pic">
                             </div>
                             <div style="flex:1">
-                                <b class="${t.aura}">${t.turma}</b>
-                                <div class="status-tag ${isOn ? 'on' : 'off'}">${isOn ? 'Online' : 'Offline'}</div>
+                                <b class="${t.aura}">${t.turma}</b> <small style="color:#555">LV ${level}</small>
+                                <div style="font-size:9px; color:#888">${t.escola || ''} • ${t.serie || ''}</div>
+                                <div class="status-tag ${isOn ? 'on' : 'off'}">
+                                    <div style="width:6px; height:6px; border-radius:50%; background:currentColor; margin-right:5px;"></div>
+                                    ${isOn ? 'No toque' : 'Offline'}
+                                </div>
                                 <button class="btn-like" onclick="darLike('${t.turma}')">❤️ ${t.likes || 0}</button>
                             </div>
                             <div style="text-align:right">
-                                <span class="top-medal-float">${i < 3 ? ['🥇','🥈','🥉'][i] : '#'+(i+1)}</span>
-                                <b style="color:var(--neon)">${t.pontos}</b>
+                                <span class="top-medal-float">${i < 3 ? medalIcon : '#'+(i+1)}</span>
+                                <b style="color:var(--neon); font-size:18px;">${t.pontos || 0}</b>
                             </div>
-                        </div>`;
+                        </div>
+                    `;
                 });
             });
         }
 
-        function pedirAtualizacao() {
-            if(!sessao) return;
-            db.ref('pedidos_update/' + sessao.turma).set({
+        // LÓGICA DO BOTÃO "ME ATUALIZE"
+        function pedirUpdate() {
+            if(!sessao || sessao.isVisitante) return;
+            const btn = document.getElementById('btn-upd');
+            btn.innerText = "⏳ ENVIADO...";
+            
+            // Joga na fila de análise do seu BOT
+            db.ref('analises/' + sessao.turma).set({
+                insta: sessao.insta || "",
                 turma: sessao.turma,
-                time: Date.now(),
-                msg: "Solicitou atualização de dados (Insta)"
-            });
-            showNotify("Pedido enviado ao Admin!");
-        }
-
-        function abrirAdmin() {
-            const pass = prompt("SENHA ADMIN:");
-            if(pass !== "123") return;
-            document.getElementById('login-view').classList.add('hidden');
-            document.getElementById('admin-view').classList.remove('hidden');
-
-            // MONITORAR ATUALIZAÇÕES EM TEMPO REAL (PEDIDOS)
-            db.ref('pedidos_update').on('value', snap => {
-                const div = document.getElementById('admin-notificacoes');
-                div.innerHTML = "<h3 style='color:orange; font-size:12px;'>🔔 SOLICITAÇÕES:</h3>";
-                snap.forEach(p => {
-                    const val = p.val();
-                    div.innerHTML += `
-                        <div class="adm-card" style="border-color:orange">
-                            <b>${val.turma}</b> quer atualização!<br>
-                            <button onclick="db.ref('pedidos_update/${val.turma}').remove()" style="color:white; background:green; border:none; padding:5px; border-radius:5px; margin-top:5px;">Marcar Lido</button>
-                        </div>`;
-                });
+                time: Date.now()
             });
 
-            // GESTÃO DE TURMAS COM BANIMENTO REAL-TIME
-            db.ref('ranking').on('value', snap => {
-                const list = document.getElementById('admin-list');
-                list.innerHTML = "<h3 style='margin-top:20px'>GESTÃO DE CONTAS:</h3>";
-                snap.forEach(t => {
-                    const user = t.val();
-                    list.innerHTML += `
-                        <div class="adm-card">
-                            <b>${user.turma}</b> (${user.ensino})<br>
-                            PONTOS: <input type="number" onchange="db.ref('ranking/${user.turma}/pontos').set(parseInt(this.value))" value="${user.pontos}" style="width:60px; padding:5px;">
-                            <button onclick="banir('${user.turma}')" style="background:red; color:white; border:none; padding:5px; border-radius:5px; float:right;">BANIR</button>
-                        </div>`;
-                });
-            });
+            showNotify("O Bot verificará seu Instagram em breve!");
+            setTimeout(() => { btn.innerText = "ME ATUALIZE 🔄"; }, 10000);
         }
 
-        function banir(turma) {
-            if(confirm("BANIR " + turma + "?")) {
-                db.ref('ranking/' + turma).update({ banido: true });
-                showNotify(turma + " BANIDO!", "error");
-            }
+        function darLike(turmaAlvo) {
+            const storageKey = 'like_v10_' + turmaAlvo;
+            if(localStorage.getItem(storageKey)) return showNotify("Já deixou o like!", "error");
+            db.ref('ranking/' + turmaAlvo + '/likes').transaction(c => (c || 0) + 1);
+            localStorage.setItem(storageKey, "true");
+            showNotify("Like enviado!");
         }
 
-        function toggleSidebar(s) { document.getElementById('sidebar').classList.toggle('open', s); document.getElementById('overlay').style.display = s ? 'block' : 'none'; }
-        function toggleChat(s) { document.getElementById('chat-ui').style.display = s ? 'flex' : 'none'; }
-        function sair() { localStorage.clear(); window.location.reload(); }
-
-        // MANTÉM LOGIN SALVO
-        window.onload = () => {
-            const save = localStorage.getItem('user_v12_persist');
-            if(save) {
-                sessao = JSON.parse(save);
-                document.getElementById('login-view').classList.add('hidden');
-                document.getElementById('select-ensino-view').classList.remove('hidden');
-            }
-        };
-
-        // FUNÇÃO DE LIKES (SEM REMOVER)
-        function darLike(t) {
-            const key = 'like_' + t;
-            if(localStorage.getItem(key)) return showNotify("Já deu like!", "error");
-            db.ref('ranking/'+t+'/likes').transaction(c => (c||0)+1);
-            localStorage.setItem(key, "true");
+        function toggleChat(s) { 
+            chatAberto = s;
+            document.getElementById('chat-ui').style.display = s ? 'flex' : 'none'; 
+            if(s) document.getElementById('chat-badge').style.display = 'none';
         }
-
+        
         function mandarMsg() {
             const m = document.getElementById('msg-input').value;
-            if(!m || !sessao) return;
+            if(!m || !sessao || sessao.isVisitante) return;
             db.ref('elite_chat').push({ t: sessao.turma, a: sessao.aura, m: m, time: Date.now() });
             document.getElementById('msg-input').value = "";
         }
 
-        db.ref('elite_chat').limitToLast(30).on('value', snap => {
+        db.ref('elite_chat').limitToLast(1).on('child_added', (snap) => {
+            const msg = snap.val();
+            if(!chatAberto && sessao && msg.t !== sessao.turma) {
+                const badge = document.getElementById('chat-badge');
+                badge.style.display = 'flex';
+                if(navigator.vibrate) navigator.vibrate(50);
+            }
+        });
+
+        db.ref('elite_chat').limitToLast(40).on('value', snap => {
             const box = document.getElementById('msg-flow');
             box.innerHTML = "";
             snap.forEach(d => {
                 const v = d.val();
-                box.innerHTML += `<div class="msg-bubble"><b class="${v.a}">${v.t}</b><br>${v.m}</div>`;
+                if(v && v.t) box.innerHTML += `<div class="msg-bubble"><b class="${v.a}" style="font-size:10px">${v.t}</b><br>${v.m}</div>`;
             });
             box.scrollTop = box.scrollHeight;
         });
+
+        function abrirAdmin() {
+            if(prompt("CÓDIGO DE ACESSO:") !== "123") return showNotify("Acesso Negado", "error");
+            document.getElementById('login-view').classList.add('hidden');
+            document.getElementById('admin-view').classList.remove('hidden');
+
+            db.ref('fila_aprovacao').on('value', snap => {
+                const fila = snap.val();
+                const adminList = document.getElementById('admin-list');
+                adminList.innerHTML = "<h3 style='margin:15px 0 10px; font-size:12px; color:var(--neon)'>🤖 FILA DO BOT (AGUARDANDO APROVAÇÃO):</h3>";
+
+                if(fila) {
+                    Object.keys(fila).forEach(id => {
+                        const item = fila[id];
+                        adminList.innerHTML += `
+                            <div class="adm-card" style="border: 2px solid #ffd700; display:flex; gap:10px; align-items:center;">
+                                <img src="${item.foto}" style="width:50px; height:50px; border-radius:50%; border:1px solid #333">
+                                <div style="flex:1">
+                                    <b style="font-size:12px">${item.turma}</b><br>
+                                    <small style="font-size:10px; color:#888">Seguidores: ${item.seguidores} | Vídeos: ${item.videos}</small><br>
+                                    <button onclick="confirmarBot('${id}')" class="btn-glow" style="padding:8px; font-size:10px; margin-top:5px">✅ CONFIRMAR E DAR PONTOS</button>
+                                    <button onclick="db.ref('fila_aprovacao/${id}').remove()" style="color:red; background:none; border:none; font-size:9px; margin-left:10px">Recusar</button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    adminList.innerHTML += "<p style='font-size:10px; color:#444'>Nenhum perfil na fila do bot no momento.</p>";
+                }
+
+                carregarAdminRestante(adminList);
+            });
+        }
+
+        function confirmarBot(id) {
+            db.ref('fila_aprovacao/' + id).once('value', snap => {
+                const d = snap.val();
+                const pts = (Math.floor(d.seguidores / 100) * 2) + (d.videos * 1);
+
+                db.ref('ranking/' + d.turma).update({
+                    seguidores: d.seguidores,
+                    videos: d.videos,
+                    pontos: pts
+                }).then(() => {
+                    db.ref('fila_aprovacao/' + id).remove();
+                    showNotify("Pontos validados para " + d.turma);
+                });
+            });
+        }
+
+        function carregarAdminRestante(adminList) {
+            db.ref('entregas').on('value', snap => {
+                const entregas = snap.val();
+                db.ref('ranking').once('value', rSnap => {
+                    const ranking = rSnap.val();
+                    adminList.innerHTML += "<h3 style='margin:25px 0 10px; font-size:12px;'>📥 ENTREGAS DE MISSÕES:</h3>";
+                    
+                    if(entregas) {
+                        Object.keys(entregas).forEach(turma => {
+                            adminList.innerHTML += `
+                                <div class="adm-card" style="border-color: #00d4ff;">
+                                    <small style="color:#00d4ff">MISSÃO ENTREGUE POR:</small><br>
+                                    <b>${turma}</b><br>
+                                    <button onclick="window.open('${entregas[turma].link}', '_blank')" style="margin-top:10px; width:100%; padding:8px; border-radius:10px; border:none; background:#222; color:white; font-size:10px;"> assistir vídeo entregue 🔗</button>
+                                    <button onclick="db.ref('entregas/${turma}').remove()" style="margin-top:5px; width:100%; padding:5px; border:none; background:none; color:#444; font-size:9px;">Remover da lista</button>
+                                </div>
+                            `;
+                        });
+                    }
+
+                    adminList.innerHTML += "<h3 style='margin:25px 0 10px; font-size:12px;'>👥 GESTÃO DE TURMAS:</h3>";
+                    Object.values(ranking).forEach(t => {
+                        if(!t.turma) return;
+                        adminList.innerHTML += `
+                            <div class="adm-card">
+                                <b>${t.turma}</b>
+                                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin: 10px 0;">
+                                    <div style="font-size:9px; color:#555">Seguidores</div>
+                                    <div style="font-size:9px; color:#555">Vídeos</div>
+                                    <input type="number" id="a-s-${t.turma}" value="${t.seguidores || 0}">
+                                    <input type="number" id="a-v-${t.turma}" value="${t.videos || 0}">
+                                </div>
+                                <div style="margin-bottom:10px;">
+                                    <label style="font-size:9px; color:var(--neon)">PONTOS EXTRAS ACUMULADOS: <span style="color:white">${t.pts_extra || 0}</span></label>
+                                    <input type="number" id="a-e-${t.turma}" value="0" style="border: 1px solid var(--neon); padding: 10px; margin-top:5px;" placeholder="Somar pontos extras...">
+                                </div>
+                                <button onclick="ajustarPontos('${t.turma}')" style="width:100%; background: #00ff88; color:black; border:none; padding:10px; border-radius:10px; font-weight:bold;">ATUALIZAR PONTOS</button>
+                            </div>
+                        `;
+                    });
+                });
+            });
+        }
+
+        // --- FUNÇÕES QUE FALTAVAM NO FINAL (O QUE TINHA SIDO CORTADO) ---
+
+        function ajustarPontos(turma) {
+            const seg = parseInt(document.getElementById(`a-s-${turma}`).value) || 0;
+            const vid = parseInt(document.getElementById(`a-v-${turma}`).value) || 0;
+            const extraNovo = parseInt(document.getElementById(`a-e-${turma}`).value) || 0;
+
+            // Pega o valor atual do banco para somar corretamente os pontos extras totais
+            db.ref('ranking/' + turma).once('value', snap => {
+                const dados = snap.val();
+                const extraAcumulado = (dados.pts_extra || 0) + extraNovo;
+
+                // Calcula a nova pontuação baseada na sua regra atual: (Seguidores/100)*2 + (Videos)*1 + Extras
+                const calculoPts = (Math.floor(seg / 100) * 2) + (vid * 1) + extraAcumulado;
+
+                db.ref('ranking/' + turma).update({
+                    seguidores: seg,
+                    videos: vid,
+                    pts_extra: extraAcumulado,
+                    pontos: calculoPts
+                });
+                
+                showNotify(`Pontos da turma ${turma} atualizados!`);
+            });
+        }
+
+        function limparTudoChat() {
+            if(confirm("Tem certeza que quer EXCLUIR TODAS as mensagens do chat da galera?")) {
+                db.ref('elite_chat').remove();
+                showNotify("Chat foi esvaziado!", "error");
+            }
+        }
+
+        function sair() {
+            if(confirm("Deseja desconectar?")) {
+                localStorage.removeItem('user_v10_persist');
+                sessao = null;
+                window.location.reload();
+            }
+        }
+
     </script>
 </body>
 </html>

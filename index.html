@@ -138,6 +138,16 @@
             background: rgba(0, 255, 136, 0.05); border: 1px dashed var(--neon);
             padding: 15px; border-radius: 15px; margin-top: 20px;
         }
+
+        /* CHECKBOXES DAS OLIMPÍADAS */
+        .checkbox-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .check-item { 
+            background: rgba(255,255,255,0.03); padding: 15px; border-radius: 15px; 
+            border: 1px solid var(--border); display: flex; align-items: center; 
+            gap: 10px; font-size: 12px; cursor: pointer; transition: 0.3s;
+        }
+        .check-item:hover { border-color: var(--neon); background: rgba(0,255,136,0.05); }
+        .check-item input { width: auto; margin: 0; transform: scale(1.3); accent-color: var(--neon); }
     </style>
 </head>
 <body>
@@ -176,6 +186,10 @@
             <input type="text" id="in-turma" placeholder="Nome da Turma">
             <input type="text" id="in-serie" placeholder="Série/Ano">
             <input type="text" id="in-escola" placeholder="Nome da Escola">
+            <select id="in-ensino">
+                <option value="medio">Ensino Médio</option>
+                <option value="fundamental">Ensino Fundamental</option>
+            </select>
             <input type="url" id="in-insta" placeholder="Instagram (URL)">
             <input type="password" id="in-pass" placeholder="Senha">
             <select id="in-aura">
@@ -185,9 +199,24 @@
                 <option value="aura-omega">♾️ Aura Omega</option>
             </select>
             
-            <button onclick="fazerLogin()" class="btn-glow">ACESSAR RANKING</button>
+            <button onclick="proximaEtapa()" class="btn-glow">CONTINUAR ➔</button>
             <button onclick="entrarVisitante()" style="background:none; border:none; color:#333; width:100%; margin-top:15px; font-size: 12px;">Entrar como Visitante</button>
             <p onclick="abrirAdmin()" style="text-align: center; font-size: 9px; margin-top: 30px; color: #111; cursor: pointer;">PAINEL ADMIN</p>
+        </section>
+
+        <section id="olimpiadas-view" class="hidden glass">
+            <h2 style="text-align: center; color: var(--neon); margin-bottom: 5px; font-size: 24px;">OLIMPÍADAS</h2>
+            <p style="text-align: center; font-size: 11px; color: #888; margin-bottom: 20px;">Selecione as disciplinas que sua turma vai participar:</p>
+            
+            <div class="checkbox-grid">
+                <label class="check-item"><input type="checkbox" value="Matemática" class="chk-oli"> Matemática</label>
+                <label class="check-item"><input type="checkbox" value="Ciências" class="chk-oli"> Ciências</label>
+                <label class="check-item"><input type="checkbox" value="Química" class="chk-oli"> Química</label>
+                <label class="check-item"><input type="checkbox" value="Biologia" class="chk-oli"> Biologia</label>
+            </div>
+
+            <button onclick="finalizarLoginMedio()" class="btn-glow">ACESSAR RANKING</button>
+            <button onclick="voltarLogin()" style="width: 100%; background: none; border: 1px solid #222; color: #666; padding: 12px; border-radius: 15px; margin-top: 15px; font-weight: bold; cursor: pointer;">VOLTAR</button>
         </section>
 
         <section id="rank-view" class="hidden">
@@ -206,8 +235,14 @@
                     <div><b id="meu-pts" style="font-size: 22px; color: var(--neon);">0</b><br><small>PTS</small></div>
                     <div><b id="meu-nivel" style="font-size: 22px;">1</b><br><small>NÍVEL</small></div>
                 </div>
-                <button onclick="sair()" style="margin-top: 15px; background: rgba(255,0,0,0.1); border: 1px solid rgba(255,0,0,0.2); color: red; padding: 5px 15px; border-radius: 10px; font-size: 10px; font-weight: bold;">SAIR DA CONTA</button>
+                <button onclick="sair()" style="margin-top: 15px; background: rgba(255,0,0,0.1); border: 1px solid rgba(255,0,0,0.2); color: red; padding: 5px 15px; border-radius: 10px; font-size: 10px; font-weight: bold; cursor: pointer;">DESCONECTAR TURMA</button>
             </div>
+
+            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                <button onclick="mudarAba('medio')" id="btn-aba-medio" class="btn-glow" style="flex:1; padding: 12px; font-size: 10px;">ENSINO MÉDIO</button>
+                <button onclick="mudarAba('fundamental')" id="btn-aba-fund" class="btn-glow" style="flex:1; padding: 12px; font-size: 10px; background: #111; color: #888; border: 1px solid #333;">FUNDAMENTAL</button>
+            </div>
+
             <div id="ranking-container"></div>
             <div style="height: 100px;"></div>
         </section>
@@ -221,7 +256,7 @@
                 <button onclick="postarMissao()" class="btn-glow" style="padding:10px; font-size:12px;">ENVIAR AGORA ⚡</button>
             </div>
 
-            <button onclick="limparTudoChat()" style="background: red; color: white; border: none; padding: 10px; border-radius: 10px; width: 100%; font-weight: bold; margin-bottom: 20px;">🧨 LIMPAR TODO O CHAT</button>
+            <button onclick="limparTudoChat()" style="background: red; color: white; border: none; padding: 10px; border-radius: 10px; width: 100%; font-weight: bold; margin-bottom: 20px; cursor: pointer;">🧨 LIMPAR TODO O CHAT</button>
             
             <div id="admin-list"></div>
             <button onclick="window.location.reload()" class="btn-glow" style="background:#222; color:white; margin-top: 20px;">FECHAR PAINEL</button>
@@ -231,13 +266,13 @@
     <div id="chat-ui">
         <div style="padding: 20px; background: #050505; border-bottom: 1px solid #111; display: flex; justify-content: space-between; align-items: center;">
             <b style="color: var(--neon);">CHAT DA ELITE</b>
-            <button onclick="toggleChat(false)" style="background:none; border:none; color:red; font-weight: 800;">[X]</button>
+            <button onclick="toggleChat(false)" style="background:none; border:none; color:red; font-weight: 800; cursor: pointer;">[X]</button>
         </div>
         <div id="msg-flow"></div>
         <div id="chat-controls" style="padding: 15px; background: #050505; display: flex; gap: 8px;"></div>
     </div>
 
-    <div id="btn-chat-float" class="hidden" onclick="toggleChat(true)" style="position: fixed; bottom: 30px; right: 20px; width: 60px; height: 60px; background: var(--neon); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 25px; box-shadow: 0 10px 25px rgba(0,255,136,0.4); z-index: 1000;">
+    <div id="btn-chat-float" class="hidden" onclick="toggleChat(true)" style="position: fixed; bottom: 30px; right: 20px; width: 60px; height: 60px; background: var(--neon); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 25px; box-shadow: 0 10px 25px rgba(0,255,136,0.4); z-index: 1000; cursor: pointer;">
         💬
         <div id="chat-badge">!</div>
     </div>
@@ -253,6 +288,8 @@
         let sessao = null;
         let base64Image = "";
         let chatAberto = false;
+        let currentRankingTab = 'medio';
+        let todosUsuarios = {}; 
 
         function showNotify(msg, type = 'success') {
             const container = document.getElementById('toast-container');
@@ -327,6 +364,7 @@
             toggleSidebar(false);
         }
 
+        // CARREGA INFORMAÇÕES SALVAS SEMPRE
         window.addEventListener('load', () => {
             const data = localStorage.getItem('user_v10_persist');
             if(data) {
@@ -337,35 +375,72 @@
                 document.getElementById('in-escola').value = p.escola || "";
                 document.getElementById('in-insta').value = p.insta || "";
                 document.getElementById('in-aura').value = p.aura || "aura-elite";
+                if(p.ensino) document.getElementById('in-ensino').value = p.ensino;
             }
         });
 
-        function fazerLogin() {
+        // NOVA LÓGICA DE ETAPAS DO LOGIN
+        function proximaEtapa() {
+            const t = document.getElementById('in-turma').value.trim();
+            const p = document.getElementById('in-pass').value;
+            const ensino = document.getElementById('in-ensino').value;
+
+            if(!t || !p) return showNotify("Preencha Turma e Senha!", "error");
+
+            if(ensino === 'medio') {
+                document.getElementById('login-view').classList.add('hidden');
+                document.getElementById('olimpiadas-view').classList.remove('hidden');
+            } else {
+                efetuarLogin([]); // Fundamental pula etapa
+            }
+        }
+
+        function voltarLogin() {
+            document.getElementById('olimpiadas-view').classList.add('hidden');
+            document.getElementById('login-view').classList.remove('hidden');
+        }
+
+        function finalizarLoginMedio() {
+            const selecionadas = [];
+            document.querySelectorAll('.chk-oli:checked').forEach(cb => selecionadas.push(cb.value));
+            efetuarLogin(selecionadas);
+        }
+
+        function efetuarLogin(olimpiadasArray) {
             const t = document.getElementById('in-turma').value.trim();
             const p = document.getElementById('in-pass').value;
             const s = document.getElementById('in-serie').value;
             const e = document.getElementById('in-escola').value;
             const i = document.getElementById('in-insta').value;
             const a = document.getElementById('in-aura').value;
-
-            if(!t || !p) return showNotify("Preencha Turma e Senha!", "error");
+            const ensino = document.getElementById('in-ensino').value;
 
             db.ref('ranking/' + t).once('value', snap => {
                 let user = snap.val();
                 if(user && user.pass !== p) {
                     showNotify("Senha incorreta!", "error");
+                    voltarLogin();
                     return;
                 }
                 if(!user) {
                     user = {
                         turma: t, pass: p, escola: e, serie: s,
-                        insta: i, aura: a, pontos: 0, 
-                        seguidores: 0, videos: 0, likes: 0, pts_extra: 0, online: Date.now()
+                        insta: i, aura: a, ensino: ensino, olimpiadas: olimpiadasArray,
+                        pontos: 0, seguidores: 0, videos: 0, likes: 0, pts_extra: 0, online: Date.now()
                     };
                     db.ref('ranking/' + t).set(user);
+                } else {
+                    db.ref('ranking/' + t).update({
+                        escola: e, serie: s, insta: i, aura: a, ensino: ensino, olimpiadas: olimpiadasArray, online: Date.now()
+                    });
+                    user.ensino = ensino;
+                    user.olimpiadas = olimpiadasArray;
                 }
                 sessao = user;
-                localStorage.setItem('user_v10_persist', JSON.stringify({ turma: t, pass: p, escola: e, serie: s, insta: i, aura: a }));
+                localStorage.setItem('user_v10_persist', JSON.stringify({ turma: t, pass: p, escola: e, serie: s, insta: i, aura: a, ensino: ensino }));
+                
+                document.getElementById('olimpiadas-view').classList.add('hidden');
+                mudarAba(ensino); // Já entra na aba correspondente
                 showNotify("Conectado na rede!");
                 startApp();
             });
@@ -406,54 +481,99 @@
             carregarDados();
         }
 
+        // SISTEMA DE ABAS E FILTROS DO RANKING
+        function mudarAba(aba) {
+            currentRankingTab = aba;
+            
+            const btnMedio = document.getElementById('btn-aba-medio');
+            const btnFund = document.getElementById('btn-aba-fund');
+            
+            if(aba === 'medio') {
+                btnMedio.style.background = 'linear-gradient(90deg, #00ff88, #00d4ff)';
+                btnMedio.style.color = 'black';
+                btnMedio.style.border = 'none';
+                
+                btnFund.style.background = '#111';
+                btnFund.style.color = '#888';
+                btnFund.style.border = '1px solid #333';
+            } else {
+                btnFund.style.background = 'linear-gradient(90deg, #00ff88, #00d4ff)';
+                btnFund.style.color = 'black';
+                btnFund.style.border = 'none';
+                
+                btnMedio.style.background = '#111';
+                btnMedio.style.color = '#888';
+                btnMedio.style.border = '1px solid #333';
+            }
+            renderizarRanking();
+        }
+
         function carregarDados() {
             db.ref('ranking').on('value', snap => {
-                const container = document.getElementById('ranking-container');
-                const dados = snap.val();
-                if(!dados) return;
-
-                const lista = Object.values(dados).filter(t => t && t.turma).sort((a,b) => (b.pontos || 0) - (a.pontos || 0));
-                container.innerHTML = "";
-
-                lista.forEach((t, i) => {
-                    const timeDiff = Date.now() - (t.online || 0);
-                    const isOn = timeDiff < 25000;
-                    const level = Math.floor((t.pontos || 0) / 10) + 1;
-                    const medalClass = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
-                    const medalIcon = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : i+1;
-                    const fotoUser = t.foto || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
-
-                    if(sessao && t.turma === sessao.turma) {
-                        document.getElementById('meu-nome').innerText = t.turma;
-                        document.getElementById('meu-nome').className = t.aura;
-                        document.getElementById('minha-info').innerText = `${t.escola || '---'} | ${t.serie || '---'}`;
-                        document.getElementById('meu-pts').innerText = t.pontos || 0;
-                        document.getElementById('meu-nivel').innerText = level;
-                        sessao = t; 
-                    }
-
-                    container.innerHTML += `
-                        <div class="rank-card">
-                            <div class="medal ${medalClass}">
-                                <img src="${fotoUser}" class="user-pic">
-                            </div>
-                            <div style="flex:1">
-                                <b class="${t.aura}">${t.turma}</b> <small style="color:#555">LV ${level}</small>
-                                <div style="font-size:9px; color:#888">${t.escola || ''} • ${t.serie || ''}</div>
-                                <div class="status-tag ${isOn ? 'on' : 'off'}">
-                                    <div style="width:6px; height:6px; border-radius:50%; background:currentColor; margin-right:5px;"></div>
-                                    ${isOn ? 'No toque' : 'Offline'}
-                                </div>
-                                <button class="btn-like" onclick="darLike('${t.turma}')">❤️ ${t.likes || 0}</button>
-                            </div>
-                            <div style="text-align:right">
-                                <span class="top-medal-float">${i < 3 ? medalIcon : '#'+(i+1)}</span>
-                                <b style="color:var(--neon); font-size:18px;">${t.pontos || 0}</b>
-                            </div>
-                        </div>
-                    `;
-                });
+                todosUsuarios = snap.val() || {};
+                renderizarRanking();
             });
+        }
+
+        function renderizarRanking() {
+            const container = document.getElementById('ranking-container');
+            if(!todosUsuarios) return;
+
+            // Filtra pela aba selecionada e ordena pelos pontos
+            const lista = Object.values(todosUsuarios)
+                .filter(t => t && t.turma && t.ensino === currentRankingTab)
+                .sort((a,b) => (b.pontos || 0) - (a.pontos || 0));
+                
+            container.innerHTML = "";
+
+            lista.forEach((t, i) => {
+                const timeDiff = Date.now() - (t.online || 0);
+                const isOn = timeDiff < 25000;
+                
+                // NOVO SISTEMA DE NÍVEL (100 pontos = 1 level)
+                const level = Math.floor((t.pontos || 0) / 100) + 1;
+                
+                const medalClass = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
+                const medalIcon = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : i+1;
+                const fotoUser = t.foto || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+                
+                const textOlimpiadas = (t.olimpiadas && t.olimpiadas.length > 0) ? `<div style="font-size:8px; color:#00d4ff; margin-top:3px;">🏅 Olimpíadas: ${t.olimpiadas.join(', ')}</div>` : '';
+
+                if(sessao && t.turma === sessao.turma) {
+                    document.getElementById('meu-nome').innerText = t.turma;
+                    document.getElementById('meu-nome').className = t.aura;
+                    document.getElementById('minha-info').innerText = `${t.escola || '---'} | ${t.serie || '---'}`;
+                    document.getElementById('meu-pts').innerText = t.pontos || 0;
+                    document.getElementById('meu-nivel').innerText = level;
+                    sessao = t; 
+                }
+
+                container.innerHTML += `
+                    <div class="rank-card">
+                        <div class="medal ${medalClass}">
+                            <img src="${fotoUser}" class="user-pic">
+                        </div>
+                        <div style="flex:1">
+                            <b class="${t.aura}">${t.turma}</b> <small style="color:#555">LV ${level}</small>
+                            <div style="font-size:9px; color:#888">${t.escola || ''} • ${t.serie || ''}</div>
+                            ${textOlimpiadas}
+                            <div class="status-tag ${isOn ? 'on' : 'off'}">
+                                <div style="width:6px; height:6px; border-radius:50%; background:currentColor; margin-right:5px;"></div>
+                                ${isOn ? 'No toque' : 'Offline'}
+                            </div>
+                            <button class="btn-like" onclick="darLike('${t.turma}')">❤️ ${t.likes || 0}</button>
+                        </div>
+                        <div style="text-align:right">
+                            <span class="top-medal-float">${i < 3 ? medalIcon : '#'+(i+1)}</span>
+                            <b style="color:var(--neon); font-size:18px;">${t.pontos || 0}</b>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            if(lista.length === 0) {
+                container.innerHTML = `<p style="text-align:center; font-size:11px; color:#555; margin-top:20px;">Nenhuma turma encontrada nesta categoria.</p>`;
+            }
         }
 
         function darLike(turmaAlvo) {
@@ -511,7 +631,7 @@
                 const entregas = snap.val();
                 db.ref('ranking').once('value', rSnap => {
                     const ranking = rSnap.val();
-                    adminList.innerHTML = ""; // Limpa para não duplicar
+                    adminList.innerHTML = ""; 
                     
                     adminList.innerHTML += "<h3 style='margin:25px 0 10px; font-size:12px;'>📥 ENTREGAS DE MISSÕES:</h3>";
                     if(entregas) {
@@ -530,9 +650,10 @@
                     adminList.innerHTML += "<h3 style='margin:25px 0 10px; font-size:12px;'>👥 GESTÃO DE TURMAS:</h3>";
                     Object.values(ranking).forEach(t => {
                         if(!t.turma) return;
+                        const nivelTag = t.ensino === 'medio' ? 'MÉDIO' : 'FUNDAMENTAL';
                         adminList.innerHTML += `
                             <div class="adm-card" id="card-adm-${t.turma}">
-                                <b>${t.turma}</b>
+                                <b>${t.turma}</b> <span style="font-size:8px; color:#aaa; background:#222; padding:2px 5px; border-radius:5px;">${nivelTag}</span>
                                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin: 10px 0;">
                                     <div style="font-size:9px; color:#555">Seguidores</div>
                                     <div style="font-size:9px; color:#555">Vídeos</div>
@@ -566,7 +687,6 @@
                 const t = snap.val();
                 const newExtra = (t.pts_extra || 0) + extra;
                 
-                // NOVO CÁLCULO: 1 Vídeo = 100 pontos, 1 Seguidor = 1 ponto.
                 const totalPontos = (seg * 1) + (vid * 100) + newExtra;
 
                 db.ref(`ranking/${turma}`).update({
@@ -576,7 +696,7 @@
                     pontos: totalPontos
                 });
                 
-                document.getElementById(`a-e-${turma}`).value = "0"; // Reseta o input extra
+                document.getElementById(`a-e-${turma}`).value = "0"; 
                 showNotify(`Pontos de ${turma} atualizados!`);
             });
         }
@@ -591,7 +711,6 @@
                 db.ref(`ranking/${turma}`).remove();
                 db.ref(`entregas/${turma}`).remove();
                 
-                // Remove o card da tela na mesma hora
                 const card = document.getElementById(`card-adm-${turma}`);
                 if(card) card.remove();
                 
@@ -606,9 +725,9 @@
             }
         }
 
+        // AGORA NÃO LIMPA MAIS OS DADOS DO LOCALSTORAGE
         function sair() {
             sessao = null;
-            localStorage.removeItem('user_v10_persist');
             window.location.reload();
         }
     </script>

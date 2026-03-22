@@ -363,9 +363,6 @@
                         seguidores: 0, videos: 0, likes: 0, pts_extra: 0, online: Date.now()
                     };
                     db.ref('ranking/' + t).set(user);
-                    
-                    // NOVA FUNÇÃO: Envia para o Bot analisar
-                    if(i) db.ref('analises/' + t).set({ insta: i, turma: t });
                 }
                 sessao = user;
                 localStorage.setItem('user_v10_persist', JSON.stringify({ turma: t, pass: p, escola: e, serie: s, insta: i, aura: a }));
@@ -504,52 +501,9 @@
             document.getElementById('login-view').classList.add('hidden');
             document.getElementById('admin-view').classList.remove('hidden');
 
-            // NOVA SEÇÃO: FILA DE APROVAÇÃO DO BOT
-            db.ref('fila_aprovacao').on('value', snap => {
-                const fila = snap.val();
-                const adminList = document.getElementById('admin-list');
-                adminList.innerHTML = "<h3 style='margin:15px 0 10px; font-size:12px; color:var(--neon)'>🤖 FILA DO BOT (AGUARDANDO APROVAÇÃO):</h3>";
-
-                if(fila) {
-                    Object.keys(fila).forEach(id => {
-                        const item = fila[id];
-                        adminList.innerHTML += `
-                            <div class="adm-card" style="border: 2px solid #ffd700; display:flex; gap:10px; align-items:center;">
-                                <img src="${item.foto}" style="width:50px; height:50px; border-radius:50%; border:1px solid #333">
-                                <div style="flex:1">
-                                    <b style="font-size:12px">${item.turma}</b><br>
-                                    <small style="font-size:10px; color:#888">Seguidores: ${item.seguidores} | Vídeos: ${item.videos}</small><br>
-                                    <button onclick="confirmarBot('${id}')" class="btn-glow" style="padding:8px; font-size:10px; margin-top:5px">✅ CONFIRMAR E DAR PONTOS</button>
-                                    <button onclick="db.ref('fila_aprovacao/${id}').remove()" style="color:red; background:none; border:none; font-size:9px; margin-left:10px">Recusar</button>
-                                </div>
-                            </div>
-                        `;
-                    });
-                } else {
-                    adminList.innerHTML += "<p style='font-size:10px; color:#444'>Nenhum perfil na fila do bot no momento.</p>";
-                }
-
-                // Restante do admin (Entregas e Gestão)
-                carregarAdminRestante(adminList);
-            });
-        }
-
-        // NOVA FUNÇÃO: Confirmação do BOT
-        function confirmarBot(id) {
-            db.ref('fila_aprovacao/' + id).once('value', snap => {
-                const d = snap.val();
-                // Cálculo: 100 seg = 2pts | 1 vídeo = 1pt
-                const pts = (Math.floor(d.seguidores / 100) * 2) + (d.videos * 1);
-
-                db.ref('ranking/' + d.turma).update({
-                    seguidores: d.seguidores,
-                    videos: d.videos,
-                    pontos: pts
-                }).then(() => {
-                    db.ref('fila_aprovacao/' + id).remove();
-                    showNotify("Pontos validados para " + d.turma);
-                });
-            });
+            const adminList = document.getElementById('admin-list');
+            adminList.innerHTML = ""; 
+            carregarAdminRestante(adminList);
         }
 
         function carregarAdminRestante(adminList) {
@@ -557,8 +511,9 @@
                 const entregas = snap.val();
                 db.ref('ranking').once('value', rSnap => {
                     const ranking = rSnap.val();
-                    adminList.innerHTML += "<h3 style='margin:25px 0 10px; font-size:12px;'>📥 ENTREGAS DE MISSÕES:</h3>";
+                    adminList.innerHTML = ""; // Limpa para não duplicar
                     
+                    adminList.innerHTML += "<h3 style='margin:25px 0 10px; font-size:12px;'>📥 ENTREGAS DE MISSÕES:</h3>";
                     if(entregas) {
                         Object.keys(entregas).forEach(turma => {
                             adminList.innerHTML += `
@@ -576,7 +531,7 @@
                     Object.values(ranking).forEach(t => {
                         if(!t.turma) return;
                         adminList.innerHTML += `
-                            <div class="adm-card">
+                            <div class="adm-card" id="card-adm-${t.turma}">
                                 <b>${t.turma}</b>
                                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin: 10px 0;">
                                     <div style="font-size:9px; color:#555">Seguidores</div>
@@ -592,7 +547,7 @@
                                 <button onclick="ajustarPontos('${t.turma}', 'subtrai')" style="width:100%; background:#ff4444; border:none; padding:12px; border-radius:10px; font-weight:bold; color:white;">TIRAR PONTOS</button>
                                 
                                 <button onclick="abrirInsta('${t.insta}')" style="margin-top:8px; width:100%; background:#111; color:white; border:1px solid #333; padding:8px; border-radius:10px; font-size:11px;">📸 ABRIR INSTAGRAM</button>
-                                <button onclick="excluirTurma('${t.turma}')" style="margin-top:15px; width:100%; background:none; color:#444; border:none; font-size:9px;">Banir Turma</button>
+                                <button onclick="excluirTurma('${t.turma}')" style="margin-top:15px; width:100%; background:none; color:#444; border:none; font-size:9px;">🗑️ BANIR CONTA</button>
                             </div>
                         `;
                     });
@@ -600,43 +555,62 @@
             });
         }
 
-        function ajustarPontos(turma, operacao) {
-            const s = parseInt(document.getElementById('a-s-'+turma).value) || 0;
-            const v = parseInt(document.getElementById('a-v-'+turma).value) || 0;
-            const inputExtra = document.getElementById('a-e-'+turma);
-            let valorAjuste = parseInt(inputExtra.value) || 0;
+        function ajustarPontos(turma, acao) {
+            const seg = parseInt(document.getElementById(`a-s-${turma}`).value) || 0;
+            const vid = parseInt(document.getElementById(`a-v-${turma}`).value) || 0;
+            let extra = parseInt(document.getElementById(`a-e-${turma}`).value) || 0;
 
-            if (operacao === 'subtrai') {
-                valorAjuste = -valorAjuste;
-            }
+            if (acao === 'subtrai') extra = -Math.abs(extra);
 
-            db.ref('ranking/' + turma).once('value', snap => {
-                const data = snap.val();
-                const novosPtsExtra = (data.pts_extra || 0) + valorAjuste;
+            db.ref(`ranking/${turma}`).once('value', snap => {
+                const t = snap.val();
+                const newExtra = (t.pts_extra || 0) + extra;
                 
-                const p = (Math.floor(s / 100) * 2) + (v * 1) + novosPtsExtra;
-                
-                db.ref('ranking/' + turma).update({ 
-                    seguidores: s, 
-                    videos: v, 
-                    pontos: p,
-                    pts_extra: novosPtsExtra 
-                }).then(() => {
-                    inputExtra.value = 0;
-                    showNotify(operacao === 'soma' ? "Pontos Adicionados!" : "Pontos Removidos!");
-                    abrirAdmin();
+                // NOVO CÁLCULO: 1 Vídeo = 100 pontos, 1 Seguidor = 1 ponto.
+                const totalPontos = (seg * 1) + (vid * 100) + newExtra;
+
+                db.ref(`ranking/${turma}`).update({
+                    seguidores: seg,
+                    videos: vid,
+                    pts_extra: newExtra,
+                    pontos: totalPontos
                 });
+                
+                document.getElementById(`a-e-${turma}`).value = "0"; // Reseta o input extra
+                showNotify(`Pontos de ${turma} atualizados!`);
             });
         }
 
-        function abrirInsta(url) {
-            if(!url || url === "") return showNotify("Instagram não cadastrado", "error");
-            window.open(url, '_blank');
+        function abrirInsta(link) {
+            if(link && link.includes('http')) window.open(link, '_blank');
+            else showNotify("Link do Instagram inválido ou não cadastrado", "error");
         }
 
-        function excluirTurma(t) { if(confirm("Apagar permanentemente "+t+"?")) { db.ref('ranking/'+t).remove(); showNotify("Turma banida."); } }
-        function limparTudoChat() { if(confirm("Limpar todo o histórico de mensagens?")) { db.ref('elite_chat').remove(); showNotify("Chat limpo."); } }
-        function sair() { window.location.reload(); }
+        function excluirTurma(turma) {
+            if(confirm(`Tem certeza que deseja BANIR a conta ${turma}? Isso removerá a conta instantaneamente da tela e do banco.`)) {
+                db.ref(`ranking/${turma}`).remove();
+                db.ref(`entregas/${turma}`).remove();
+                
+                // Remove o card da tela na mesma hora
+                const card = document.getElementById(`card-adm-${turma}`);
+                if(card) card.remove();
+                
+                showNotify(`Conta ${turma} banida com sucesso!`);
+            }
+        }
+
+        function limparTudoChat() {
+            if(confirm("ATENÇÃO: Isso vai deletar TODAS as mensagens do chat! Continuar?")) {
+                db.ref('elite_chat').remove();
+                showNotify("Chat completamente limpo!");
+            }
+        }
+
+        function sair() {
+            sessao = null;
+            localStorage.removeItem('user_v10_persist');
+            window.location.reload();
+        }
     </script>
 </body>
 </html>

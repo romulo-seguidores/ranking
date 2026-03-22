@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <title>RANK X - Elite Mídia V12 (Completa)</title>
+    <title>RANK X - Elite Mídia V11</title>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;900&display=swap');
@@ -138,13 +138,6 @@
             background: rgba(0, 255, 136, 0.05); border: 1px dashed var(--neon);
             padding: 15px; border-radius: 15px; margin-top: 20px;
         }
-
-        /* Botão Me Atualize */
-        .btn-update { 
-            background: rgba(0, 255, 136, 0.1); border: 1px solid var(--neon); 
-            color: var(--neon); padding: 5px 10px; border-radius: 10px; 
-            font-size: 9px; font-weight: 900; cursor: pointer; 
-        }
     </style>
 </head>
 <body>
@@ -181,17 +174,10 @@
             <p style="text-align: center; font-size: 10px; color: #444; margin-bottom: 20px;">SISTEMA DE ELITE REGIONAL</p>
             
             <input type="text" id="in-turma" placeholder="Nome da Turma">
-            <input type="password" id="in-pass" placeholder="Senha">
-            
-            <select id="in-ensino">
-                <option value="fundamental">Ensino Fundamental</option>
-                <option value="medio">Ensino Médio</option>
-            </select>
-            
             <input type="text" id="in-serie" placeholder="Série/Ano">
             <input type="text" id="in-escola" placeholder="Nome da Escola">
             <input type="url" id="in-insta" placeholder="Instagram (URL)">
-            
+            <input type="password" id="in-pass" placeholder="Senha">
             <select id="in-aura">
                 <option value="aura-beta">🏳️‍🌈⃤ Aura Beta</option>
                 <option value="aura-elite">⚜️ Aura Elite</option>
@@ -206,10 +192,7 @@
 
         <section id="rank-view" class="hidden">
             <div class="glass" style="text-align: center; border-bottom: 4px solid var(--neon); position: relative;">
-                
-                <div style="position: absolute; top: 15px; right: 15px; display: flex; align-items: center; gap: 15px;">
-                    <button onclick="pedirUpdate()" class="btn-update" id="btn-upd">ME ATUALIZE 🔄</button>
-                    
+                <div style="position: absolute; top: 15px; right: 15px; display: flex; gap: 15px;">
                     <div style="position: relative;" onclick="toggleSidebar(true)">
                         <span style="font-size: 20px; cursor: pointer; filter: grayscale(1);">🔔</span>
                         <div id="notif-badge">!</div>
@@ -217,7 +200,7 @@
                     <button onclick="toggleSidebar(true)" style="background: none; border: none; font-size: 20px; cursor: pointer; filter: grayscale(1);">⚙️</button>
                 </div>
                 
-                <h2 id="meu-nome" class="aura-elite" style="margin-top: 10px;">---</h2>
+                <h2 id="meu-nome" class="aura-elite">---</h2>
                 <p id="minha-info" style="font-size: 11px; color: #888; margin-top: 5px;">Escola --- | Série ---</p>
                 <div style="margin-top: 15px; display: flex; justify-content: space-around;">
                     <div><b id="meu-pts" style="font-size: 22px; color: var(--neon);">0</b><br><small>PTS</small></div>
@@ -225,12 +208,6 @@
                 </div>
                 <button onclick="sair()" style="margin-top: 15px; background: rgba(255,0,0,0.1); border: 1px solid rgba(255,0,0,0.2); color: red; padding: 5px 15px; border-radius: 10px; font-size: 10px; font-weight: bold;">SAIR DA CONTA</button>
             </div>
-
-            <div style="display: flex; gap: 5px; margin-bottom: 15px;">
-                <button id="btn-fund" onclick="mudarFiltro('fundamental')" style="flex:1; padding: 10px; border-radius: 12px; border: 1px solid var(--neon); background: #111; color: white; font-size: 10px; font-weight: bold;">FUNDAMENTAL</button>
-                <button id="btn-med" onclick="mudarFiltro('medio')" style="flex:1; padding: 10px; border-radius: 12px; border: 1px solid #222; background: #111; color: white; font-size: 10px; font-weight: bold;">MÉDIO</button>
-            </div>
-
             <div id="ranking-container"></div>
             <div style="height: 100px;"></div>
         </section>
@@ -276,7 +253,6 @@
         let sessao = null;
         let base64Image = "";
         let chatAberto = false;
-        let filtroEnsino = "fundamental"; // Novo Estado para o filtro
 
         function showNotify(msg, type = 'success') {
             const container = document.getElementById('toast-container');
@@ -298,27 +274,6 @@
                 document.getElementById('edit-nome').value = sessao.turma;
                 if(!sessao.isVisitante) document.getElementById('missao-recebida').classList.remove('hidden');
             }
-        }
-
-        function aprovarTurma(dados) {
-            // 1. Calcula os pontos (ex: seguidores * 10)
-            const pontosCalculados = parseInt(dados.seguidores.replace(/\D/g,'')) * 10;
-
-            // 2. Manda para o Ranking Oficial
-            fetch(`https://gincanaescola-d4f8c-default-rtdb.firebaseio.com/ranking_oficial/${dados.id_original}.json`, {
-                method: 'PUT',
-                body: JSON.stringify({
-                    turma: dados.turma,
-                    pontos: pontosCalculados,
-                    insta: dados.user
-                })
-            });
-
-            // 3. Deleta da fila de espera
-            fetch(`https://gincanaescola-d4f8c-default-rtdb.firebaseio.com/analises/${dados.id_original}.json`, { method: 'DELETE' });
-            fetch(`https://gincanaescola-d4f8c-default-rtdb.firebaseio.com/fila_de_aprovacao/${dados.id_original}.json`, { method: 'DELETE' });
-
-            showNotify("Pontos creditados com sucesso!");
         }
 
         function postarMissao() {
@@ -378,7 +333,6 @@
                 const p = JSON.parse(data);
                 document.getElementById('in-turma').value = p.turma || "";
                 document.getElementById('in-pass').value = p.pass || "";
-                document.getElementById('in-ensino').value = p.ensino || "fundamental";
                 document.getElementById('in-serie').value = p.serie || "";
                 document.getElementById('in-escola').value = p.escola || "";
                 document.getElementById('in-insta').value = p.insta || "";
@@ -389,7 +343,6 @@
         function fazerLogin() {
             const t = document.getElementById('in-turma').value.trim();
             const p = document.getElementById('in-pass').value;
-            const ens = document.getElementById('in-ensino').value;
             const s = document.getElementById('in-serie').value;
             const e = document.getElementById('in-escola').value;
             const i = document.getElementById('in-insta').value;
@@ -405,19 +358,17 @@
                 }
                 if(!user) {
                     user = {
-                        turma: t, pass: p, ensino: ens, escola: e, serie: s,
+                        turma: t, pass: p, escola: e, serie: s,
                         insta: i, aura: a, pontos: 0, 
                         seguidores: 0, videos: 0, likes: 0, pts_extra: 0, online: Date.now()
                     };
                     db.ref('ranking/' + t).set(user);
                     
+                    // NOVA FUNÇÃO: Envia para o Bot analisar
                     if(i) db.ref('analises/' + t).set({ insta: i, turma: t });
                 }
-                
                 sessao = user;
-                filtroEnsino = user.ensino || "fundamental";
-                
-                localStorage.setItem('user_v10_persist', JSON.stringify({ turma: t, pass: p, ensino: ens, escola: e, serie: s, insta: i, aura: a }));
+                localStorage.setItem('user_v10_persist', JSON.stringify({ turma: t, pass: p, escola: e, serie: s, insta: i, aura: a }));
                 showNotify("Conectado na rede!");
                 startApp();
             });
@@ -425,7 +376,6 @@
 
         function entrarVisitante() {
             sessao = { turma: "Visitante", aura: "aura-beta", isVisitante: true };
-            filtroEnsino = "fundamental";
             showNotify("Entrando como Visitante...");
             startApp(true);
         }
@@ -434,8 +384,6 @@
             document.getElementById('login-view').classList.add('hidden');
             document.getElementById('rank-view').classList.remove('hidden');
             document.getElementById('btn-chat-float').classList.remove('hidden');
-
-            mudarFiltro(filtroEnsino); // Aplica o visual do botão selecionado
 
             const chatControls = document.getElementById('chat-controls');
             if(isVis) {
@@ -461,26 +409,14 @@
             carregarDados();
         }
 
-        // LÓGICA DE FILTRO DE ENSINO
-        function mudarFiltro(tipo) {
-            filtroEnsino = tipo;
-            document.getElementById('btn-fund').style.borderColor = tipo === 'fundamental' ? 'var(--neon)' : '#222';
-            document.getElementById('btn-med').style.borderColor = tipo === 'medio' ? 'var(--neon)' : '#222';
-            carregarDados();
-        }
-
         function carregarDados() {
             db.ref('ranking').on('value', snap => {
                 const container = document.getElementById('ranking-container');
                 const dados = snap.val();
                 if(!dados) return;
 
-                // FILTRA AQUI SE É FUNDAMENTAL OU MÉDIO
-                const lista = Object.values(dados)
-                    .filter(t => t && t.turma && t.ensino === filtroEnsino)
-                    .sort((a,b) => (b.pontos || 0) - (a.pontos || 0));
-                    
-                container.innerHTML = `<h3 style="font-size:11px; margin: 10px 0; color:#555">EXIBINDO: ENSINO ${filtroEnsino.toUpperCase()}</h3>`;
+                const lista = Object.values(dados).filter(t => t && t.turma).sort((a,b) => (b.pontos || 0) - (a.pontos || 0));
+                container.innerHTML = "";
 
                 lista.forEach((t, i) => {
                     const timeDiff = Date.now() - (t.online || 0);
@@ -521,23 +457,6 @@
                     `;
                 });
             });
-        }
-
-        // LÓGICA DO BOTÃO "ME ATUALIZE"
-        function pedirUpdate() {
-            if(!sessao || sessao.isVisitante) return;
-            const btn = document.getElementById('btn-upd');
-            btn.innerText = "⏳ ENVIADO...";
-            
-            // Joga na fila de análise do seu BOT
-            db.ref('analises/' + sessao.turma).set({
-                insta: sessao.insta || "",
-                turma: sessao.turma,
-                time: Date.now()
-            });
-
-            showNotify("O Bot verificará seu Instagram em breve!");
-            setTimeout(() => { btn.innerText = "ME ATUALIZE 🔄"; }, 10000);
         }
 
         function darLike(turmaAlvo) {
@@ -585,6 +504,7 @@
             document.getElementById('login-view').classList.add('hidden');
             document.getElementById('admin-view').classList.remove('hidden');
 
+            // NOVA SEÇÃO: FILA DE APROVAÇÃO DO BOT
             db.ref('fila_aprovacao').on('value', snap => {
                 const fila = snap.val();
                 const adminList = document.getElementById('admin-list');
@@ -609,13 +529,16 @@
                     adminList.innerHTML += "<p style='font-size:10px; color:#444'>Nenhum perfil na fila do bot no momento.</p>";
                 }
 
+                // Restante do admin (Entregas e Gestão)
                 carregarAdminRestante(adminList);
             });
         }
 
+        // NOVA FUNÇÃO: Confirmação do BOT
         function confirmarBot(id) {
             db.ref('fila_aprovacao/' + id).once('value', snap => {
                 const d = snap.val();
+                // Cálculo: 100 seg = 2pts | 1 vídeo = 1pt
                 const pts = (Math.floor(d.seguidores / 100) * 2) + (d.videos * 1);
 
                 db.ref('ranking/' + d.turma).update({
@@ -663,9 +586,13 @@
                                 </div>
                                 <div style="margin-bottom:10px;">
                                     <label style="font-size:9px; color:var(--neon)">PONTOS EXTRAS ACUMULADOS: <span style="color:white">${t.pts_extra || 0}</span></label>
-                                    <input type="number" id="a-e-${t.turma}" value="0" style="border: 1px solid var(--neon); padding: 10px; margin-top:5px;" placeholder="Somar pontos extras...">
+                                    <input type="number" id="a-e-${t.turma}" value="0" style="border: 1px solid var(--neon); padding: 10px; margin-top:5px;">
                                 </div>
-                                <button onclick="ajustarPontos('${t.turma}')" style="width:100%; background: #00ff88; color:black; border:none; padding:10px; border-radius:10px; font-weight:bold;">ATUALIZAR PONTOS</button>
+                                <button onclick="ajustarPontos('${t.turma}', 'soma')" style="width:100%; background:var(--neon); border:none; padding:12px; border-radius:10px; font-weight:bold; margin-bottom:5px;">ADICIONAR PONTOS</button>
+                                <button onclick="ajustarPontos('${t.turma}', 'subtrai')" style="width:100%; background:#ff4444; border:none; padding:12px; border-radius:10px; font-weight:bold; color:white;">TIRAR PONTOS</button>
+                                
+                                <button onclick="abrirInsta('${t.insta}')" style="margin-top:8px; width:100%; background:#111; color:white; border:1px solid #333; padding:8px; border-radius:10px; font-size:11px;">📸 ABRIR INSTAGRAM</button>
+                                <button onclick="excluirTurma('${t.turma}')" style="margin-top:15px; width:100%; background:none; color:#444; border:none; font-size:9px;">Banir Turma</button>
                             </div>
                         `;
                     });
@@ -673,47 +600,43 @@
             });
         }
 
-        // --- FUNÇÕES QUE FALTAVAM NO FINAL (O QUE TINHA SIDO CORTADO) ---
+        function ajustarPontos(turma, operacao) {
+            const s = parseInt(document.getElementById('a-s-'+turma).value) || 0;
+            const v = parseInt(document.getElementById('a-v-'+turma).value) || 0;
+            const inputExtra = document.getElementById('a-e-'+turma);
+            let valorAjuste = parseInt(inputExtra.value) || 0;
 
-        function ajustarPontos(turma) {
-            const seg = parseInt(document.getElementById(`a-s-${turma}`).value) || 0;
-            const vid = parseInt(document.getElementById(`a-v-${turma}`).value) || 0;
-            const extraNovo = parseInt(document.getElementById(`a-e-${turma}`).value) || 0;
+            if (operacao === 'subtrai') {
+                valorAjuste = -valorAjuste;
+            }
 
-            // Pega o valor atual do banco para somar corretamente os pontos extras totais
             db.ref('ranking/' + turma).once('value', snap => {
-                const dados = snap.val();
-                const extraAcumulado = (dados.pts_extra || 0) + extraNovo;
-
-                // Calcula a nova pontuação baseada na sua regra atual: (Seguidores/100)*2 + (Videos)*1 + Extras
-                const calculoPts = (Math.floor(seg / 100) * 2) + (vid * 1) + extraAcumulado;
-
-                db.ref('ranking/' + turma).update({
-                    seguidores: seg,
-                    videos: vid,
-                    pts_extra: extraAcumulado,
-                    pontos: calculoPts
-                });
+                const data = snap.val();
+                const novosPtsExtra = (data.pts_extra || 0) + valorAjuste;
                 
-                showNotify(`Pontos da turma ${turma} atualizados!`);
+                const p = (Math.floor(s / 100) * 2) + (v * 1) + novosPtsExtra;
+                
+                db.ref('ranking/' + turma).update({ 
+                    seguidores: s, 
+                    videos: v, 
+                    pontos: p,
+                    pts_extra: novosPtsExtra 
+                }).then(() => {
+                    inputExtra.value = 0;
+                    showNotify(operacao === 'soma' ? "Pontos Adicionados!" : "Pontos Removidos!");
+                    abrirAdmin();
+                });
             });
         }
 
-        function limparTudoChat() {
-            if(confirm("Tem certeza que quer EXCLUIR TODAS as mensagens do chat da galera?")) {
-                db.ref('elite_chat').remove();
-                showNotify("Chat foi esvaziado!", "error");
-            }
+        function abrirInsta(url) {
+            if(!url || url === "") return showNotify("Instagram não cadastrado", "error");
+            window.open(url, '_blank');
         }
 
-        function sair() {
-            if(confirm("Deseja desconectar?")) {
-                localStorage.removeItem('user_v10_persist');
-                sessao = null;
-                window.location.reload();
-            }
-        }
-
+        function excluirTurma(t) { if(confirm("Apagar permanentemente "+t+"?")) { db.ref('ranking/'+t).remove(); showNotify("Turma banida."); } }
+        function limparTudoChat() { if(confirm("Limpar todo o histórico de mensagens?")) { db.ref('elite_chat').remove(); showNotify("Chat limpo."); } }
+        function sair() { window.location.reload(); }
     </script>
 </body>
 </html>

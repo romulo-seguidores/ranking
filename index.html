@@ -462,8 +462,10 @@
                 chatControls.innerHTML = `<p style="color:#555; font-size:11px; width:100%; text-align:center">Visitantes apenas observam.</p>`;
             } else {
                 chatControls.innerHTML = `
-                    <input type="text" id="msg-input" style="margin:0;" placeholder="Mande sua mídia...">
-                    <button onclick="mandarMsg()" class="btn-glow" style="width: 60px; padding: 0; font-size:20px;">⚡</button>
+                    <input type="file" id="video-upload" accept="video/mp4,video/x-m4v,video/*" style="display:none;" onchange="enviarVideoChat(this)">
+                    <button onclick="document.getElementById('video-upload').click()" class="btn-glow" style="width: 45px; padding: 0; font-size:18px; background: #333; color: white;">🎥</button>
+                    <input type="text" id="msg-input" style="margin:0; flex: 1;" placeholder="Mande sua mídia...">
+                    <button onclick="mandarMsg()" class="btn-glow" style="width: 50px; padding: 0; font-size:20px;">⚡</button>
                 `;
                 setInterval(() => {
                     if(sessao && !sessao.isVisitante) db.ref('ranking/'+sessao.turma).update({ online: Date.now() });
@@ -539,8 +541,11 @@
                 
                 const textOlimpiadas = (t.olimpiadas && t.olimpiadas.length > 0) ? `<div style="font-size:8px; color:#00d4ff; margin-top:3px;">🏅 Olimpíadas: ${t.olimpiadas.join(', ')}</div>` : '';
 
+                // MAPEIA O EMOJI DA AURA
+                const auraEmoji = t.aura === 'aura-beta' ? '🏳️‍🌈⃤' : t.aura === 'aura-elite' ? '⚜️' : t.aura === 'aura-sigma' ? '🗿' : t.aura === 'aura-omega' ? '♾️' : '';
+
                 if(sessao && t.turma === sessao.turma) {
-                    document.getElementById('meu-nome').innerText = t.turma;
+                    document.getElementById('meu-nome').innerHTML = `${t.turma} <span style="font-size: 14px; filter: grayscale(0);">${auraEmoji}</span>`;
                     document.getElementById('meu-nome').className = t.aura;
                     document.getElementById('minha-info').innerText = `${t.escola || '---'} | ${t.serie || '---'}`;
                     document.getElementById('meu-pts').innerText = t.pontos || 0;
@@ -554,7 +559,7 @@
                             <img src="${fotoUser}" class="user-pic">
                         </div>
                         <div style="flex:1">
-                            <b class="${t.aura}">${t.turma}</b> <small style="color:#555">LV ${level}</small>
+                            <b class="${t.aura}">${t.turma} <span style="font-size: 12px; filter: grayscale(0); opacity: 0.9;">${auraEmoji}</span></b> <small style="color:#555">LV ${level}</small>
                             <div style="font-size:9px; color:#888">${t.escola || ''} • ${t.serie || ''}</div>
                             ${textOlimpiadas}
                             <div class="status-tag ${isOn ? 'on' : 'off'}">
@@ -593,8 +598,26 @@
         function mandarMsg() {
             const m = document.getElementById('msg-input').value;
             if(!m || !sessao || sessao.isVisitante) return;
-            db.ref('elite_chat').push({ t: sessao.turma, a: sessao.aura, m: m, time: Date.now() });
+            db.ref('elite_chat').push({ t: sessao.turma, a: sessao.aura, m: m, type: 'text', time: Date.now() });
             document.getElementById('msg-input').value = "";
+        }
+
+        function enviarVideoChat(input) {
+            const file = input.files[0];
+            if(!file || !sessao || sessao.isVisitante) return;
+            
+            if(file.size > 5000000) {
+                return showNotify("Vídeo muito grande! Escolha até 5MB para não travar o banco.", "error");
+            }
+
+            showNotify("Enviando vídeo, aguarde...", "success");
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                db.ref('elite_chat').push({ t: sessao.turma, a: sessao.aura, m: reader.result, type: 'video', time: Date.now() });
+                showNotify("Vídeo enviado com sucesso!");
+                input.value = ""; 
+            };
+            reader.readAsDataURL(file);
         }
 
         db.ref('elite_chat').limitToLast(1).on('child_added', (snap) => {
@@ -611,7 +634,14 @@
             box.innerHTML = "";
             snap.forEach(d => {
                 const v = d.val();
-                if(v && v.t) box.innerHTML += `<div class="msg-bubble"><b class="${v.a}" style="font-size:10px">${v.t}</b><br>${v.m}</div>`;
+                if(v && v.t) {
+                    let content = v.m;
+                    // LÓGICA DO VÍDEO NO CHAT
+                    if(v.type === 'video') {
+                        content = `<video src="${v.m}" controls style="max-width: 100%; border-radius: 10px; margin-top: 5px; border: 1px solid var(--neon); background: #000;"></video>`;
+                    }
+                    box.innerHTML += `<div class="msg-bubble"><b class="${v.a}" style="font-size:10px">${v.t}</b><br>${content}</div>`;
+                }
             });
             box.scrollTop = box.scrollHeight;
         });
@@ -627,107 +657,26 @@
         }
 
         function carregarAdminRestante(adminList) {
-            db.ref('entregas').on('value', snap => {
-                const entregas = snap.val();
-                db.ref('ranking').once('value', rSnap => {
-                    const ranking = rSnap.val();
-                    adminList.innerHTML = ""; 
-                    
-                    adminList.innerHTML += "<h3 style='margin:25px 0 10px; font-size:12px;'>📥 ENTREGAS DE MISSÕES:</h3>";
-                    if(entregas) {
-                        Object.keys(entregas).forEach(turma => {
-                            adminList.innerHTML += `
-                                <div class="adm-card" style="border-color: #00d4ff;">
-                                    <small style="color:#00d4ff">MISSÃO ENTREGUE POR:</small><br>
-                                    <b>${turma}</b><br>
-                                    <button onclick="window.open('${entregas[turma].link}', '_blank')" style="margin-top:10px; width:100%; padding:8px; border-radius:10px; border:none; background:#222; color:white; font-size:10px;"> assistir vídeo entregue 🔗</button>
-                                    <button onclick="db.ref('entregas/${turma}').remove()" style="margin-top:5px; width:100%; padding:5px; border:none; background:none; color:#444; font-size:9px;">Remover da lista</button>
-                                </div>
-                            `;
-                        });
-                    }
-
-                    adminList.innerHTML += "<h3 style='margin:25px 0 10px; font-size:12px;'>👥 GESTÃO DE TURMAS:</h3>";
-                    Object.values(ranking).forEach(t => {
-                        if(!t.turma) return;
-                        const nivelTag = t.ensino === 'medio' ? 'MÉDIO' : 'FUNDAMENTAL';
-                        adminList.innerHTML += `
-                            <div class="adm-card" id="card-adm-${t.turma}">
-                                <b>${t.turma}</b> <span style="font-size:8px; color:#aaa; background:#222; padding:2px 5px; border-radius:5px;">${nivelTag}</span>
-                                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin: 10px 0;">
-                                    <div style="font-size:9px; color:#555">Seguidores</div>
-                                    <div style="font-size:9px; color:#555">Vídeos</div>
-                                    <input type="number" id="a-s-${t.turma}" value="${t.seguidores || 0}">
-                                    <input type="number" id="a-v-${t.turma}" value="${t.videos || 0}">
-                                </div>
-                                <div style="margin-bottom:10px;">
-                                    <label style="font-size:9px; color:var(--neon)">PONTOS EXTRAS ACUMULADOS: <span style="color:white">${t.pts_extra || 0}</span></label>
-                                    <input type="number" id="a-e-${t.turma}" value="0" style="border: 1px solid var(--neon); padding: 10px; margin-top:5px;">
-                                </div>
-                                <button onclick="ajustarPontos('${t.turma}', 'soma')" style="width:100%; background:var(--neon); border:none; padding:12px; border-radius:10px; font-weight:bold; margin-bottom:5px;">ADICIONAR PONTOS</button>
-                                <button onclick="ajustarPontos('${t.turma}', 'subtrai')" style="width:100%; background:#ff4444; border:none; padding:12px; border-radius:10px; font-weight:bold; color:white;">TIRAR PONTOS</button>
-                                
-                                <button onclick="abrirInsta('${t.insta}')" style="margin-top:8px; width:100%; background:#111; color:white; border:1px solid #333; padding:8px; border-radius:10px; font-size:11px;">📸 ABRIR INSTAGRAM</button>
-                                <button onclick="excluirTurma('${t.turma}')" style="margin-top:15px; width:100%; background:none; color:#444; border:none; font-size:9px;">🗑️ BANIR CONTA</button>
-                            </div>
-                        `;
-                    });
+            db.ref('ranking').once('value', snap => {
+                snap.forEach(child => {
+                    const u = child.val();
+                    adminList.innerHTML += `<div style="border-bottom:1px solid #333; padding: 10px 5px; font-size: 12px; display: flex; justify-content: space-between;">
+                        <span><b class="${u.aura}">${u.turma}</b> (${u.ensino})</span>
+                        <b style="color: var(--neon);">${u.pontos} pts</b>
+                    </div>`;
                 });
             });
-        }
-
-        function ajustarPontos(turma, acao) {
-            const seg = parseInt(document.getElementById(`a-s-${turma}`).value) || 0;
-            const vid = parseInt(document.getElementById(`a-v-${turma}`).value) || 0;
-            let extra = parseInt(document.getElementById(`a-e-${turma}`).value) || 0;
-
-            if (acao === 'subtrai') extra = -Math.abs(extra);
-
-            db.ref(`ranking/${turma}`).once('value', snap => {
-                const t = snap.val();
-                const newExtra = (t.pts_extra || 0) + extra;
-                
-                const totalPontos = (seg * 1) + (vid * 100) + newExtra;
-
-                db.ref(`ranking/${turma}`).update({
-                    seguidores: seg,
-                    videos: vid,
-                    pts_extra: newExtra,
-                    pontos: totalPontos
-                });
-                
-                document.getElementById(`a-e-${turma}`).value = "0"; 
-                showNotify(`Pontos de ${turma} atualizados!`);
-            });
-        }
-
-        function abrirInsta(link) {
-            if(link && link.includes('http')) window.open(link, '_blank');
-            else showNotify("Link do Instagram inválido ou não cadastrado", "error");
-        }
-
-        function excluirTurma(turma) {
-            if(confirm(`Tem certeza que deseja BANIR a conta ${turma}? Isso removerá a conta instantaneamente da tela e do banco.`)) {
-                db.ref(`ranking/${turma}`).remove();
-                db.ref(`entregas/${turma}`).remove();
-                
-                const card = document.getElementById(`card-adm-${turma}`);
-                if(card) card.remove();
-                
-                showNotify(`Conta ${turma} banida com sucesso!`);
-            }
         }
 
         function limparTudoChat() {
-            if(confirm("ATENÇÃO: Isso vai deletar TODAS as mensagens do chat! Continuar?")) {
+            if(confirm("Certeza que quer apagar todo o chat?")) {
                 db.ref('elite_chat').remove();
-                showNotify("Chat completamente limpo!");
+                showNotify("Chat limpo!");
             }
         }
 
-        // AGORA NÃO LIMPA MAIS OS DADOS DO LOCALSTORAGE
         function sair() {
-            sessao = null;
+            localStorage.removeItem('user_v10_persist');
             window.location.reload();
         }
     </script>

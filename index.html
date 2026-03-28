@@ -364,6 +364,7 @@
             toggleSidebar(false);
         }
 
+        // CARREGA INFORMAÇÕES SALVAS SEMPRE
         window.addEventListener('load', () => {
             const data = localStorage.getItem('user_v10_persist');
             if(data) {
@@ -378,6 +379,7 @@
             }
         });
 
+        // NOVA LÓGICA DE ETAPAS DO LOGIN
         function proximaEtapa() {
             const t = document.getElementById('in-turma').value.trim();
             const p = document.getElementById('in-pass').value;
@@ -389,7 +391,7 @@
                 document.getElementById('login-view').classList.add('hidden');
                 document.getElementById('olimpiadas-view').classList.remove('hidden');
             } else {
-                efetuarLogin([]); 
+                efetuarLogin([]); // Fundamental pula etapa
             }
         }
 
@@ -438,79 +440,72 @@
                 localStorage.setItem('user_v10_persist', JSON.stringify({ turma: t, pass: p, escola: e, serie: s, insta: i, aura: a, ensino: ensino }));
                 
                 document.getElementById('olimpiadas-view').classList.add('hidden');
-                mudarAba(ensino); 
+                mudarAba(ensino); // Já entra na aba correspondente
                 showNotify("Conectado na rede!");
                 startApp();
             });
         }
+
         function entrarVisitante() {
-            sessao = { isVisitante: true, turma: "Visitante", aura: "aura-beta" };
-            document.getElementById('login-view').classList.add('hidden');
-            mudarAba('medio');
-            startApp();
-            showNotify("Modo Visitante Ativo");
+            sessao = { turma: "Visitante", aura: "aura-beta", isVisitante: true };
+            showNotify("Entrando como Visitante...");
+            startApp(true);
         }
 
-        function abrirAdmin() {
-            const senha = prompt("SENHA DO SISTEMA DE ELITE:");
-            if(senha === "123") { // Você pode mudar a senha aqui se precisar
-                document.getElementById('login-view').classList.add('hidden');
-                document.getElementById('admin-view').classList.remove('hidden');
-                carregarAdmin();
-            } else {
-                showNotify("Acesso Negado!", "error");
-            }
-        }
-
-        function mudarAba(aba) {
-            currentRankingTab = aba;
-            document.getElementById('btn-aba-medio').style.background = aba === 'medio' ? 'linear-gradient(90deg, #00ff88, #00d4ff)' : '#111';
-            document.getElementById('btn-aba-medio').style.color = aba === 'medio' ? 'black' : '#888';
-            
-            document.getElementById('btn-aba-fund').style.background = aba === 'fundamental' ? 'linear-gradient(90deg, #00ff88, #00d4ff)' : '#111';
-            document.getElementById('btn-aba-fund').style.color = aba === 'fundamental' ? 'black' : '#888';
-            
-            carregarRank(aba);
-        }
-
-        function startApp() {
+        function startApp(isVis = false) {
             document.getElementById('login-view').classList.add('hidden');
             document.getElementById('rank-view').classList.remove('hidden');
             document.getElementById('btn-chat-float').classList.remove('hidden');
 
-            if(!sessao.isVisitante) {
-                document.getElementById('meu-nome').innerText = sessao.turma;
-                document.getElementById('meu-nome').className = sessao.aura;
-                document.getElementById('minha-info').innerText = `${sessao.escola} | ${sessao.serie}`;
-                
-                db.ref('ranking/' + sessao.turma).on('value', snap => {
-                    const u = snap.val();
-                    if(u) {
-                        document.getElementById('meu-pts').innerText = u.pontos || 0;
-                        document.getElementById('meu-nivel').innerText = Math.floor((u.pontos || 0) / 1000) + 1;
-                    }
-                });
-
-                setInterval(() => {
-                    db.ref('ranking/' + sessao.turma).update({ online: Date.now() });
-                }, 30000);
+            const chatControls = document.getElementById('chat-controls');
+            if(isVis) {
+                chatControls.innerHTML = `<p style="color:#555; font-size:11px; width:100%; text-align:center">Visitantes apenas observam.</p>`;
             } else {
-                document.getElementById('meu-nome').innerText = "Visitante";
-                document.getElementById('minha-info').innerText = "Apenas visualização";
-                document.getElementById('meu-pts').innerText = "-";
-                document.getElementById('meu-nivel').innerText = "-";
+                chatControls.innerHTML = `
+                    <input type="text" id="msg-input" style="margin:0;" placeholder="Mande sua mídia...">
+                    <button onclick="mandarMsg()" class="btn-glow" style="width: 60px; padding: 0; font-size:20px;">⚡</button>
+                `;
+                setInterval(() => {
+                    if(sessao && !sessao.isVisitante) db.ref('ranking/'+sessao.turma).update({ online: Date.now() });
+                }, 10000);
             }
-
-            carregarChat();
 
             db.ref('missao_global').on('value', snap => {
                 const m = snap.val();
-                if(m && !sessao.isVisitante) {
+                if(m) {
                     document.getElementById('txt-missao').innerText = m.txt;
-                    showNotify("NOVA MISSÃO GLOBAL DISPONÍVEL!", "success");
-                    document.getElementById('notif-badge').style.display = 'flex';
+                    if(sessao && !isVis) document.getElementById('notif-badge').style.display = 'flex';
                 }
             });
+
+            carregarDados();
+        }
+
+        // SISTEMA DE ABAS E FILTROS DO RANKING
+        function mudarAba(aba) {
+            currentRankingTab = aba;
+            
+            const btnMedio = document.getElementById('btn-aba-medio');
+            const btnFund = document.getElementById('btn-aba-fund');
+            
+            if(aba === 'medio') {
+                btnMedio.style.background = 'linear-gradient(90deg, #00ff88, #00d4ff)';
+                btnMedio.style.color = 'black';
+                btnMedio.style.border = 'none';
+                
+                btnFund.style.background = '#111';
+                btnFund.style.color = '#888';
+                btnFund.style.border = '1px solid #333';
+            } else {
+                btnFund.style.background = 'linear-gradient(90deg, #00ff88, #00d4ff)';
+                btnFund.style.color = 'black';
+                btnFund.style.border = 'none';
+                
+                btnMedio.style.background = '#111';
+                btnMedio.style.color = '#888';
+                btnMedio.style.border = '1px solid #333';
+            }
+            renderizarRanking();
         }
 
         function carregarDados() {
@@ -553,104 +548,84 @@
                     sessao = t; 
                 }
 
-
-        function toggleChat(state) {
-            chatAberto = state;
-            document.getElementById('chat-ui').style.display = state ? 'flex' : 'none';
-            if(state) {
-                document.getElementById('chat-badge').style.display = 'none';
-                const flow = document.getElementById('msg-flow');
-                flow.scrollTop = flow.scrollHeight;
-                
-                // LÓGICA DE CONTROLES DO CHAT COM BOTÃO DE VÍDEO
-                const controls = document.getElementById('chat-controls');
-                if(!sessao.isVisitante) {
-                    controls.innerHTML = `
-                        <button onclick="enviarVideoMsg()" style="background: #222; border: 1px solid var(--border); color: white; padding: 12px; border-radius: 15px; cursor: pointer; font-size: 16px;" title="Enviar Vídeo">🎥</button>
-                        <input type="text" id="chat-in" placeholder="Sua mensagem..." style="margin: 0; flex: 1; border-radius: 15px;">
-                        <button onclick="enviarMsg()" class="btn-glow" style="width: auto; padding: 0 20px;">➔</button>
-                    `;
-                } else {
-                    controls.innerHTML = `<div style="color:#666; font-size:11px; text-align:center; width:100%;">Visitantes não podem enviar mensagens.</div>`;
-                }
-            }
-        }
-
-        function enviarMsg() {
-            if(sessao.isVisitante) return;
-            const input = document.getElementById('chat-in');
-            const txt = input.value.trim();
-            if(!txt) return;
-            
-            db.ref('elite_chat').push({ t: sessao.turma, a: sessao.aura, txt: txt, time: Date.now() });
-            input.value = "";
-        }
-
-        // NOVA FUNÇÃO: ENVIAR VÍDEO
-        function enviarVideoMsg() {
-            if(sessao.isVisitante) return;
-            const url = prompt("Cole o link do vídeo (YouTube ou link direto .mp4):");
-            if(!url) return;
-            
-            let finalUrl = url;
-            let isYoutube = false;
-            
-            if(url.includes("youtube.com/watch?v=")) {
-                finalUrl = url.replace("watch?v=", "embed/");
-                isYoutube = true;
-            } else if(url.includes("youtu.be/")) {
-                finalUrl = url.replace("youtu.be/", "youtube.com/embed/");
-                isYoutube = true;
-            }
-
-            db.ref('elite_chat').push({ 
-                t: sessao.turma, 
-                a: sessao.aura, 
-                isVideo: true, 
-                isYoutube: isYoutube, 
-                url: finalUrl, 
-                time: Date.now() 
-            });
-        }
-
-        function carregarChat() {
-            db.ref('elite_chat').on('child_added', snap => {
-                const m = snap.val();
-                const flow = document.getElementById('msg-flow');
-                const isMe = sessao && sessao.turma === m.t;
-                
-                let contentHTML = "";
-                
-                // RENDERIZADOR DE VÍDEOS NO CHAT
-                if(m.isVideo) {
-                    if(m.isYoutube) {
-                        contentHTML = `<iframe width="100%" height="180" src="${m.url}" frameborder="0" allowfullscreen style="border-radius:10px; border:none; margin-top:5px;"></iframe>`;
-                    } else {
-                        contentHTML = `<video width="100%" controls style="border-radius:10px; margin-top:5px; max-height:200px;"><source src="${m.url}" type="video/mp4">Seu navegador não suporta vídeos.</video>`;
-                    }
-                } else {
-                    contentHTML = m.txt;
-                }
-
-                flow.innerHTML += `
-                    <div style="display:flex; flex-direction:column; align-items: ${isMe ? 'flex-end' : 'flex-start'};">
-                        <small class="${m.a || 'aura-elite'}" style="font-size:10px; margin-bottom:2px;">${m.t}</small>
-                        <div class="msg-bubble" style="${isMe ? 'background: rgba(0,255,136,0.1); border-right: 4px solid var(--neon); border-left: none;' : ''}">
-                            ${contentHTML}
+                container.innerHTML += `
+                    <div class="rank-card">
+                        <div class="medal ${medalClass}">
+                            <img src="${fotoUser}" class="user-pic">
+                        </div>
+                        <div style="flex:1">
+                            <b class="${t.aura}">${t.turma}</b> <small style="color:#555">LV ${level}</small>
+                            <div style="font-size:9px; color:#888">${t.escola || ''} • ${t.serie || ''}</div>
+                            ${textOlimpiadas}
+                            <div class="status-tag ${isOn ? 'on' : 'off'}">
+                                <div style="width:6px; height:6px; border-radius:50%; background:currentColor; margin-right:5px;"></div>
+                                ${isOn ? 'No toque' : 'Offline'}
+                            </div>
+                            <button class="btn-like" onclick="darLike('${t.turma}')">❤️ ${t.likes || 0}</button>
+                        </div>
+                        <div style="text-align:right">
+                            <span class="top-medal-float">${i < 3 ? medalIcon : '#'+(i+1)}</span>
+                            <b style="color:var(--neon); font-size:18px;">${t.pontos || 0}</b>
                         </div>
                     </div>
                 `;
-                flow.scrollTop = flow.scrollHeight;
-                if(!chatAberto) document.getElementById('chat-badge').style.display = 'flex';
             });
+            
+            if(lista.length === 0) {
+                container.innerHTML = `<p style="text-align:center; font-size:11px; color:#555; margin-top:20px;">Nenhuma turma encontrada nesta categoria.</p>`;
+            }
         }
 
-        function carregarAdmin() {
+        function darLike(turmaAlvo) {
+            const storageKey = 'like_v10_' + turmaAlvo;
+            if(localStorage.getItem(storageKey)) return showNotify("Já deixou o like!", "error");
+            db.ref('ranking/' + turmaAlvo + '/likes').transaction(c => (c || 0) + 1);
+            localStorage.setItem(storageKey, "true");
+            showNotify("Like enviado!");
+        }
+
+        function toggleChat(s) { 
+            chatAberto = s;
+            document.getElementById('chat-ui').style.display = s ? 'flex' : 'none'; 
+            if(s) document.getElementById('chat-badge').style.display = 'none';
+        }
+        
+        function mandarMsg() {
+            const m = document.getElementById('msg-input').value;
+            if(!m || !sessao || sessao.isVisitante) return;
+            db.ref('elite_chat').push({ t: sessao.turma, a: sessao.aura, m: m, time: Date.now() });
+            document.getElementById('msg-input').value = "";
+        }
+
+        db.ref('elite_chat').limitToLast(1).on('child_added', (snap) => {
+            const msg = snap.val();
+            if(!chatAberto && sessao && msg.t !== sessao.turma) {
+                const badge = document.getElementById('chat-badge');
+                badge.style.display = 'flex';
+                if(navigator.vibrate) navigator.vibrate(50);
+            }
+        });
+
+        db.ref('elite_chat').limitToLast(40).on('value', snap => {
+            const box = document.getElementById('msg-flow');
+            box.innerHTML = "";
+            snap.forEach(d => {
+                const v = d.val();
+                if(v && v.t) box.innerHTML += `<div class="msg-bubble"><b class="${v.a}" style="font-size:10px">${v.t}</b><br>${v.m}</div>`;
+            });
+            box.scrollTop = box.scrollHeight;
+        });
+
+        function abrirAdmin() {
+            if(prompt("CÓDIGO DE ACESSO:") !== "123") return showNotify("Acesso Negado", "error");
+            document.getElementById('login-view').classList.add('hidden');
+            document.getElementById('admin-view').classList.remove('hidden');
+
             const adminList = document.getElementById('admin-list');
+            adminList.innerHTML = ""; 
             carregarAdminRestante(adminList);
         }
 
-        // SUA PARTE DO ADMIN INTACTA
         function carregarAdminRestante(adminList) {
             db.ref('entregas').on('value', snap => {
                 const entregas = snap.val();
@@ -750,6 +725,7 @@
             }
         }
 
+        // AGORA NÃO LIMPA MAIS OS DADOS DO LOCALSTORAGE
         function sair() {
             sessao = null;
             window.location.reload();

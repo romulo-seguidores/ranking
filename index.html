@@ -513,54 +513,46 @@
             });
         }
 
-        function carregarRank(tab) {
+        function carregarDados() {
             db.ref('ranking').on('value', snap => {
-                const data = snap.val();
-                if(!data) return;
-                todosUsuarios = data;
-                
-                let users = Object.values(data).filter(u => u.ensino === tab);
-                users.sort((a,b) => (b.pontos || 0) - (a.pontos || 0));
-
-                const container = document.getElementById('ranking-container');
-                container.innerHTML = "";
-
-                users.forEach((u, index) => {
-                    let medalClass = index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : '';
-                    let topFloat = index === 0 ? '👑' : index === 1 ? '🥈' : index === 2 ? '🥉' : `#${index+1}`;
-                    let isMe = sessao && sessao.turma === u.turma;
-                    let img = u.foto || 'https://i.imgur.com/6YQ9Z5b.png';
-                    let status = (Date.now() - u.online) < 60000 ? '<span class="status-tag on">● ONLINE</span>' : '<span class="status-tag off">○ OFFLINE</span>';
-                    
-                    // LÓGICA DA AURA NO RANKING (Adicionada aqui)
-                    let auraLabel = "";
-                    if(u.aura === 'aura-beta') auraLabel = "🏳️‍🌈⃤ Aura Beta";
-                    if(u.aura === 'aura-elite') auraLabel = "⚜️ Aura Elite";
-                    if(u.aura === 'aura-sigma') auraLabel = "🗿 Aura Sigma";
-                    if(u.aura === 'aura-omega') auraLabel = "♾️ Aura Omega";
-
-                    let card = document.createElement('div');
-                    card.className = `rank-card ${isMe ? 'glass' : ''}`;
-                    card.innerHTML = `
-                        <div style="display:flex; flex-direction:column; align-items:center; width: 45px; margin-right: 15px;">
-                            <span class="top-medal-float">${topFloat}</span>
-                            <div class="medal ${medalClass}"><img src="${img}" class="user-pic"></div>
-                        </div>
-                        <div style="flex: 1;">
-                            <b class="${u.aura || 'aura-elite'}" style="font-size: 16px;">${u.turma}</b>
-                            <span style="font-size: 8px; display: block; margin-top: -3px; margin-bottom: 2px;" class="${u.aura || 'aura-elite'}">${auraLabel}</span>
-                            <div style="font-size: 10px; color: #aaa;">${u.escola || ''} • ${u.serie || ''}</div>
-                            ${status}
-                        </div>
-                        <div style="text-align: right; margin-right: 10px;">
-                            <b style="color: var(--neon); font-size: 18px;">${u.pontos || 0}</b><br>
-                            <span style="font-size: 9px; color: #666;">PTS</span>
-                        </div>
-                    `;
-                    container.appendChild(card);
-                });
+                todosUsuarios = snap.val() || {};
+                renderizarRanking();
             });
         }
+
+        function renderizarRanking() {
+            const container = document.getElementById('ranking-container');
+            if(!todosUsuarios) return;
+
+            // Filtra pela aba selecionada e ordena pelos pontos
+            const lista = Object.values(todosUsuarios)
+                .filter(t => t && t.turma && t.ensino === currentRankingTab)
+                .sort((a,b) => (b.pontos || 0) - (a.pontos || 0));
+                
+            container.innerHTML = "";
+
+            lista.forEach((t, i) => {
+                const timeDiff = Date.now() - (t.online || 0);
+                const isOn = timeDiff < 25000;
+                
+                // NOVO SISTEMA DE NÍVEL (100 pontos = 1 level)
+                const level = Math.floor((t.pontos || 0) / 100) + 1;
+                
+                const medalClass = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
+                const medalIcon = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : i+1;
+                const fotoUser = t.foto || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+                
+                const textOlimpiadas = (t.olimpiadas && t.olimpiadas.length > 0) ? `<div style="font-size:8px; color:#00d4ff; margin-top:3px;">🏅 Olimpíadas: ${t.olimpiadas.join(', ')}</div>` : '';
+
+                if(sessao && t.turma === sessao.turma) {
+                    document.getElementById('meu-nome').innerText = t.turma;
+                    document.getElementById('meu-nome').className = t.aura;
+                    document.getElementById('minha-info').innerText = `${t.escola || '---'} | ${t.serie || '---'}`;
+                    document.getElementById('meu-pts').innerText = t.pontos || 0;
+                    document.getElementById('meu-nivel').innerText = level;
+                    sessao = t; 
+                }
+
 
         function toggleChat(state) {
             chatAberto = state;

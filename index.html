@@ -230,19 +230,25 @@
 
         // SALVAR NO FIREBASE
         function salvarInscricao(tipo) {
+            showNotify("Enviando inscrição..."); // Aviso de carregamento
             const refBase = db.ref('casabranca_inscricoes');
+            
+            // CORREÇÃO AQUI: O Firebase precisa que o código seja Texto (String) e não Número (Int)
+            const codigoString = String(codigoAtual);
             
             if(tipo === 1) {
                 const v = document.getElementById('vulgo-1x1').value.trim();
                 const t = document.getElementById('tel-1x1').value.trim();
                 
-                refBase.child('1x1').child(codigoAtual).set({
-                    codigo: codigoAtual,
+                refBase.child('1x1').child(codigoString).set({
+                    codigo: codigoString,
                     vulgo: v,
                     celular: t,
                     data: new Date().toLocaleString('pt-BR')
                 }).then(() => {
                     mudarTela('success-view');
+                }).catch((error) => {
+                    showNotify("⚠️ Erro ao salvar: " + error.message);
                 });
 
             } else if (tipo === 2) {
@@ -251,13 +257,15 @@
                 const v2 = document.getElementById('vulgo2-2x2').value.trim();
                 const t2 = document.getElementById('tel2-2x2').value.trim();
 
-                refBase.child('2x2').child(codigoAtual).set({
-                    codigo: codigoAtual,
+                refBase.child('2x2').child(codigoString).set({
+                    codigo: codigoString,
                     mc1: v1, tel1: t1,
                     mc2: v2, tel2: t2,
                     data: new Date().toLocaleString('pt-BR')
                 }).then(() => {
                     mudarTela('success-view');
+                }).catch((error) => {
+                    showNotify("⚠️ Erro ao salvar: " + error.message);
                 });
             }
         }
@@ -311,6 +319,8 @@
                         `;
                     }
                 });
+            }).catch((error) => {
+                lista.innerHTML = "<p style='text-align:center; color:#ff4444;'>⚠️ Erro ao carregar: " + error.message + "</p>";
             });
         }
     </script>

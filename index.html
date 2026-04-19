@@ -1,145 +1,318 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trick Button Simulator</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Batalha da Casa Branca - Inscrições</title>
+
     <style>
-        body {
-            margin: 0;
-            height: 100vh;
-            background: #1a1a1a;
-            overflow: hidden;
-            font-family: sans-serif;
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap');
+
+        :root {
+            --primary: #ff2a5f; /* Vermelho/Rosa street */
+            --bg: #0a0a0c;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
         }
 
-        /* O Botão Trick */
-        #trick-button {
-            position: absolute;
-            width: 60px;
-            height: 60px;
-            background: rgba(255, 255, 255, 0.2);
-            border: 2px solid rgba(255, 255, 255, 0.5);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: move;
-            touch-action: none;
-            z-index: 9999;
-            box-shadow: 0 0 15px rgba(0,0,0,0.5);
-            transition: border-color 0.3s, background 0.3s;
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
+        body { background: var(--bg); color: white; overflow-x: hidden; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+
+        #app { width: 100%; max-width: 400px; padding: 20px; }
+
+        .glass-panel {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 30px 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            animation: fadeIn 0.4s ease forwards;
         }
 
-        /* Indicador interno (estilo iPhone) */
-        #trick-button::after {
-            content: "";
-            width: 40px;
-            height: 40px;
-            background: rgba(255, 255, 255, 0.4);
-            border-radius: 50%;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Estado quando estiver travado */
-        #trick-button.locked {
-            border-color: #ff3b30;
-            background: rgba(255, 59, 48, 0.2);
-            cursor: default;
+        h1 { text-align: center; font-weight: 900; font-size: 28px; text-transform: uppercase; margin-bottom: 5px; line-height: 1.1; }
+        h1 span { color: var(--primary); }
+        .subtitle { text-align: center; font-size: 11px; color: #888; margin-bottom: 30px; letter-spacing: 1px; }
+
+        input {
+            width: 100%; padding: 15px; margin-bottom: 15px; border-radius: 12px;
+            border: 1px solid #222; background: #111; color: white; font-size: 14px; outline: none;
+            transition: 0.3s;
+        }
+        input:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(255, 42, 95, 0.2); }
+
+        .btn-glow {
+            width: 100%; padding: 16px; border-radius: 12px; border: none;
+            background: var(--primary); color: white;
+            font-weight: 900; font-size: 16px; text-transform: uppercase;
+            cursor: pointer; transition: 0.3s; box-shadow: 0 5px 20px rgba(255, 42, 95, 0.4);
+            margin-bottom: 10px;
+        }
+        .btn-glow:active { transform: scale(0.96); }
+        
+        .btn-outline {
+            width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #444;
+            background: transparent; color: white; font-weight: 700;
+            cursor: pointer; transition: 0.3s;
+        }
+        .btn-outline:active { background: rgba(255,255,255,0.1); }
+
+        .hidden { display: none !important; }
+
+        .code-box {
+            background: #000; border: 2px dashed var(--primary);
+            padding: 15px; text-align: center; border-radius: 12px;
+            margin: 15px 0; font-size: 32px; font-weight: 900; color: var(--primary);
+            letter-spacing: 5px;
         }
 
-        .status-panel {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            color: white;
-            background: rgba(0,0,0,0.7);
-            padding: 10px;
-            border-radius: 8px;
-            pointer-events: none;
+        /* NOTIFICAÇÕES */
+        #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; width: 90%; max-width: 350px; }
+        .toast {
+            background: rgba(20, 20, 20, 0.9); border-left: 4px solid var(--primary);
+            padding: 15px; border-radius: 10px; color: white; font-size: 12px; font-weight: 700;
+            margin-bottom: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            animation: slideDown 0.3s forwards;
         }
+        @keyframes slideDown { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        /* ADMIN LIST */
+        .admin-card {
+            background: #111; border-left: 3px solid var(--primary); padding: 15px;
+            border-radius: 10px; margin-bottom: 10px; font-size: 13px;
+        }
+        .admin-card strong { color: var(--primary); font-size: 15px;}
     </style>
 </head>
 <body>
 
-<div class="status-panel">
-    Status: <span id="status">Móvel</span><br>
-    <small>Clique 3x e segure para Travar/Destravar</small>
-</div>
+    <div id="toast-container"></div>
 
-<div id="trick-button"></div>
+    <div id="app">
+        <section id="home-view" class="glass-panel">
+            <h1>CASA <span>BRANCA</span></h1>
+            <p class="subtitle">BATALHA DE RIMA • INSCRIÇÕES</p>
+            
+            <p style="text-align: center; font-size: 13px; color: #ccc; margin-bottom: 20px;">Escolha o formato da sua batalha hoje:</p>
 
-<script>
-    const btn = document.getElementById('trick-button');
-    const statusTxt = document.getElementById('status');
-    
-    let isLocked = false;
-    let clickCount = 0;
-    let clickTimer;
-    let isDragging = false;
-    let offset = { x: 0, y: 0 };
+            <button onclick="mudarTela('form-1x1-view')" class="btn-glow" style="margin-bottom: 15px;">SANGUE 1x1</button>
+            <button onclick="mudarTela('form-2x2-view')" class="btn-outline">DUPLA 2x2</button>
 
-    // --- Lógica de Arrastar ---
-    btn.addEventListener('pointerdown', (e) => {
-        if (isLocked) return;
-        
-        isDragging = true;
-        offset.x = e.clientX - btn.offsetLeft;
-        offset.y = e.clientY - btn.offsetTop;
-        btn.setPointerCapture(e.pointerId);
-    });
+            <p onclick="abrirAdmin()" style="text-align: center; font-size: 10px; margin-top: 40px; color: #444; cursor: pointer; text-transform: uppercase;">Acesso Organização</p>
+        </section>
 
-    window.addEventListener('pointermove', (e) => {
-        if (!isDragging || isLocked) return;
-        
-        let x = e.clientX - offset.x;
-        let y = e.clientY - offset.y;
-        
-        btn.style.left = `${x}px`;
-        btn.style.top = `${y}px`;
-    });
+        <section id="form-1x1-view" class="glass-panel hidden">
+            <h1>MODO <span>1x1</span></h1>
+            <p class="subtitle">PREENCHA SEUS DADOS</p>
 
-    window.addEventListener('pointerup', () => {
-        isDragging = false;
-    });
+            <input type="text" id="vulgo-1x1" placeholder="Seu Vulgo (Nome de MC)">
+            <input type="tel" id="tel-1x1" placeholder="Número do WhatsApp">
 
-    // --- Lógica de Trava (3 Cliques + Segurar) ---
-    btn.addEventListener('mousedown', () => {
-        clickCount++;
-        
-        clearTimeout(clickTimer);
-        
-        // Se houver 3 cliques rápidos
-        if (clickCount === 3) {
-            // Timer para detectar se está "segurando" após o 3º clique
-            clickTimer = setTimeout(() => {
-                toggleLock();
-            }, 500);
-        } else {
-            clickTimer = setTimeout(() => { clickCount = 0; }, 400);
+            <button id="btn-gerar-1x1" onclick="gerarCodigo(1)" class="btn-outline" style="border-color: var(--primary); color: var(--primary);">GERAR CÓDIGO DE INSCRIÇÃO</button>
+            
+            <div id="box-codigo-1x1" class="hidden">
+                <div class="code-box" id="display-codigo-1x1">000</div>
+                <p style="font-size: 10px; text-align: center; color: #888; margin-bottom: 15px;">Tire print deste código! Você precisará dele.</p>
+                <button onclick="salvarInscricao(1)" class="btn-glow">FINALIZAR INSCRIÇÃO</button>
+            </div>
+
+            <button onclick="mudarTela('home-view')" style="background: none; border: none; color: #666; width: 100%; margin-top: 10px; font-weight: bold; cursor: pointer;">VOLTAR</button>
+        </section>
+
+        <section id="form-2x2-view" class="glass-panel hidden">
+            <h1>MODO <span>2x2</span></h1>
+            <p class="subtitle">INSCRIÇÃO DA DUPLA</p>
+
+            <input type="text" id="vulgo1-2x2" placeholder="Vulgo MC 1">
+            <input type="tel" id="tel1-2x2" placeholder="WhatsApp MC 1">
+            <hr style="border: 0; border-top: 1px solid #333; margin: 15px 0;">
+            <input type="text" id="vulgo2-2x2" placeholder="Vulgo MC 2">
+            <input type="tel" id="tel2-2x2" placeholder="WhatsApp MC 2">
+
+            <button id="btn-gerar-2x2" onclick="gerarCodigo(2)" class="btn-outline" style="border-color: var(--primary); color: var(--primary);">GERAR CÓDIGO DA DUPLA</button>
+            
+            <div id="box-codigo-2x2" class="hidden">
+                <div class="code-box" id="display-codigo-2x2">000</div>
+                <p style="font-size: 10px; text-align: center; color: #888; margin-bottom: 15px;">Tire print deste código! Ele vale para a dupla.</p>
+                <button onclick="salvarInscricao(2)" class="btn-glow">FINALIZAR INSCRIÇÃO</button>
+            </div>
+
+            <button onclick="mudarTela('home-view')" style="background: none; border: none; color: #666; width: 100%; margin-top: 10px; font-weight: bold; cursor: pointer;">VOLTAR</button>
+        </section>
+
+        <section id="success-view" class="glass-panel hidden" style="text-align: center;">
+            <div style="font-size: 50px; margin-bottom: 10px;">🎤🔥</div>
+            <h1 style="color: #00ff88;">CADASTRADO!</h1>
+            <p style="font-size: 12px; color: #ccc; margin-top: 10px; margin-bottom: 25px;">Sua inscrição foi enviada para a organização. Chegue cedo no local do evento!</p>
+            <button onclick="window.location.reload()" class="btn-outline">VOLTAR AO INÍCIO</button>
+        </section>
+
+        <section id="admin-view" class="glass-panel hidden">
+            <h1 style="font-size: 20px;">SISTEMA <span>ADMIN</span></h1>
+            <p class="subtitle">LISTA DE INSCRITOS</p>
+
+            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                <button onclick="filtrarAdmin('1x1')" class="btn-glow" style="padding: 10px; font-size: 12px; margin: 0;">VER 1x1</button>
+                <button onclick="filtrarAdmin('2x2')" class="btn-outline" style="padding: 10px; font-size: 12px; margin: 0;">VER 2x2</button>
+            </div>
+
+            <div id="lista-inscritos" style="max-height: 400px; overflow-y: auto; padding-right: 5px;">
+                <p style="text-align: center; color: #555; font-size: 12px; margin-top: 20px;">Carregando...</p>
+            </div>
+
+            <button onclick="window.location.reload()" style="background: none; border: none; color: #ff4444; width: 100%; margin-top: 20px; font-weight: bold; cursor: pointer;">SAIR DO PAINEL</button>
+        </section>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+    <script>
+        // INICIALIZAÇÃO FIREBASE (Usando o mesmo banco que você mandou)
+        const firebaseConfig = { databaseURL: "https://gincanaescola-d4f8c-default-rtdb.firebaseio.com/" };
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        let codigoAtual = "";
+
+        // FUNÇÃO DE NOTIFICAÇÃO
+        function showNotify(msg) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = msg;
+            container.appendChild(toast);
+            setTimeout(() => { toast.remove(); }, 3500);
         }
-    });
 
-    btn.addEventListener('mouseup', () => {
-        if (clickCount < 3) {
-            clearTimeout(clickTimer);
+        // FUNÇÃO DE TROCAR DE TELAS
+        function mudarTela(idTela) {
+            document.querySelectorAll('section').forEach(sec => sec.classList.add('hidden'));
+            document.getElementById(idTela).classList.remove('hidden');
         }
-    });
 
-    function toggleLock() {
-        isLocked = !isLocked;
-        clickCount = 0;
-        
-        if (isLocked) {
-            btn.classList.add('locked');
-            statusTxt.innerText = "TRAVADO (Estabilizado)";
-            statusTxt.style.color = "#ff3b30";
-        } else {
-            btn.classList.remove('locked');
-            statusTxt.innerText = "Móvel";
-            statusTxt.style.color = "#00ff88";
+        // GERAR CÓDIGO (1 para 1x1, 2 para 2x2)
+        function gerarCodigo(tipo) {
+            if(tipo === 1) {
+                const v = document.getElementById('vulgo-1x1').value.trim();
+                const t = document.getElementById('tel-1x1').value.trim();
+                if(!v || !t) return showNotify("⚠️ Preencha seu vulgo e celular!");
+                
+                // Esconde botão gerar e mostra o código e finalizar
+                document.getElementById('btn-gerar-1x1').classList.add('hidden');
+                document.getElementById('box-codigo-1x1').classList.remove('hidden');
+                
+                // Gera 3 números aleatórios (entre 100 e 999)
+                codigoAtual = Math.floor(Math.random() * 900) + 100;
+                document.getElementById('display-codigo-1x1').innerText = codigoAtual;
+
+            } else if (tipo === 2) {
+                const v1 = document.getElementById('vulgo1-2x2').value.trim();
+                const t1 = document.getElementById('tel1-2x2').value.trim();
+                const v2 = document.getElementById('vulgo2-2x2').value.trim();
+                const t2 = document.getElementById('tel2-2x2').value.trim();
+
+                if(!v1 || !t1 || !v2 || !t2) return showNotify("⚠️ Preencha os dados dos 2 MCs!");
+
+                document.getElementById('btn-gerar-2x2').classList.add('hidden');
+                document.getElementById('box-codigo-2x2').classList.remove('hidden');
+                
+                codigoAtual = Math.floor(Math.random() * 900) + 100;
+                document.getElementById('display-codigo-2x2').innerText = codigoAtual;
+            }
         }
-    }
-</script>
 
+        // SALVAR NO FIREBASE
+        function salvarInscricao(tipo) {
+            const refBase = db.ref('casabranca_inscricoes');
+            
+            if(tipo === 1) {
+                const v = document.getElementById('vulgo-1x1').value.trim();
+                const t = document.getElementById('tel-1x1').value.trim();
+                
+                refBase.child('1x1').child(codigoAtual).set({
+                    codigo: codigoAtual,
+                    vulgo: v,
+                    celular: t,
+                    data: new Date().toLocaleString('pt-BR')
+                }).then(() => {
+                    mudarTela('success-view');
+                });
+
+            } else if (tipo === 2) {
+                const v1 = document.getElementById('vulgo1-2x2').value.trim();
+                const t1 = document.getElementById('tel1-2x2').value.trim();
+                const v2 = document.getElementById('vulgo2-2x2').value.trim();
+                const t2 = document.getElementById('tel2-2x2').value.trim();
+
+                refBase.child('2x2').child(codigoAtual).set({
+                    codigo: codigoAtual,
+                    mc1: v1, tel1: t1,
+                    mc2: v2, tel2: t2,
+                    data: new Date().toLocaleString('pt-BR')
+                }).then(() => {
+                    mudarTela('success-view');
+                });
+            }
+        }
+
+        // SISTEMA ADMIN
+        function abrirAdmin() {
+            const senha = prompt("Senha da Organização:");
+            if(senha === "casa123") { // <- SENHA DO ADMIN AQUI
+                mudarTela('admin-view');
+                filtrarAdmin('1x1'); // Carrega a 1x1 por padrão
+            } else {
+                if(senha !== null) showNotify("⚠️ Senha Incorreta!");
+            }
+        }
+
+        function filtrarAdmin(tipo) {
+            const lista = document.getElementById('lista-inscritos');
+            lista.innerHTML = "<p style='text-align:center; color:#888;'>Buscando na base...</p>";
+
+            db.ref('casabranca_inscricoes/' + tipo).once('value', snap => {
+                lista.innerHTML = "";
+                const dados = snap.val();
+                
+                if(!dados) {
+                    lista.innerHTML = "<p style='text-align:center; color:#888;'>Nenhum inscrito ainda.</p>";
+                    return;
+                }
+
+                // Transforma objeto em array para rodar e imprimir
+                Object.values(dados).forEach(inscrito => {
+                    if(tipo === '1x1') {
+                        lista.innerHTML += `
+                            <div class="admin-card">
+                                <div style="display:flex; justify-content:space-between;">
+                                    <strong>${inscrito.vulgo}</strong>
+                                    <span style="color: white; background: #333; padding: 2px 8px; border-radius: 5px;">#${inscrito.codigo}</span>
+                                </div>
+                                <div style="color: #888; margin-top: 5px;">📱 ${inscrito.celular}</div>
+                            </div>
+                        `;
+                    } else {
+                        lista.innerHTML += `
+                            <div class="admin-card">
+                                <div style="display:flex; justify-content:space-between; margin-bottom: 5px;">
+                                    <strong>DUPLA #${inscrito.codigo}</strong>
+                                    <span style="color: #666; font-size: 10px;">${inscrito.data.split(' ')[0]}</span>
+                                </div>
+                                <div style="color: #ccc; margin-bottom: 3px;">🎤 ${inscrito.mc1} <span style="color:#666">(${inscrito.tel1})</span></div>
+                                <div style="color: #ccc;">🎤 ${inscrito.mc2} <span style="color:#666">(${inscrito.tel2})</span></div>
+                            </div>
+                        `;
+                    }
+                });
+            });
+        }
+    </script>
 </body>
 </html>

@@ -3,13 +3,13 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <title>Batalha da Casa Branca - Inscrições</title>
+    <title>Batalha da Casa Branca - Login</title>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap');
 
         :root {
-            --primary: #ff2a5f; /* Vermelho/Rosa street */
+            --primary: #ff2a5f;
             --bg: #0a0a0c;
             --glass: rgba(255, 255, 255, 0.05);
             --border: rgba(255, 255, 255, 0.1);
@@ -43,7 +43,7 @@
         input {
             width: 100%; padding: 15px; margin-bottom: 15px; border-radius: 12px;
             border: 1px solid #222; background: #111; color: white; font-size: 14px; outline: none;
-            transition: 0.3s;
+            transition: 0.3s; text-align: center;
         }
         input:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(255, 42, 95, 0.2); }
 
@@ -54,40 +54,32 @@
             cursor: pointer; transition: 0.3s; box-shadow: 0 5px 20px rgba(255, 42, 95, 0.4);
             margin-bottom: 10px;
         }
-        .btn-glow:active { transform: scale(0.96); }
         
         .btn-outline {
             width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #444;
             background: transparent; color: white; font-weight: 700;
-            cursor: pointer; transition: 0.3s;
+            cursor: pointer; transition: 0.3s; text-transform: uppercase;
         }
-        .btn-outline:active { background: rgba(255,255,255,0.1); }
+
+        .code-display {
+            background: #000; border: 1px solid var(--primary);
+            padding: 10px; text-align: center; border-radius: 10px;
+            margin-bottom: 20px; color: var(--primary); font-weight: 900; font-size: 24px;
+        }
 
         .hidden { display: none !important; }
-
-        .code-box {
-            background: #000; border: 2px dashed var(--primary);
-            padding: 15px; text-align: center; border-radius: 12px;
-            margin: 15px 0; font-size: 32px; font-weight: 900; color: var(--primary);
-            letter-spacing: 5px;
-        }
 
         /* NOTIFICAÇÕES */
         #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; width: 90%; max-width: 350px; }
         .toast {
-            background: rgba(20, 20, 20, 0.9); border-left: 4px solid var(--primary);
+            background: rgba(20, 20, 20, 0.95); border-left: 4px solid var(--primary);
             padding: 15px; border-radius: 10px; color: white; font-size: 12px; font-weight: 700;
             margin-bottom: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.8);
             animation: slideDown 0.3s forwards;
         }
         @keyframes slideDown { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-        /* ADMIN LIST */
-        .admin-card {
-            background: #111; border-left: 3px solid var(--primary); padding: 15px;
-            border-radius: 10px; margin-bottom: 10px; font-size: 13px;
-        }
-        .admin-card strong { color: var(--primary); font-size: 15px;}
+        .admin-card { background: #111; padding: 15px; border-radius: 10px; margin-bottom: 10px; border-left: 3px solid var(--primary); }
     </style>
 </head>
 <body>
@@ -95,78 +87,71 @@
     <div id="toast-container"></div>
 
     <div id="app">
-        <section id="home-view" class="glass-panel">
+        <section id="login-view" class="glass-panel">
             <h1>CASA <span>BRANCA</span></h1>
-            <p class="subtitle">BATALHA DE RIMA • INSCRIÇÕES</p>
+            <p class="subtitle">SISTEMA DE ACESSO</p>
             
-            <p style="text-align: center; font-size: 13px; color: #ccc; margin-bottom: 20px;">Escolha o formato da sua batalha hoje:</p>
+            <input type="text" id="login-nome" placeholder="Digite seu Vulgo ou Nome da Dupla">
+            
+            <div id="generated-code-box" style="text-align: center;">
+                <p style="font-size: 10px; color: #666; margin-bottom: 5px;">SEU CÓDIGO DE ACESSO É:</p>
+                <div class="code-display" id="main-code-display">---</div>
+            </div>
 
-            <button onclick="mudarTela('form-1x1-view')" class="btn-glow" style="margin-bottom: 15px;">SANGUE 1x1</button>
-            <button onclick="mudarTela('form-2x2-view')" class="btn-outline">DUPLA 2x2</button>
+            <button onclick="fazerLogin()" class="btn-glow">ENTRAR E ESCOLHER MODO</button>
+            <p onclick="abrirAdmin()" style="text-align: center; font-size: 10px; margin-top: 30px; color: #333; cursor: pointer;">ACESSO ADMIN</p>
+        </section>
 
-            <p onclick="abrirAdmin()" style="text-align: center; font-size: 10px; margin-top: 40px; color: #444; cursor: pointer; text-transform: uppercase;">Acesso Organização</p>
+        <section id="choice-view" class="glass-panel hidden">
+            <h1>OLÁ, <span id="user-greeting">MC</span></h1>
+            <p class="subtitle">ESCOLHA O FORMATO DA BATALHA</p>
+            
+            <button onclick="mudarTela('form-1x1-view')" class="btn-glow">BATALHAR 1x1</button>
+            <button onclick="mudarTela('form-2x2-view')" class="btn-outline">BATALHAR 2x2</button>
+            
+            <button onclick="location.reload()" style="background:none; border:none; color:#555; width:100%; margin-top:20px; font-size:11px;">SAIR / TROCAR NOME</button>
         </section>
 
         <section id="form-1x1-view" class="glass-panel hidden">
             <h1>MODO <span>1x1</span></h1>
-            <p class="subtitle">PREENCHA SEUS DADOS</p>
+            <p class="subtitle">CONFIRME SEUS DADOS</p>
 
-            <input type="text" id="vulgo-1x1" placeholder="Seu Vulgo (Nome de MC)">
-            <input type="tel" id="tel-1x1" placeholder="Número do WhatsApp">
+            <input type="tel" id="tel-1x1" placeholder="Seu WhatsApp">
+            <p style="font-size: 10px; color: var(--primary); text-align: center; margin-bottom: 5px;">DIGITE O CÓDIGO QUE VOCÊ RECEBEU:</p>
+            <input type="number" id="confirm-code-1x1" placeholder="Código de 3 dígitos">
 
-            <button id="btn-gerar-1x1" onclick="gerarCodigo(1)" class="btn-outline" style="border-color: var(--primary); color: var(--primary);">GERAR CÓDIGO DE INSCRIÇÃO</button>
-            
-            <div id="box-codigo-1x1" class="hidden">
-                <div class="code-box" id="display-codigo-1x1">000</div>
-                <p style="font-size: 10px; text-align: center; color: #888; margin-bottom: 15px;">Tire print deste código! Você precisará dele.</p>
-                <button onclick="salvarInscricao(1)" class="btn-glow">FINALIZAR INSCRIÇÃO</button>
-            </div>
-
-            <button onclick="mudarTela('home-view')" style="background: none; border: none; color: #666; width: 100%; margin-top: 10px; font-weight: bold; cursor: pointer;">VOLTAR</button>
+            <button onclick="finalizar(1)" class="btn-glow">ENVIAR INSCRIÇÃO</button>
+            <button onclick="mudarTela('choice-view')" class="btn-outline" style="border:none;">VOLTAR</button>
         </section>
 
         <section id="form-2x2-view" class="glass-panel hidden">
             <h1>MODO <span>2x2</span></h1>
-            <p class="subtitle">INSCRIÇÃO DA DUPLA</p>
+            <p class="subtitle">DADOS DA DUPLA</p>
 
-            <input type="text" id="vulgo1-2x2" placeholder="Vulgo MC 1">
-            <input type="tel" id="tel1-2x2" placeholder="WhatsApp MC 1">
-            <hr style="border: 0; border-top: 1px solid #333; margin: 15px 0;">
-            <input type="text" id="vulgo2-2x2" placeholder="Vulgo MC 2">
-            <input type="tel" id="tel2-2x2" placeholder="WhatsApp MC 2">
+            <input type="text" id="vulgo2-2x2" placeholder="Vulgo do seu Parceiro(a)">
+            <input type="tel" id="tel-2x2" placeholder="WhatsApp de contato">
+            <p style="font-size: 10px; color: var(--primary); text-align: center; margin-bottom: 5px;">DIGITE O CÓDIGO QUE VOCÊS RECEBERAM:</p>
+            <input type="number" id="confirm-code-2x2" placeholder="Código de 3 dígitos">
 
-            <button id="btn-gerar-2x2" onclick="gerarCodigo(2)" class="btn-outline" style="border-color: var(--primary); color: var(--primary);">GERAR CÓDIGO DA DUPLA</button>
-            
-            <div id="box-codigo-2x2" class="hidden">
-                <div class="code-box" id="display-codigo-2x2">000</div>
-                <p style="font-size: 10px; text-align: center; color: #888; margin-bottom: 15px;">Tire print deste código! Ele vale para a dupla.</p>
-                <button onclick="salvarInscricao(2)" class="btn-glow">FINALIZAR INSCRIÇÃO</button>
-            </div>
-
-            <button onclick="mudarTela('home-view')" style="background: none; border: none; color: #666; width: 100%; margin-top: 10px; font-weight: bold; cursor: pointer;">VOLTAR</button>
+            <button onclick="finalizar(2)" class="btn-glow">ENVIAR DUPLA</button>
+            <button onclick="mudarTela('choice-view')" class="btn-outline" style="border:none;">VOLTAR</button>
         </section>
 
         <section id="success-view" class="glass-panel hidden" style="text-align: center;">
-            <div style="font-size: 50px; margin-bottom: 10px;">🎤🔥</div>
-            <h1 style="color: #00ff88;">CADASTRADO!</h1>
-            <p style="font-size: 12px; color: #ccc; margin-top: 10px; margin-bottom: 25px;">Sua inscrição foi enviada para a organização. Chegue cedo no local do evento!</p>
-            <button onclick="window.location.reload()" class="btn-outline">VOLTAR AO INÍCIO</button>
+            <div style="font-size: 50px;">🔥</div>
+            <h1 style="color: #00ff88;">INSCRITO!</h1>
+            <p style="margin: 20px 0; color: #ccc; font-size: 14px;">Sua vaga está garantida. Nos vemos na Casa Branca!</p>
+            <button onclick="location.reload()" class="btn-glow">VOLTAR AO INÍCIO</button>
         </section>
 
         <section id="admin-view" class="glass-panel hidden">
-            <h1 style="font-size: 20px;">SISTEMA <span>ADMIN</span></h1>
-            <p class="subtitle">LISTA DE INSCRITOS</p>
-
+            <h1>PAINEL <span>ADMIN</span></h1>
             <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                <button onclick="filtrarAdmin('1x1')" class="btn-glow" style="padding: 10px; font-size: 12px; margin: 0;">VER 1x1</button>
-                <button onclick="filtrarAdmin('2x2')" class="btn-outline" style="padding: 10px; font-size: 12px; margin: 0;">VER 2x2</button>
+                <button onclick="carregarInscritos('1x1')" class="btn-glow" style="padding: 10px; font-size: 12px;">VER 1x1</button>
+                <button onclick="carregarInscritos('2x2')" class="btn-outline" style="padding: 10px; font-size: 12px;">VER 2x2</button>
             </div>
-
-            <div id="lista-inscritos" style="max-height: 400px; overflow-y: auto; padding-right: 5px;">
-                <p style="text-align: center; color: #555; font-size: 12px; margin-top: 20px;">Carregando...</p>
-            </div>
-
-            <button onclick="window.location.reload()" style="background: none; border: none; color: #ff4444; width: 100%; margin-top: 20px; font-weight: bold; cursor: pointer;">SAIR DO PAINEL</button>
+            <div id="lista-admin" style="max-height: 350px; overflow-y: auto;"></div>
+            <button onclick="location.reload()" style="background:none; border:none; color:red; width:100%; margin-top:20px;">SAIR</button>
         </section>
     </div>
 
@@ -174,153 +159,107 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <script>
-        // INICIALIZAÇÃO FIREBASE (Usando o mesmo banco que você mandou)
+        // CONFIGURAÇÃO
         const firebaseConfig = { databaseURL: "https://gincanaescola-d4f8c-default-rtdb.firebaseio.com/" };
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        let codigoAtual = "";
+        let codigoSessao = "";
+        let nomeUsuario = "";
 
-        // FUNÇÃO DE NOTIFICAÇÃO
+        // GERAR CÓDIGO AO ABRIR O SITE
+        window.onload = () => {
+            codigoSessao = String(Math.floor(Math.random() * 900) + 100);
+            document.getElementById('main-code-display').innerText = codigoSessao;
+        };
+
         function showNotify(msg) {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = 'toast';
-            toast.innerHTML = msg;
-            container.appendChild(toast);
-            setTimeout(() => { toast.remove(); }, 3500);
+            const t = document.createElement('div');
+            t.className = 'toast'; t.innerHTML = msg;
+            document.getElementById('toast-container').appendChild(t);
+            setTimeout(() => t.remove(), 3500);
         }
 
-        // FUNÇÃO DE TROCAR DE TELAS
-        function mudarTela(idTela) {
-            document.querySelectorAll('section').forEach(sec => sec.classList.add('hidden'));
-            document.getElementById(idTela).classList.remove('hidden');
+        function mudarTela(id) {
+            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
         }
 
-        // GERAR CÓDIGO (1 para 1x1, 2 para 2x2)
-        function gerarCodigo(tipo) {
-            if(tipo === 1) {
-                const v = document.getElementById('vulgo-1x1').value.trim();
-                const t = document.getElementById('tel-1x1').value.trim();
-                if(!v || !t) return showNotify("⚠️ Preencha seu vulgo e celular!");
-                
-                // Esconde botão gerar e mostra o código e finalizar
-                document.getElementById('btn-gerar-1x1').classList.add('hidden');
-                document.getElementById('box-codigo-1x1').classList.remove('hidden');
-                
-                // Gera 3 números aleatórios (entre 100 e 999)
-                codigoAtual = Math.floor(Math.random() * 900) + 100;
-                document.getElementById('display-codigo-1x1').innerText = codigoAtual;
-
-            } else if (tipo === 2) {
-                const v1 = document.getElementById('vulgo1-2x2').value.trim();
-                const t1 = document.getElementById('tel1-2x2').value.trim();
-                const v2 = document.getElementById('vulgo2-2x2').value.trim();
-                const t2 = document.getElementById('tel2-2x2').value.trim();
-
-                if(!v1 || !t1 || !v2 || !t2) return showNotify("⚠️ Preencha os dados dos 2 MCs!");
-
-                document.getElementById('btn-gerar-2x2').classList.add('hidden');
-                document.getElementById('box-codigo-2x2').classList.remove('hidden');
-                
-                codigoAtual = Math.floor(Math.random() * 900) + 100;
-                document.getElementById('display-codigo-2x2').innerText = codigoAtual;
-            }
-        }
-
-        // SALVAR NO FIREBASE
-        function salvarInscricao(tipo) {
-            showNotify("Enviando inscrição..."); // Aviso de carregamento
-            const refBase = db.ref('casabranca_inscricoes');
+        function fazerLogin() {
+            nomeUsuario = document.getElementById('login-nome').value.trim();
+            if(!nomeUsuario) return showNotify("⚠️ Digite seu nome ou vulgo!");
             
-            // CORREÇÃO AQUI: O Firebase precisa que o código seja Texto (String) e não Número (Int)
-            const codigoString = String(codigoAtual);
-            
-            if(tipo === 1) {
-                const v = document.getElementById('vulgo-1x1').value.trim();
-                const t = document.getElementById('tel-1x1').value.trim();
-                
-                refBase.child('1x1').child(codigoString).set({
-                    codigo: codigoString,
-                    vulgo: v,
-                    celular: t,
-                    data: new Date().toLocaleString('pt-BR')
-                }).then(() => {
-                    mudarTela('success-view');
-                }).catch((error) => {
-                    showNotify("⚠️ Erro ao salvar: " + error.message);
-                });
-
-            } else if (tipo === 2) {
-                const v1 = document.getElementById('vulgo1-2x2').value.trim();
-                const t1 = document.getElementById('tel1-2x2').value.trim();
-                const v2 = document.getElementById('vulgo2-2x2').value.trim();
-                const t2 = document.getElementById('tel2-2x2').value.trim();
-
-                refBase.child('2x2').child(codigoString).set({
-                    codigo: codigoString,
-                    mc1: v1, tel1: t1,
-                    mc2: v2, tel2: t2,
-                    data: new Date().toLocaleString('pt-BR')
-                }).then(() => {
-                    mudarTela('success-view');
-                }).catch((error) => {
-                    showNotify("⚠️ Erro ao salvar: " + error.message);
-                });
-            }
+            document.getElementById('user-greeting').innerText = nomeUsuario.split(' ')[0].toUpperCase();
+            mudarTela('choice-view');
         }
 
-        // SISTEMA ADMIN
-        function abrirAdmin() {
-            const senha = prompt("Senha da Organização:");
-            if(senha === "casa123") { // <- SENHA DO ADMIN AQUI
-                mudarTela('admin-view');
-                filtrarAdmin('1x1'); // Carrega a 1x1 por padrão
+        function finalizar(tipo) {
+            const confCode = document.getElementById('confirm-code-' + (tipo === 1 ? '1x1' : '2x2')).value;
+            
+            if(confCode !== codigoSessao) {
+                return showNotify("⚠️ Código de acesso incorreto!");
+            }
+
+            let payload = {
+                nome_registro: nomeUsuario,
+                codigo_validacao: codigoSessao,
+                data: new Date().toLocaleString()
+            };
+
+            if(tipo === 1) {
+                payload.whatsapp = document.getElementById('tel-1x1').value;
+                if(!payload.whatsapp) return showNotify("⚠️ Digite seu WhatsApp!");
             } else {
-                if(senha !== null) showNotify("⚠️ Senha Incorreta!");
+                payload.parceiro = document.getElementById('vulgo2-2x2').value;
+                payload.whatsapp = document.getElementById('tel-2x2').value;
+                if(!payload.parceiro || !payload.whatsapp) return showNotify("⚠️ Preencha os dados da dupla!");
+            }
+
+            const path = tipo === 1 ? '1x1' : '2x2';
+            
+            // Salvando no Firebase
+            db.ref('casabranca_inscricoes/' + path + '/' + codigoSessao).set(payload)
+            .then(() => mudarTela('success-view'))
+            .catch(e => {
+                // Se cair aqui, é porque as REGRAS no Firebase ainda estão bloqueadas!
+                showNotify("❌ ERRO DE PERMISSÃO: Verifique as regras do Firebase.");
+                console.error(e);
+            });
+        }
+
+        function abrirAdmin() {
+            const s = prompt("Senha da Organização:");
+            if(s === "casa123") {
+                mudarTela('admin-view');
+                carregarInscritos('1x1');
+            } else if(s !== null) {
+                showNotify("⚠️ Senha inválida!");
             }
         }
 
-        function filtrarAdmin(tipo) {
-            const lista = document.getElementById('lista-inscritos');
-            lista.innerHTML = "<p style='text-align:center; color:#888;'>Buscando na base...</p>";
-
+        function carregarInscritos(tipo) {
+            const list = document.getElementById('lista-admin');
+            list.innerHTML = "<p style='text-align:center; color:#555;'>Buscando...</p>";
+            
             db.ref('casabranca_inscricoes/' + tipo).once('value', snap => {
-                lista.innerHTML = "";
+                list.innerHTML = "";
                 const dados = snap.val();
-                
-                if(!dados) {
-                    lista.innerHTML = "<p style='text-align:center; color:#888;'>Nenhum inscrito ainda.</p>";
-                    return;
-                }
+                if(!dados) return list.innerHTML = "<p style='text-align:center; color:#888;'>Nenhuma inscrição.</p>";
 
-                // Transforma objeto em array para rodar e imprimir
-                Object.values(dados).forEach(inscrito => {
-                    if(tipo === '1x1') {
-                        lista.innerHTML += `
-                            <div class="admin-card">
-                                <div style="display:flex; justify-content:space-between;">
-                                    <strong>${inscrito.vulgo}</strong>
-                                    <span style="color: white; background: #333; padding: 2px 8px; border-radius: 5px;">#${inscrito.codigo}</span>
-                                </div>
-                                <div style="color: #888; margin-top: 5px;">📱 ${inscrito.celular}</div>
+                Object.values(dados).forEach(i => {
+                    list.innerHTML += `
+                        <div class="admin-card">
+                            <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                                <b style="color:var(--primary)">#${i.codigo_validacao}</b>
+                                <small style="color:#444">${i.data.split(',')[0]}</small>
                             </div>
-                        `;
-                    } else {
-                        lista.innerHTML += `
-                            <div class="admin-card">
-                                <div style="display:flex; justify-content:space-between; margin-bottom: 5px;">
-                                    <strong>DUPLA #${inscrito.codigo}</strong>
-                                    <span style="color: #666; font-size: 10px;">${inscrito.data.split(' ')[0]}</span>
-                                </div>
-                                <div style="color: #ccc; margin-bottom: 3px;">🎤 ${inscrito.mc1} <span style="color:#666">(${inscrito.tel1})</span></div>
-                                <div style="color: #ccc;">🎤 ${inscrito.mc2} <span style="color:#666">(${inscrito.tel2})</span></div>
-                            </div>
-                        `;
-                    }
+                            <b>${i.nome_registro}</b> ${i.parceiro ? ' & <b>'+i.parceiro+'</b>' : ''}<br>
+                            <span style="color:#888; font-size:12px;">📱 ${i.whatsapp}</span>
+                        </div>
+                    `;
                 });
-            }).catch((error) => {
-                lista.innerHTML = "<p style='text-align:center; color:#ff4444;'>⚠️ Erro ao carregar: " + error.message + "</p>";
+            }).catch(() => {
+                list.innerHTML = "<p style='text-align:center; color:red;'>Erro de Permissão!</p>";
             });
         }
     </script>

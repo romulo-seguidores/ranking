@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <title>Batalha da Casa Branca - Login</title>
+    <title>Batalha da Casa Branca</title>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap');
@@ -31,10 +31,7 @@
             animation: fadeIn 0.4s ease forwards;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
         h1 { text-align: center; font-weight: 900; font-size: 28px; text-transform: uppercase; margin-bottom: 5px; line-height: 1.1; }
         h1 span { color: var(--primary); }
@@ -69,7 +66,6 @@
 
         .hidden { display: none !important; }
 
-        /* NOTIFICAÇÕES */
         #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; width: 90%; max-width: 350px; }
         .toast {
             background: rgba(20, 20, 20, 0.95); border-left: 4px solid var(--primary);
@@ -90,68 +86,55 @@
         <section id="login-view" class="glass-panel">
             <h1>CASA <span>BRANCA</span></h1>
             <p class="subtitle">SISTEMA DE ACESSO</p>
-            
-            <input type="text" id="login-nome" placeholder="Digite seu Vulgo ou Nome da Dupla">
-            
-            <div id="generated-code-box" style="text-align: center;">
-                <p style="font-size: 10px; color: #666; margin-bottom: 5px;">SEU CÓDIGO DE ACESSO É:</p>
+            <input type="text" id="login-nome" placeholder="Digite seu Vulgo">
+            <div style="text-align: center;">
+                <p style="font-size: 10px; color: #666; margin-bottom: 5px;">CÓDIGO GERADO:</p>
                 <div class="code-display" id="main-code-display">---</div>
             </div>
-
-            <button onclick="fazerLogin()" class="btn-glow">ENTRAR E ESCOLHER MODO</button>
-            <p onclick="abrirAdmin()" style="text-align: center; font-size: 10px; margin-top: 30px; color: #333; cursor: pointer;">ACESSO ADMIN</p>
+            <button onclick="fazerLogin()" class="btn-glow">ENTRAR</button>
+            <p onclick="abrirAdmin()" style="text-align: center; font-size: 10px; margin-top: 30px; color: #333; cursor: pointer;">PAINEL ORGANIZAÇÃO</p>
         </section>
 
         <section id="choice-view" class="glass-panel hidden">
-            <h1>OLÁ, <span id="user-greeting">MC</span></h1>
-            <p class="subtitle">ESCOLHA O FORMATO DA BATALHA</p>
-            
-            <button onclick="mudarTela('form-1x1-view')" class="btn-glow">BATALHAR 1x1</button>
-            <button onclick="mudarTela('form-2x2-view')" class="btn-outline">BATALHAR 2x2</button>
-            
-            <button onclick="location.reload()" style="background:none; border:none; color:#555; width:100%; margin-top:20px; font-size:11px;">SAIR / TROCAR NOME</button>
+            <h1>SALVE, <span id="user-greeting">MC</span></h1>
+            <p class="subtitle">QUAL O MODO DE HOJE?</p>
+            <button onclick="mudarTela('form-1x1-view')" class="btn-glow">1x1 SANGUE</button>
+            <button onclick="mudarTela('form-2x2-view')" class="btn-outline">2x2 DUPLA</button>
         </section>
 
         <section id="form-1x1-view" class="glass-panel hidden">
             <h1>MODO <span>1x1</span></h1>
-            <p class="subtitle">CONFIRME SEUS DADOS</p>
-
             <input type="tel" id="tel-1x1" placeholder="Seu WhatsApp">
-            <p style="font-size: 10px; color: var(--primary); text-align: center; margin-bottom: 5px;">DIGITE O CÓDIGO QUE VOCÊ RECEBEU:</p>
-            <input type="number" id="confirm-code-1x1" placeholder="Código de 3 dígitos">
-
-            <button onclick="finalizar(1)" class="btn-glow">ENVIAR INSCRIÇÃO</button>
+            <p style="font-size: 10px; color: var(--primary); text-align: center; margin-bottom: 5px;">REPETIR CÓDIGO GERADO:</p>
+            <input type="number" id="confirm-code-1x1" placeholder="3 dígitos">
+            <button onclick="finalizar(1)" class="btn-glow">CONFIRMAR INSCRIÇÃO</button>
             <button onclick="mudarTela('choice-view')" class="btn-outline" style="border:none;">VOLTAR</button>
         </section>
 
         <section id="form-2x2-view" class="glass-panel hidden">
             <h1>MODO <span>2x2</span></h1>
-            <p class="subtitle">DADOS DA DUPLA</p>
-
-            <input type="text" id="vulgo2-2x2" placeholder="Vulgo do seu Parceiro(a)">
-            <input type="tel" id="tel-2x2" placeholder="WhatsApp de contato">
-            <p style="font-size: 10px; color: var(--primary); text-align: center; margin-bottom: 5px;">DIGITE O CÓDIGO QUE VOCÊS RECEBERAM:</p>
-            <input type="number" id="confirm-code-2x2" placeholder="Código de 3 dígitos">
-
-            <button onclick="finalizar(2)" class="btn-glow">ENVIAR DUPLA</button>
+            <input type="text" id="vulgo2-2x2" placeholder="Vulgo do Parceiro">
+            <input type="tel" id="tel-2x2" placeholder="WhatsApp Contato">
+            <p style="font-size: 10px; color: var(--primary); text-align: center; margin-bottom: 5px;">REPETIR CÓDIGO GERADO:</p>
+            <input type="number" id="confirm-code-2x2" placeholder="3 dígitos">
+            <button onclick="finalizar(2)" class="btn-glow">CONFIRMAR DUPLA</button>
             <button onclick="mudarTela('choice-view')" class="btn-outline" style="border:none;">VOLTAR</button>
         </section>
 
         <section id="success-view" class="glass-panel hidden" style="text-align: center;">
-            <div style="font-size: 50px;">🔥</div>
-            <h1 style="color: #00ff88;">INSCRITO!</h1>
-            <p style="margin: 20px 0; color: #ccc; font-size: 14px;">Sua vaga está garantida. Nos vemos na Casa Branca!</p>
-            <button onclick="location.reload()" class="btn-glow">VOLTAR AO INÍCIO</button>
+            <h1 style="color: #00ff88;">PRONTO!</h1>
+            <p style="margin: 20px 0; color: #ccc;">Sua inscrição foi enviada para o telão!</p>
+            <button onclick="location.reload()" class="btn-glow">NOVA INSCRIÇÃO</button>
         </section>
 
         <section id="admin-view" class="glass-panel hidden">
-            <h1>PAINEL <span>ADMIN</span></h1>
+            <h1>INSCRITOS <span>TOTAL</span></h1>
             <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                <button onclick="carregarInscritos('1x1')" class="btn-glow" style="padding: 10px; font-size: 12px;">VER 1x1</button>
-                <button onclick="carregarInscritos('2x2')" class="btn-outline" style="padding: 10px; font-size: 12px;">VER 2x2</button>
+                <button onclick="filtrarAdmin('1x1')" class="btn-glow" style="padding: 10px; font-size: 12px;">1x1</button>
+                <button onclick="filtrarAdmin('2x2')" class="btn-outline" style="padding: 10px; font-size: 12px;">2x2</button>
             </div>
             <div id="lista-admin" style="max-height: 350px; overflow-y: auto;"></div>
-            <button onclick="location.reload()" style="background:none; border:none; color:red; width:100%; margin-top:20px;">SAIR</button>
+            <button onclick="location.reload()" style="background:none; border:none; color:red; width:100%; margin-top:20px;">FECHAR</button>
         </section>
     </div>
 
@@ -159,25 +142,24 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <script>
-        // CONFIGURAÇÃO
-        const firebaseConfig = { databaseURL: "https://gincanaescola-d4f8c-default-rtdb.firebaseio.com/" };
-        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
+        // CONFIGURAÇÃO IDENTICA AO RANKCLASE
+        const config = { databaseURL: "https://gincanaescola-d4f8c-default-rtdb.firebaseio.com/" };
+        if (!firebase.apps.length) firebase.initializeApp(config);
+        const database = firebase.database();
 
-        let codigoSessao = "";
-        let nomeUsuario = "";
+        let codigoGerado = "";
+        let mcPrincipal = "";
 
-        // GERAR CÓDIGO AO ABRIR O SITE
         window.onload = () => {
-            codigoSessao = String(Math.floor(Math.random() * 900) + 100);
-            document.getElementById('main-code-display').innerText = codigoSessao;
+            codigoGerado = String(Math.floor(Math.random() * 899) + 100);
+            document.getElementById('main-code-display').innerText = codigoGerado;
         };
 
         function showNotify(msg) {
             const t = document.createElement('div');
             t.className = 'toast'; t.innerHTML = msg;
             document.getElementById('toast-container').appendChild(t);
-            setTimeout(() => t.remove(), 3500);
+            setTimeout(() => t.remove(), 3000);
         }
 
         function mudarTela(id) {
@@ -186,80 +168,67 @@
         }
 
         function fazerLogin() {
-            nomeUsuario = document.getElementById('login-nome').value.trim();
-            if(!nomeUsuario) return showNotify("⚠️ Digite seu nome ou vulgo!");
-            
-            document.getElementById('user-greeting').innerText = nomeUsuario.split(' ')[0].toUpperCase();
+            mcPrincipal = document.getElementById('login-nome').value.trim();
+            if(!mcPrincipal) return showNotify("⚠️ Digite seu vulgo!");
+            document.getElementById('user-greeting').innerText = mcPrincipal.toUpperCase();
             mudarTela('choice-view');
         }
 
-        function finalizar(tipo) {
-            const confCode = document.getElementById('confirm-code-' + (tipo === 1 ? '1x1' : '2x2')).value;
-            
-            if(confCode !== codigoSessao) {
-                return showNotify("⚠️ Código de acesso incorreto!");
-            }
+        function finalizar(modo) {
+            const inputCod = document.getElementById('confirm-code-' + (modo === 1 ? '1x1' : '2x2')).value;
+            if(inputCod !== codigoGerado) return showNotify("⚠️ O código deve ser " + codigoGerado);
 
-            let payload = {
-                nome_registro: nomeUsuario,
-                codigo_validacao: codigoSessao,
-                data: new Date().toLocaleString()
+            let dados = {
+                mc: mcPrincipal,
+                id: codigoGerado,
+                timestamp: new Date().getTime()
             };
 
-            if(tipo === 1) {
-                payload.whatsapp = document.getElementById('tel-1x1').value;
-                if(!payload.whatsapp) return showNotify("⚠️ Digite seu WhatsApp!");
+            if(modo === 1) {
+                dados.zap = document.getElementById('tel-1x1').value;
             } else {
-                payload.parceiro = document.getElementById('vulgo2-2x2').value;
-                payload.whatsapp = document.getElementById('tel-2x2').value;
-                if(!payload.parceiro || !payload.whatsapp) return showNotify("⚠️ Preencha os dados da dupla!");
+                dados.parceiro = document.getElementById('vulgo2-2x2').value;
+                dados.zap = document.getElementById('tel-2x2').value;
             }
 
-            const path = tipo === 1 ? '1x1' : '2x2';
-            
-            // Salvando no Firebase
-            db.ref('casabranca_inscricoes/' + path + '/' + codigoSessao).set(payload)
-            .then(() => mudarTela('success-view'))
-            .catch(e => {
-                // Se cair aqui, é porque as REGRAS no Firebase ainda estão bloqueadas!
-                showNotify("❌ ERRO DE PERMISSÃO: Verifique as regras do Firebase.");
-                console.error(e);
+            // FUNÇÃO DE SALVAR ESTILO RANKCLASE
+            const pasta = modo === 1 ? '1x1' : '2x2';
+            database.ref('casabranca_inscricoes/' + pasta + '/' + codigoGerado).set(dados, (error) => {
+                if (error) {
+                    showNotify("❌ Erro de Permissão!");
+                } else {
+                    mudarTela('success-view');
+                }
             });
         }
 
         function abrirAdmin() {
-            const s = prompt("Senha da Organização:");
-            if(s === "casa123") {
+            const p = prompt("Senha:");
+            if(p === "casa123") {
                 mudarTela('admin-view');
-                carregarInscritos('1x1');
-            } else if(s !== null) {
-                showNotify("⚠️ Senha inválida!");
+                filtrarAdmin('1x1');
             }
         }
 
-        function carregarInscritos(tipo) {
-            const list = document.getElementById('lista-admin');
-            list.innerHTML = "<p style='text-align:center; color:#555;'>Buscando...</p>";
-            
-            db.ref('casabranca_inscricoes/' + tipo).once('value', snap => {
-                list.innerHTML = "";
-                const dados = snap.val();
-                if(!dados) return list.innerHTML = "<p style='text-align:center; color:#888;'>Nenhuma inscrição.</p>";
+        function filtrarAdmin(pasta) {
+            const box = document.getElementById('lista-admin');
+            box.innerHTML = "Carregando...";
 
-                Object.values(dados).forEach(i => {
-                    list.innerHTML += `
+            // LISTAGEM EM TEMPO REAL
+            database.ref('casabranca_inscricoes/' + pasta).on('value', (snapshot) => {
+                box.innerHTML = "";
+                const lista = snapshot.val();
+                if(!lista) return box.innerHTML = "Vazio.";
+
+                Object.values(lista).forEach(item => {
+                    box.innerHTML += `
                         <div class="admin-card">
-                            <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
-                                <b style="color:var(--primary)">#${i.codigo_validacao}</b>
-                                <small style="color:#444">${i.data.split(',')[0]}</small>
-                            </div>
-                            <b>${i.nome_registro}</b> ${i.parceiro ? ' & <b>'+i.parceiro+'</b>' : ''}<br>
-                            <span style="color:#888; font-size:12px;">📱 ${i.whatsapp}</span>
+                            <b style="color:var(--primary)">#${item.id}</b> | <b>${item.mc}</b>
+                            ${item.parceiro ? ' & ' + item.parceiro : ''}<br>
+                            <span style="font-size:11px; color:#666">Zap: ${item.zap}</span>
                         </div>
                     `;
                 });
-            }).catch(() => {
-                list.innerHTML = "<p style='text-align:center; color:red;'>Erro de Permissão!</p>";
             });
         }
     </script>

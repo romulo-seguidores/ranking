@@ -1,235 +1,388 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <title>Batalha da Casa Branca</title>
-
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap');
-
-        :root {
-            --primary: #ff2a5f;
-            --bg: #0a0a0c;
-            --glass: rgba(255, 255, 255, 0.05);
-            --border: rgba(255, 255, 255, 0.1);
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
-        body { background: var(--bg); color: white; overflow-x: hidden; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
-
-        #app { width: 100%; max-width: 400px; padding: 20px; }
-
-        .glass-panel {
-            background: var(--glass);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 30px 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-            animation: fadeIn 0.4s ease forwards;
-        }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-        h1 { text-align: center; font-weight: 900; font-size: 28px; text-transform: uppercase; margin-bottom: 5px; line-height: 1.1; }
-        h1 span { color: var(--primary); }
-        .subtitle { text-align: center; font-size: 11px; color: #888; margin-bottom: 30px; letter-spacing: 1px; }
-
-        input {
-            width: 100%; padding: 15px; margin-bottom: 15px; border-radius: 12px;
-            border: 1px solid #222; background: #111; color: white; font-size: 14px; outline: none;
-            transition: 0.3s; text-align: center;
-        }
-        input:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(255, 42, 95, 0.2); }
-
-        .btn-glow {
-            width: 100%; padding: 16px; border-radius: 12px; border: none;
-            background: var(--primary); color: white;
-            font-weight: 900; font-size: 16px; text-transform: uppercase;
-            cursor: pointer; transition: 0.3s; box-shadow: 0 5px 20px rgba(255, 42, 95, 0.4);
-            margin-bottom: 10px;
-        }
-        
-        .btn-outline {
-            width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #444;
-            background: transparent; color: white; font-weight: 700;
-            cursor: pointer; transition: 0.3s; text-transform: uppercase;
-        }
-
-        .code-display {
-            background: #000; border: 1px solid var(--primary);
-            padding: 10px; text-align: center; border-radius: 10px;
-            margin-bottom: 20px; color: var(--primary); font-weight: 900; font-size: 24px;
-        }
-
-        .hidden { display: none !important; }
-
-        #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; width: 90%; max-width: 350px; }
-        .toast {
-            background: rgba(20, 20, 20, 0.95); border-left: 4px solid var(--primary);
-            padding: 15px; border-radius: 10px; color: white; font-size: 12px; font-weight: 700;
-            margin-bottom: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-            animation: slideDown 0.3s forwards;
-        }
-        @keyframes slideDown { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-        .admin-card { background: #111; padding: 15px; border-radius: 10px; margin-bottom: 10px; border-left: 3px solid var(--primary); }
-    </style>
-</head>
-<body>
-
-    <div id="toast-container"></div>
-
-    <div id="app">
-        <section id="login-view" class="glass-panel">
-            <h1>CASA <span>BRANCA</span></h1>
-            <p class="subtitle">SISTEMA DE ACESSO</p>
-            <input type="text" id="login-nome" placeholder="Digite seu Vulgo">
-            <div style="text-align: center;">
-                <p style="font-size: 10px; color: #666; margin-bottom: 5px;">CÓDIGO GERADO:</p>
-                <div class="code-display" id="main-code-display">---</div>
-            </div>
-            <button onclick="fazerLogin()" class="btn-glow">ENTRAR</button>
-            <p onclick="abrirAdmin()" style="text-align: center; font-size: 10px; margin-top: 30px; color: #333; cursor: pointer;">PAINEL ORGANIZAÇÃO</p>
-        </section>
-
-        <section id="choice-view" class="glass-panel hidden">
-            <h1>SALVE, <span id="user-greeting">MC</span></h1>
-            <p class="subtitle">QUAL O MODO DE HOJE?</p>
-            <button onclick="mudarTela('form-1x1-view')" class="btn-glow">1x1 SANGUE</button>
-            <button onclick="mudarTela('form-2x2-view')" class="btn-outline">2x2 DUPLA</button>
-        </section>
-
-        <section id="form-1x1-view" class="glass-panel hidden">
-            <h1>MODO <span>1x1</span></h1>
-            <input type="tel" id="tel-1x1" placeholder="Seu WhatsApp">
-            <p style="font-size: 10px; color: var(--primary); text-align: center; margin-bottom: 5px;">REPETIR CÓDIGO GERADO:</p>
-            <input type="number" id="confirm-code-1x1" placeholder="3 dígitos">
-            <button onclick="finalizar(1)" class="btn-glow">CONFIRMAR INSCRIÇÃO</button>
-            <button onclick="mudarTela('choice-view')" class="btn-outline" style="border:none;">VOLTAR</button>
-        </section>
-
-        <section id="form-2x2-view" class="glass-panel hidden">
-            <h1>MODO <span>2x2</span></h1>
-            <input type="text" id="vulgo2-2x2" placeholder="Vulgo do Parceiro">
-            <input type="tel" id="tel-2x2" placeholder="WhatsApp Contato">
-            <p style="font-size: 10px; color: var(--primary); text-align: center; margin-bottom: 5px;">REPETIR CÓDIGO GERADO:</p>
-            <input type="number" id="confirm-code-2x2" placeholder="3 dígitos">
-            <button onclick="finalizar(2)" class="btn-glow">CONFIRMAR DUPLA</button>
-            <button onclick="mudarTela('choice-view')" class="btn-outline" style="border:none;">VOLTAR</button>
-        </section>
-
-        <section id="success-view" class="glass-panel hidden" style="text-align: center;">
-            <h1 style="color: #00ff88;">PRONTO!</h1>
-            <p style="margin: 20px 0; color: #ccc;">Sua inscrição foi enviada para o telão!</p>
-            <button onclick="location.reload()" class="btn-glow">NOVA INSCRIÇÃO</button>
-        </section>
-
-        <section id="admin-view" class="glass-panel hidden">
-            <h1>INSCRITOS <span>TOTAL</span></h1>
-            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                <button onclick="filtrarAdmin('1x1')" class="btn-glow" style="padding: 10px; font-size: 12px;">1x1</button>
-                <button onclick="filtrarAdmin('2x2')" class="btn-outline" style="padding: 10px; font-size: 12px;">2x2</button>
-            </div>
-            <div id="lista-admin" style="max-height: 350px; overflow-y: auto;"></div>
-            <button onclick="location.reload()" style="background:none; border:none; color:red; width:100%; margin-top:20px;">FECHAR</button>
-        </section>
-    </div>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rank Classe - Versão Premium</title>
+    
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+        :root {
+            --accent: #00ff88;
+            --secondary: #00d4ff;
+            --bg-dark: #020202;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body { 
+            margin: 0; 
+            background: var(--bg-dark); 
+            color: white; 
+            font-family: 'Poppins', sans-serif; 
+            display: flex; 
+            justify-content: center; 
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        #app { width: 100%; max-width: 440px; padding: 20px; }
+
+        /* ANIMAÇÕES E FLUIDEZ */
+        section { animation: slideUp 0.5s ease; }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .glass, .glass-large { 
+            background: var(--glass-bg); 
+            backdrop-filter: blur(25px); 
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255,255,255,0.08); 
+            border-radius: 35px; 
+            padding: 30px; 
+            text-align: center; 
+            margin-top: 20px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        /* PODERES (Estilizados) */
+        .power-fogo { color: #ff4d00; text-shadow: 0 0 15px rgba(255,77,0,0.5); }
+        .power-gelo { color: #00d4ff; text-shadow: 0 0 15px rgba(0,212,255,0.5); }
+        .power-floresta { color: #00ff88; text-shadow: 0 0 15px rgba(0,255,136,0.5); }
+        .power-vazio { color: #a855f7; text-shadow: 0 0 15px rgba(168,85,247,0.5); }
+        .power-eletrico { color: #eab308; text-shadow: 0 0 15px rgba(234,179,8,0.5); }
+
+        /* INPUTS E BOTÕES FLUIDOS */
+        input, select { 
+            width: 100%; padding: 16px; margin: 10px 0; border-radius: 15px; 
+            border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); 
+            color: white; font-size: 14px; transition: var(--transition);
+        }
+        input:focus { background: rgba(255,255,255,0.1); border-color: var(--accent); outline: none; }
+
+        .btn-main { 
+            width: 100%; padding: 18px; 
+            background: linear-gradient(135deg, var(--accent), var(--secondary)); 
+            border: none; border-radius: 15px; font-weight: 700; cursor: pointer; 
+            color: #000; text-transform: uppercase; letter-spacing: 1px;
+            transition: var(--transition); margin-top: 10px;
+        }
+        .btn-main:hover { transform: scale(1.02); filter: brightness(1.1); box-shadow: 0 10px 20px rgba(0,255,136,0.2); }
+
+        .btn-sec { background: transparent; border: 1px solid #333; color: #888; width: 100%; padding: 14px; border-radius: 15px; margin-top: 15px; cursor: pointer; transition: var(--transition); }
+        .btn-sec:hover { border-color: #666; color: white; }
+
+        /* MURAL DE AVISOS */
+        #mural-avisos {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            padding: 15px; border-radius: 20px; margin-bottom: 20px;
+            font-size: 13px; color: var(--accent); display: none;
+        }
+
+        /* RANK CARD MELHORADO */
+        .rank-card { 
+            display: flex; justify-content: space-between; align-items: center; 
+            background: rgba(255,255,255,0.04); padding: 20px; border-radius: 25px; 
+            margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.03);
+            transition: var(--transition);
+        }
+        .rank-card:hover { transform: translateX(5px); background: rgba(255,255,255,0.07); }
+
+        .stats-info { font-size: 11px; color: #aaa; margin-top: 8px; font-weight: 300; }
+        .escola-info { font-size: 10px; color: #666; display: block; margin-top: 2px; }
+
+        /* ADMIN PANEL CARDS */
+        .admin-card { 
+            background: #0d0d0d; padding: 25px; border-radius: 25px; 
+            border: 1px solid #222; margin-bottom: 20px; text-align: left;
+            position: relative; overflow: hidden;
+        }
+        .admin-card.salvo { border-left: 5px solid var(--accent); }
+        .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 15px 0; }
+        
+        .btn-save { 
+            background: var(--accent); color: black; border: none; 
+            width: 100%; padding: 12px; border-radius: 12px; font-weight: bold; cursor: pointer; 
+        }
+
+        .btn-insta-admin { 
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 10px; background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); 
+            color: white; text-decoration: none; font-size: 12px; border-radius: 10px; font-weight: 600; 
+        }
+
+        .btn-delete { background: rgba(255, 68, 68, 0.1); color: #ff4444; border: none; padding: 8px; border-radius: 10px; font-size: 11px; cursor: pointer; width: 100%; margin-top: 15px; }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <section id="auth-screen" class="glass">
+            <h1 style="font-weight: 800; letter-spacing: -1px; margin-bottom: 5px;">RANK<span style="color: var(--accent);">CLASSE</span></h1>
+            <p style="font-size: 12px; color: #666; margin-bottom: 25px;">SISTEMA DE GINCANAS 2.0</p>
+            <div class="input-group">
+                <input type="text" id="reg-turma" placeholder="Qual o nome da Turma?">
+                <input type="text" id="reg-serie" placeholder="Qual a Série? (Ex: 3º Ano B)">
+                <input type="text" id="reg-escola" placeholder="Nome da Escola">
+                <input type="url" id="reg-insta" placeholder="Link do Instagram da Turma">
+                <input type="password" id="reg-pass" placeholder="Crie uma Senha">
+                <select id="reg-power">
+                    <option value="power-fogo">🔥 Poder: Fogo (Vermelho)</option>
+                    <option value="power-gelo">❄️ Poder: Gelo (Azul)</option>
+                    <option value="power-floresta">🌿 Poder: Floresta (Verde)</option>
+                    <option value="power-vazio">🌑 Poder: Vazio (Roxo)</option>
+                    <option value="power-eletrico">⚡ Poder: Elétrico (Amarelo)</option>
+                </select>
+                <button onclick="logarOuCadastrar()" class="btn-main">ENTRAR NO RANKING</button>
+            </div>
+            <button onclick="mostrarLoginAdmin()" style="color: #333;" class="btn-sec">Acesso Administrativo</button>
+        </section>
+
+        <section id="rank-screen" class="hidden glass-large">
+            <div id="mural-avisos"></div>
+            
+            <div id="user-header" style="text-align: left; margin-bottom: 20px;">
+                <small style="color: #666;">Conta ativa:</small>
+                <h1 id="nome-turma-topo" style="margin: 0; font-size: 24px;">---</h1>
+            </div>
+
+            <div id="lista-ranking"></div>
+            
+            <button onclick="voltar()" class="btn-sec">SAIR DA CONTA</button>
+        </section>
+
+        <section id="admin-login-screen" class="hidden glass">
+            <h2 style="margin-bottom: 20px;">🛡 Portal Admin</h2>
+            <input type="text" id="admin-user" placeholder="Usuário">
+            <input type="password" id="admin-pass" placeholder="Senha">
+            <button onclick="loginAdmin()" class="btn-main">CONECTAR</button>
+            <button onclick="voltar()" class="btn-sec">VOLTAR</button>
+        </section>
+
+        <section id="admin-panel" class="hidden glass-large">
+            <h2 style="margin-bottom: 5px;">🛠 Painel de Gestão</h2>
+            <p style="font-size: 11px; color: #666; margin-bottom: 20px;">CONTROLE DE TURMAS E AVISOS</p>
+
+            <div class="admin-card" style="border-color: var(--secondary);">
+                <strong>📢 Enviar Aviso Global</strong>
+                <input type="text" id="input-aviso" placeholder="Escreva o aviso para as turmas...">
+                <div style="display: flex; gap: 10px;">
+                    <button onclick="postarAviso()" class="btn-save" style="background: var(--secondary);">POSTAR</button>
+                    <button onclick="limparAvisos()" class="btn-save" style="background: #ff4444;">LIMPAR</button>
+                </div>
+            </div>
+
+            <div id="lista-admin"></div>
+            
+            <button onclick="voltar()" class="btn-sec">FECHAR PAINEL</button>
+        </section>
+    </div>
+
     <script>
-        // CONFIGURAÇÃO IDENTICA AO RANKCLASE
-        const config = { databaseURL: "https://gincanaescola-d4f8c-default-rtdb.firebaseio.com/" };
-        if (!firebase.apps.length) firebase.initializeApp(config);
-        const database = firebase.database();
-
-        let codigoGerado = "";
-        let mcPrincipal = "";
-
-        window.onload = () => {
-            codigoGerado = String(Math.floor(Math.random() * 899) + 100);
-            document.getElementById('main-code-display').innerText = codigoGerado;
+        // CONFIG FIREBASE (Mantive suas chaves)
+        const firebaseConfig = {
+            apiKey: "SUA_API_KEY",
+            databaseURL: "https://gincanaescola-d4f8c-default-rtdb.firebaseio.com/",
+            projectId: "gincanaescola-d4f8c",
         };
 
-        function showNotify(msg) {
-            const t = document.createElement('div');
-            t.className = 'toast'; t.innerHTML = msg;
-            document.getElementById('toast-container').appendChild(t);
-            setTimeout(() => t.remove(), 3000);
-        }
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
 
-        function mudarTela(id) {
-            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
-            document.getElementById(id).classList.remove('hidden');
-        }
-
-        function fazerLogin() {
-            mcPrincipal = document.getElementById('login-nome').value.trim();
-            if(!mcPrincipal) return showNotify("⚠️ Digite seu vulgo!");
-            document.getElementById('user-greeting').innerText = mcPrincipal.toUpperCase();
-            mudarTela('choice-view');
-        }
-
-        function finalizar(modo) {
-            const inputCod = document.getElementById('confirm-code-' + (modo === 1 ? '1x1' : '2x2')).value;
-            if(inputCod !== codigoGerado) return showNotify("⚠️ O código deve ser " + codigoGerado);
-
-            let dados = {
-                mc: mcPrincipal,
-                id: codigoGerado,
-                timestamp: new Date().getTime()
-            };
-
-            if(modo === 1) {
-                dados.zap = document.getElementById('tel-1x1').value;
+        // --- SISTEMA DE AVISOS ---
+        database.ref('avisos').on('value', snap => {
+            const mural = document.getElementById('mural-avisos');
+            const texto = snap.val();
+            if(texto) {
+                mural.style.display = 'block';
+                mural.innerHTML = `<strong>AVISO:</strong> ${texto}`;
             } else {
-                dados.parceiro = document.getElementById('vulgo2-2x2').value;
-                dados.zap = document.getElementById('tel-2x2').value;
+                mural.style.display = 'none';
             }
+        });
 
-            // FUNÇÃO DE SALVAR ESTILO RANKCLASE
-            const pasta = modo === 1 ? '1x1' : '2x2';
-            database.ref('casabranca_inscricoes/' + pasta + '/' + codigoGerado).set(dados, (error) => {
-                if (error) {
-                    showNotify("❌ Erro de Permissão!");
+        function postarAviso() {
+            const msg = document.getElementById('input-aviso').value;
+            if(msg) database.ref('avisos').set(msg).then(() => {
+                document.getElementById('input-aviso').value = "";
+                alert("Aviso enviado!");
+            });
+        }
+
+        function limparAvisos() {
+            database.ref('avisos').remove();
+        }
+
+        // --- LÓGICA ORIGINAL MELHORADA ---
+
+        function logarOuCadastrar() {
+            const turma = document.getElementById('reg-turma').value.trim();
+            const serie = document.getElementById('reg-serie').value;
+            const escola = document.getElementById('reg-escola').value;
+            const insta = document.getElementById('reg-insta').value;
+            const pass = document.getElementById('reg-pass').value;
+            const power = document.getElementById('reg-power').value;
+
+            if (!turma || !pass || !escola) return alert("Preencha Turma, Escola e Senha!");
+
+            database.ref('ranking/' + turma).once('value').then((snapshot) => {
+                if (snapshot.exists()) {
+                    const dados = snapshot.val();
+                    if (dados.pass === pass) entrarNoSistema(dados);
+                    else alert("Senha incorreta!");
                 } else {
-                    mudarTela('success-view');
+                    const novaTurma = {
+                        turma, serie, escola, insta, pass, power,
+                        seguidores: 0, videos: 0, pontos: 0, verificado: false
+                    };
+                    database.ref('ranking/' + turma).set(novaTurma).then(() => entrarNoSistema(novaTurma));
                 }
             });
         }
 
-        function abrirAdmin() {
-            const p = prompt("Senha:");
-            if(p === "casa123") {
-                mudarTela('admin-view');
-                filtrarAdmin('1x1');
+        function entrarNoSistema(dados) {
+            document.getElementById('nome-turma-topo').innerText = `${dados.turma}`;
+            document.getElementById('nome-turma-topo').className = dados.power;
+            esconderTudo();
+            document.getElementById('rank-screen').classList.remove('hidden');
+        }
+
+        database.ref('ranking').on('value', (snapshot) => {
+            const lista = document.getElementById('lista-ranking');
+            if (!lista) return;
+            const dadosBD = snapshot.val();
+            if (!dadosBD) { lista.innerHTML = "Aguardando turmas..."; return; }
+
+            let arrayTurmas = Object.keys(dadosBD).map(id => dadosBD[id]);
+            arrayTurmas.sort((a, b) => (b.pontos || 0) - (a.pontos || 0));
+
+            lista.innerHTML = "";
+            arrayTurmas.forEach((t, i) => {
+                let medal = "";
+                if(t.pontos > 0) {
+                    if(i === 0) medal = "🥇";
+                    else if(i === 1) medal = "🥈";
+                    else if(i === 2) medal = "🥉";
+                    else medal = "🎖";
+                } else { medal = "🏳️"; }
+
+                lista.innerHTML += `
+                    <div class="rank-card">
+                        <div style="text-align:left">
+                            <span class="${t.power}" style="font-weight:700; font-size: 16px;">${t.turma}</span>
+                            <small class="escola-info">${t.serie} • ${t.escola}</small>
+                            <span class="stats-info">👥 ${t.seguidores} | 🎬 ${t.videos}</span>
+                        </div>
+                        <div style="text-align:right">
+                            <div style="font-size: 20px;">${medal}</div>
+                            <span style="color:var(--accent); font-weight:800; font-size:1.1rem">${t.pontos} <small style="font-size: 10px;">pts</small></span>
+                        </div>
+                    </div>`;
+            });
+        });
+
+        function loginAdmin() {
+            const user = document.getElementById('admin-user').value;
+            const pass = document.getElementById('admin-pass').value;
+            if (user === "admin" && pass === "admin123") {
+                esconderTudo();
+                document.getElementById('admin-panel').classList.remove('hidden');
+                carregarPainelAdmin();
+            } else alert("Acesso Negado!");
+        }
+
+        function carregarPainelAdmin() {
+            database.ref('ranking').on('value', snapshot => {
+                const container = document.getElementById('lista-admin');
+                container.innerHTML = "";
+                const dados = snapshot.val();
+                if(!dados) return;
+
+                Object.keys(dados).forEach(id => {
+                    const t = dados[id];
+                    container.innerHTML += `
+                        <div class="admin-card ${t.verificado ? 'salvo' : ''}" id="card-${t.turma}">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                                <div>
+                                    <strong class="${t.power}" style="font-size: 18px;">${t.turma}</strong>
+                                    <span style="display:block; font-size: 10px; color: #555;">${t.escola}</span>
+                                </div>
+                                <span style="font-size: 10px; background: #222; padding: 4px 8px; border-radius: 5px;">PW: ${t.pass}</span>
+                            </div>
+                            
+                            <a href="${t.insta}" target="_blank" class="btn-insta-admin">
+                                <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16" style="margin-right:5px">
+                                    <path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.917 3.917 0 0 0-1.417.923A3.927 3.927 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.916 3.916 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.926 3.926 0 0 0-.923-1.417A3.911 3.911 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.999 0h.002zm-.002 1.441c2.137 0 2.39.008 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599.28.28.453.546.598.92.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.47 2.47 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.478 2.478 0 0 1-.92-.598 2.48 2.48 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233 0-2.136.008-2.388.046-3.231.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92.28-.28.546-.453.92-.598.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045v.002z"/>
+                                    <path d="M8 3.99a4.01 4.01 0 1 0 0 8.019 4.01 4.01 0 0 0 0-8.019zm0 6.578a2.567 2.567 0 1 1 0-5.134 2.567 2.567 0 0 1 0 5.134zM12.49 3.519a1.112 1.112 0 1 1-2.225 0 1.112 1.112 0 0 1 2.225 0z"/>
+                                </svg> 
+                                REVISAR INSTA
+                            </a>
+
+                            <div class="admin-grid">
+                                <div>
+                                    <label style="font-size: 9px; color: #444;">SEGUIDORES</label>
+                                    <input type="number" id="s-${t.turma}" value="${t.seguidores}" oninput="pendente('${t.turma}')">
+                                </div>
+                                <div>
+                                    <label style="font-size: 9px; color: #444;">VÍDEOS</label>
+                                    <input type="number" id="v-${t.turma}" value="${t.videos}" oninput="pendente('${t.turma}')">
+                                </div>
+                            </div>
+                            
+                            <button onclick="salvarPontos('${t.turma}')" class="btn-save">LANÇAR RESULTADO</button>
+                            <button onclick="deletarTurma('${t.turma}')" class="btn-delete">Remover Turma do Ranking</button>
+                        </div>`;
+                });
+            });
+        }
+
+        function pendente(nome) {
+            const card = document.getElementById(`card-${nome}`);
+            if(card) card.classList.remove('salvo');
+        }
+
+        function salvarPontos(nome) {
+            const s = parseInt(document.getElementById(`s-${nome}`).value) || 0;
+            const v = parseInt(document.getElementById(`v-${nome}`).value) || 0;
+            // Lógica de pontos: 2pts a cada 100 seguidores + 1pt por vídeo
+            const total = (Math.floor(s / 100) * 2) + (v * 1);
+            
+            database.ref('ranking/' + nome).update({ 
+                seguidores: s, 
+                videos: v, 
+                pontos: total, 
+                verificado: true 
+            }).then(() => alert("Dados atualizados para " + nome));
+        }
+
+        function deletarTurma(nome) {
+            if(confirm(`⚠️ ATENÇÃO: Deseja realmente excluir a turma ${nome}? Esta ação não pode ser desfeita.`)) {
+                database.ref('ranking/' + nome).remove();
             }
         }
 
-        function filtrarAdmin(pasta) {
-            const box = document.getElementById('lista-admin');
-            box.innerHTML = "Carregando...";
+        function esconderTudo() { 
+            ["auth-screen", "admin-login-screen", "rank-screen", "admin-panel"].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            }); 
+        }
 
-            // LISTAGEM EM TEMPO REAL
-            database.ref('casabranca_inscricoes/' + pasta).on('value', (snapshot) => {
-                box.innerHTML = "";
-                const lista = snapshot.val();
-                if(!lista) return box.innerHTML = "Vazio.";
+        function voltar() { 
+            esconderTudo(); 
+            document.getElementById('auth-screen').classList.remove('hidden'); 
+        }
 
-                Object.values(lista).forEach(item => {
-                    box.innerHTML += `
-                        <div class="admin-card">
-                            <b style="color:var(--primary)">#${item.id}</b> | <b>${item.mc}</b>
-                            ${item.parceiro ? ' & ' + item.parceiro : ''}<br>
-                            <span style="font-size:11px; color:#666">Zap: ${item.zap}</span>
-                        </div>
-                    `;
-                });
-            });
+        function mostrarLoginAdmin() { 
+            esconderTudo(); 
+            document.getElementById('admin-login-screen').classList.remove('hidden'); 
         }
     </script>
 </body>

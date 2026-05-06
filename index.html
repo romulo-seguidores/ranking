@@ -22,102 +22,97 @@
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg-dark); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; flex-direction: row; }
+        body { background: var(--bg-dark); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
 
         .hidden { display: none !important; }
         .fade-in { animation: fadeIn 0.3s ease-in-out forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Scrollbar Mobile-friendly */
+        /* Scrollbar Mobile */
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
 
-        #toast-container { position: fixed; top: 20px; right: 20px; z-index: 10000; display: flex; flex-direction: column; gap: 10px; width: auto; max-width: 80%; }
-        .toast { background: var(--primary); color: white; padding: 12px 20px; border-radius: 8px; font-weight: 500; box-shadow: 0 4px 12px rgba(0,0,0,0.3); animation: slideInRight 0.3s forwards; font-size: 14px; }
+        #toast-container { position: fixed; top: 20px; right: 20px; z-index: 10000; display: flex; flex-direction: column; gap: 10px; }
+        .toast { background: var(--primary); color: white; padding: 12px 20px; border-radius: 8px; font-weight: 500; box-shadow: 0 4px 12px rgba(0,0,0,0.3); animation: slideInRight 0.3s forwards; }
         @keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
 
-        input, textarea, select { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: white; outline: none; transition: 0.3s; font-size: 16px; /* Evita zoom no iOS */ }
+        input, textarea, select { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: white; outline: none; transition: 0.3s; font-size: 16px; }
         input[type="file"] { background: var(--bg-card); padding: 8px; font-size: 12px; color: var(--text-muted); cursor: pointer; }
-        input:focus, textarea:focus { border-color: var(--primary); }
-
-        .btn { width: 100%; padding: 14px; border-radius: 8px; border: none; font-weight: 700; cursor: pointer; transition: 0.2s; text-transform: uppercase; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn:active { transform: scale(0.98); }
+        
+        .btn { width: 100%; padding: 12px; border-radius: 8px; border: none; font-weight: 700; cursor: pointer; transition: 0.2s; text-transform: uppercase; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 5px; }
         .btn-primary { background: var(--primary); color: white; }
         .btn-success { background: var(--success); color: white; }
         .btn-danger { background: #ef4444; color: white; }
         .btn-outline { background: transparent; border: 1px solid #334155; color: var(--text-muted); }
 
-        /* Login */
-        #login-view { width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #0f172a, #1e1b4b); position: absolute; z-index: 2000; }
+        /* Login View */
+        #login-view { width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #0f172a, #1e1b4b); position: fixed; top:0; left:0; z-index: 9999; }
         .login-box { background: var(--bg-card); padding: 30px; border-radius: 16px; width: 90%; max-width: 380px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05); }
 
-        /* Sidebar & Menu Mobile */
-        .sidebar { width: 260px; background: var(--bg-card); padding: 20px; display: flex; flex-direction: column; border-right: 1px solid #334155; transition: 0.3s; z-index: 1000; }
+        /* Layout Estrutura */
+        #app-layout { display: flex; width: 100vw; height: 100vh; position: relative; }
+        
+        /* Sidebar corrigida para Mobile */
+        .sidebar { width: 260px; background: var(--bg-card); padding: 20px; display: flex; flex-direction: column; border-right: 1px solid #334155; transition: transform 0.3s ease; z-index: 2000; }
         .sidebar-logo { font-size: 24px; font-weight: 900; color: var(--primary); margin-bottom: 30px; text-align: center; }
         .menu-item { padding: 12px 15px; margin-bottom: 8px; border-radius: 8px; cursor: pointer; color: var(--text-muted); font-weight: 500; transition: 0.2s; display: flex; align-items: center; gap: 10px; }
         .menu-item:hover, .menu-item.active { background: var(--primary); color: white; }
-        
-        .mobile-header { display: none; width: 100%; background: var(--bg-card); padding: 15px; align-items: center; justify-content: space-between; border-bottom: 1px solid #334155; position: sticky; top: 0; z-index: 900; }
-        .btn-menu { background: none; border: none; color: white; font-size: 24px; cursor: pointer; }
+        .sidebar-footer { margin-top: auto; padding-top: 20px; }
 
-        /* Main Content */
-        .main-content { flex: 1; padding: 25px; overflow-y: auto; background: var(--bg-dark); width: 100%; }
+        /* Conteúdo Principal */
+        .main-content { flex: 1; padding: 20px; overflow-y: auto; background: var(--bg-dark); width: 100%; }
         .section-title { font-size: 22px; font-weight: 700; margin-bottom: 20px; border-bottom: 1px solid #334155; padding-bottom: 10px; }
 
-        /* Grid de Produtos Adaptável */
+        /* Header Mobile */
+        .mobile-header { display: none; width: 100%; background: var(--bg-card); padding: 15px; align-items: center; border-bottom: 1px solid #334155; position: sticky; top: 0; z-index: 1500; }
+        .btn-toggle { background: none; border: none; color: white; font-size: 24px; cursor: pointer; margin-right: 15px; }
+
+        /* Grid de Produtos */
         .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; }
         .product-card { background: var(--bg-card); border-radius: 12px; padding: 12px; border: 1px solid #334155; transition: 0.3s; }
         .product-img { width: 100%; height: 120px; background: #0f172a; border-radius: 8px; margin-bottom: 10px; object-fit: cover; }
-        .product-title { font-size: 14px; font-weight: 700; margin-bottom: 5px; height: 34px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+        .product-title { font-size: 14px; font-weight: 700; margin-bottom: 5px; }
         .product-price { color: var(--success); font-weight: 900; font-size: 16px; }
 
-        /* Detalhes do Produto Responsivo */
-        .product-detail-layout { display: flex; flex-direction: column; gap: 20px; background: var(--bg-card); padding: 20px; border-radius: 16px; }
-        .product-detail-img { width: 100%; max-width: 400px; height: auto; border-radius: 12px; margin: 0 auto; }
+        /* Overlay para fechar o menu */
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1900; }
 
-        @media (min-width: 768px) {
-            .product-detail-layout { flex-direction: row; gap: 30px; }
-            .product-detail-img { width: 300px; height: 300px; }
-            .product-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
-            .mobile-header { display: none; }
-        }
-
-        @media (max-width: 767px) {
-            body { flex-direction: column; }
-            .sidebar { position: fixed; left: -260px; height: 100vh; box-shadow: 10px 0 30px rgba(0,0,0,0.5); }
-            .sidebar.active { left: 0; }
+        @media (max-width: 768px) {
             .mobile-header { display: flex; }
-            .main-content { padding: 15px; }
-            .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; z-index: 950; }
+            .sidebar { position: fixed; left: 0; top: 0; height: 100%; transform: translateX(-100%); box-shadow: 10px 0 20px rgba(0,0,0,0.5); }
+            .sidebar.active { transform: translateX(0); }
             .overlay.active { display: block; }
+            .product-detail-layout { flex-direction: column; gap: 20px; }
+            .product-detail-img { width: 100% !important; height: auto !important; }
+            .main-content { padding: 15px; }
         }
+
+        /* Classes auxiliares */
+        .product-detail-layout { display: flex; gap: 30px; background: var(--bg-card); padding: 20px; border-radius: 16px; }
+        .product-detail-img { width: 300px; height: 300px; border-radius: 12px; object-fit: cover; background: #0f172a; }
+        .reviews-section { margin-top: 20px; background: var(--bg-card); padding: 15px; border-radius: 12px; }
+        .list-card { background: var(--bg-card); padding: 15px; border-radius: 12px; margin-bottom: 15px; border-left: 4px solid var(--primary); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
     </style>
 </head>
 <body>
 
-    <div id="overlay" class="overlay" onclick="toggleMenu()"></div>
     <div id="toast-container"></div>
+    <div id="overlay" class="overlay" onclick="toggleSidebar()"></div>
     
     <input type="file" id="input-comprovante-file" accept="image/*" class="hidden" onchange="processarUploadComprovante(event)">
 
     <div id="login-view" class="fade-in">
         <div class="login-box">
-            <h1 style="text-align: center; margin-bottom: 10px;">Store<span style="color:var(--primary)">PRO</span></h1>
-            <p style="color: var(--text-muted); text-align: center; margin-bottom: 25px; font-size: 14px;">Acesse sua conta ou cadastre-se</p>
+            <h1 style="text-align: center;">Store<span style="color:var(--primary)">PRO</span></h1>
+            <p style="text-align: center; color: var(--text-muted); margin-bottom: 20px;">Acesse sua conta digital</p>
             <input type="text" id="auth-user" placeholder="Usuário">
             <input type="password" id="auth-pass" placeholder="Senha">
             <button onclick="autenticar()" class="btn btn-primary" style="margin-bottom: 10px;">ENTRAR / CADASTRAR</button>
-            <button onclick="loginAdmin()" class="btn btn-outline" style="font-size: 10px;">SOU ADMINISTRADOR</button>
+            <button onclick="loginAdmin()" class="btn btn-outline" style="font-size: 10px;">MODO ADMINISTRADOR</button>
         </div>
     </div>
 
-    <div class="mobile-header">
-        <button class="btn-menu" onclick="toggleMenu()">☰</button>
-        <div style="font-weight: 900; color: var(--primary);">StorePRO</div>
-        <div style="width: 30px;"></div>
-    </div>
-
-    <div id="app-layout" class="hidden fade-in" style="display: flex; width: 100%; height: 100%;">
+    <div id="app-layout" class="hidden fade-in">
         
         <div id="sidebar" class="sidebar">
             <div class="sidebar-logo">Store<span style="color:white">PRO</span></div>
@@ -126,32 +121,36 @@
                 <div class="menu-item active" onclick="navegar('loja', null, this)">🛒 Loja Principal</div>
                 <div class="menu-item" onclick="navegar('presets', null, this)">🎹 Presets BandLab</div>
                 <div class="menu-item" onclick="navegar('cursos', null, this)">💻 Cursos Programação</div>
-                <div class="menu-item" onclick="navegar('minhas-compras', null, this)">📦 Minhas Compras</div>
-                <div class="menu-item" onclick="navegar('suporte', null, this)">🎧 Suporte / Ajuda</div>
+                <div class="menu-item" onclick="navegar('minhas-compras', null, this)">📦 Meus Pedidos</div>
+                <div class="menu-item" onclick="navegar('suporte', null, this)">🎧 Ajuda / Suporte</div>
             </div>
 
             <div id="menu-admin" class="hidden">
                 <div style="font-size: 11px; color: var(--warning); margin-bottom: 10px; font-weight: bold; padding-left: 15px;">PAINEL ADMIN</div>
                 <div class="menu-item active" onclick="navegar('admin-produtos', null, this)">📝 Gerenciar Produtos</div>
-                <div class="menu-item" onclick="navegar('admin-pedidos', null, this)">💰 Pedidos & PIX</div>
-                <div class="menu-item" onclick="navegar('admin-suporte', null, this)">📩 Tickets Ajuda</div>
+                <div class="menu-item" onclick="navegar('admin-pedidos', null, this)">💰 Validar Pedidos</div>
             </div>
 
             <div class="sidebar-footer">
-                <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px; padding-left: 15px;">Logado como: <b id="display-username" style="color:white">...</b></div>
-                <button onclick="deslogar()" class="btn btn-outline">SAIR</button>
+                <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px; padding-left: 15px;">Olá, <b id="display-username" style="color:white">...</b></div>
+                <button onclick="deslogar()" class="btn btn-outline">SAIR DA CONTA</button>
             </div>
         </div>
 
         <div class="main-content">
             
+            <div class="mobile-header">
+                <button class="btn-toggle" onclick="toggleSidebar()">☰</button>
+                <div style="font-weight: 900; color: var(--primary);">StorePRO</div>
+            </div>
+
             <div id="view-loja" class="view-section">
-                <h2 class="section-title" id="titulo-loja">Catálogo de Produtos</h2>
+                <h2 class="section-title" id="titulo-loja">Produtos Disponíveis</h2>
                 <div class="product-grid" id="grid-produtos"></div>
             </div>
 
             <div id="view-detalhes" class="view-section hidden">
-                <button onclick="navegar('loja')" class="btn btn-outline" style="width: auto; margin-bottom: 20px; padding: 10px 20px;">⬅ Voltar</button>
+                <button onclick="navegar('loja')" class="btn btn-outline" style="width: auto; margin-bottom: 20px; padding: 8px 15px;">⬅ Voltar</button>
                 <div class="product-detail-layout">
                     <img id="det-img" class="product-detail-img" src="" alt="Produto">
                     <div class="product-info">
@@ -164,74 +163,59 @@
                 <div class="reviews-section">
                     <h3>Avaliações</h3>
                     <div id="lista-avaliacoes" style="margin-top: 15px;"></div>
-                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+                    <div style="display: flex; gap: 10px; margin-top: 15px;">
                         <input type="text" id="input-avaliacao" placeholder="Sua opinião..." style="margin-bottom: 0;">
-                        <button id="btn-avaliar" class="btn btn-primary">Enviar</button>
+                        <button id="btn-avaliar" class="btn btn-primary" style="width: 100px;">Enviar</button>
                     </div>
                 </div>
             </div>
 
             <div id="view-minhas-compras" class="view-section hidden">
-                <h2 class="section-title">Meus Pedidos</h2>
+                <h2 class="section-title">Minhas Compras</h2>
                 <div id="lista-minhas-compras"></div>
             </div>
 
             <div id="view-suporte" class="view-section hidden">
-                <h2 class="section-title">Central de Ajuda</h2>
-                <div style="background: var(--bg-card); padding: 20px; border-radius: 12px; width: 100%; max-width: 500px;">
-                    <p style="margin-bottom: 15px; color: var(--text-muted);">Relate seu problema. Nossa equipe responderá em breve.</p>
-                    <textarea id="texto-suporte" rows="4" placeholder="Descreva seu problema..."></textarea>
+                <h2 class="section-title">Suporte</h2>
+                <div style="background: var(--bg-card); padding: 20px; border-radius: 12px; max-width: 500px;">
+                    <textarea id="texto-suporte" rows="4" placeholder="Descreva sua dúvida..."></textarea>
                     <button onclick="enviarSuporte()" class="btn btn-primary">ENVIAR TICKET</button>
                 </div>
             </div>
 
             <div id="view-admin-produtos" class="view-section hidden">
-                <div style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px;">
-                    <h2 class="section-title" style="margin: 0; border: none;">Gerenciar Produtos</h2>
-                    <button onclick="abrirModalAddProduto()" class="btn btn-success" style="width: auto;">+ NOVO PRODUTO</button>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 class="section-title" style="margin:0; border:none;">Produtos</h2>
+                    <button onclick="document.getElementById('form-novo-produto').classList.toggle('hidden')" class="btn btn-success" style="width: auto;">+ NOVO</button>
                 </div>
                 
                 <div id="form-novo-produto" class="hidden" style="background: var(--bg-card); padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--success);">
-                    <h3>Novo Produto</h3><br>
-                    <input type="text" id="add-nome" placeholder="Nome">
+                    <input type="text" id="add-nome" placeholder="Nome do Produto">
                     <input type="text" id="add-desc" placeholder="Descrição">
                     <input type="number" id="add-preco" placeholder="Preço (Ex: 29.90)">
                     <select id="add-categoria">
                         <option value="presets">Preset BandLab</option>
                         <option value="cursos">Curso Programação</option>
-                        <option value="outros">Outros</option>
                     </select>
-                    
-                    <label style="color:var(--text-muted); font-size: 11px;">Capa (Imagem):</label>
+                    <label style="font-size: 11px; color:var(--text-muted)">Capa:</label>
                     <input type="file" id="add-img-file" accept="image/*">
-                    
-                    <label style="color:var(--text-muted); font-size: 11px;">Arquivo (Download):</label>
+                    <label style="font-size: 11px; color:var(--text-muted)">Arquivo:</label>
                     <input type="file" id="add-arquivo-file">
-                    
-                    <div style="display: flex; gap: 10px;">
-                        <button onclick="salvarNovoProduto()" class="btn btn-success">Salvar</button>
-                        <button onclick="document.getElementById('form-novo-produto').classList.add('hidden')" class="btn btn-outline">Cancelar</button>
-                    </div>
+                    <button onclick="salvarNovoProduto()" class="btn btn-success">SALVAR PRODUTO</button>
                 </div>
-
                 <div id="lista-admin-produtos"></div>
             </div>
 
             <div id="view-admin-pedidos" class="view-section hidden">
-                <h2 class="section-title">Pedidos (Vendas)</h2>
+                <h2 class="section-title">Fila de Pedidos</h2>
                 <div id="lista-admin-pedidos"></div>
-            </div>
-
-            <div id="view-admin-suporte" class="view-section hidden">
-                <h2 class="section-title">Tickets Suporte</h2>
-                <div id="lista-admin-tickets"></div>
             </div>
 
         </div>
     </div>
 
     <script>
-        // CONFIGURAÇÃO DO FIREBASE (MANTIDA IGUAL A SUA)
+        // FIREBASE CONFIG (MANTIDA)
         const firebaseConfig = {
             apiKey: "AIzaSyCWw0TPhKAjPeL3bvd-BzaQYG5SJNtxsL4",
             authDomain: "gincanaescola-d4f8c.firebaseapp.com",
@@ -252,13 +236,12 @@
         let telaAtual = 'loja';
         let pedidoAtualParaComprovante = null;
 
-        // UI MOBILE
-        function toggleMenu() {
+        // FUNÇÃO DE TOGGLE DO MENU MOBILE (CORRIGIDA)
+        function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('active');
             document.getElementById('overlay').classList.toggle('active');
         }
 
-        // SINCRONIZAÇÃO EM TEMPO REAL
         window.onload = () => {
             database.ref('store_db').on('value', (snapshot) => {
                 const data = snapshot.val();
@@ -267,24 +250,13 @@
                     if(!db.users) db.users = {};
                     if(!db.products) db.products = [];
                     if(!db.orders) db.orders = [];
-                    if(!db.tickets) db.tickets = [];
-                    atualizarTelasEmTempoReal();
+                    if(currentUser) atualizarTelasEmTempoReal();
                 }
             });
             if(currentUser) entrarNoSistema();
         };
 
-        function salvarBD() {
-            database.ref('store_db').set(db);
-        }
-
-        function atualizarTelasEmTempoReal() {
-            if(telaAtual === 'loja' || telaAtual === 'presets' || telaAtual === 'cursos') carregarProdutos(telaAtual === 'loja' ? 'todos' : telaAtual);
-            if(telaAtual === 'minhas-compras') carregarMinhasCompras();
-            if(telaAtual === 'admin-produtos') carregarAdminProdutos();
-            if(telaAtual === 'admin-pedidos') carregarAdminPedidos();
-            if(telaAtual === 'admin-suporte') carregarAdminTickets();
-        }
+        function salvarBD() { database.ref('store_db').set(db); }
 
         function toast(msg, cor = "var(--primary)") {
             const t = document.createElement('div');
@@ -307,7 +279,7 @@
                 db.users[user] = { pass: pass, role: 'client' };
                 salvarBD();
                 currentUser = { username: user, role: 'client' };
-                toast("Conta criada!", "var(--success)");
+                toast("Bem-vindo!", "var(--success)");
                 entrarNoSistema();
             }
         }
@@ -318,7 +290,7 @@
                 currentUser = { username: 'ADMIN', role: 'admin' };
                 isAdmin = true;
                 entrarNoSistema();
-            } else { toast("Erro!", "#ef4444"); }
+            } else { toast("Negado!", "#ef4444"); }
         }
 
         function entrarNoSistema() {
@@ -338,25 +310,30 @@
 
         function navegar(viewId, param = null, el = null) {
             telaAtual = viewId;
+            // Fecha menu se for mobile
+            document.getElementById('sidebar').classList.remove('active');
+            document.getElementById('overlay').classList.remove('active');
+
             document.querySelectorAll('.view-section').forEach(v => v.classList.add('hidden'));
             document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
             if(el) el.classList.add('active');
-            
-            if(window.innerWidth < 768) {
-                document.getElementById('sidebar').classList.remove('active');
-                document.getElementById('overlay').classList.remove('active');
-            }
 
             document.getElementById('view-' + viewId).classList.remove('hidden');
             
             if(viewId === 'loja') { document.getElementById('titulo-loja').innerText = "Catálogo"; carregarProdutos('todos'); }
-            if(viewId === 'presets') { document.getElementById('view-loja').classList.remove('hidden'); carregarProdutos('presets'); }
-            if(viewId === 'cursos') { document.getElementById('view-loja').classList.remove('hidden'); carregarProdutos('cursos'); }
+            if(viewId === 'presets') carregarProdutos('presets');
+            if(viewId === 'cursos') carregarProdutos('cursos');
             if(viewId === 'detalhes') abrirDetalhes(param);
             if(viewId === 'minhas-compras') carregarMinhasCompras();
             if(viewId === 'admin-produtos') carregarAdminProdutos();
             if(viewId === 'admin-pedidos') carregarAdminPedidos();
-            if(viewId === 'admin-suporte') carregarAdminTickets();
+        }
+
+        function atualizarTelasEmTempoReal() {
+            if(telaAtual === 'loja' || telaAtual === 'presets' || telaAtual === 'cursos') carregarProdutos(telaAtual === 'loja' ? 'todos' : telaAtual);
+            if(telaAtual === 'minhas-compras') carregarMinhasCompras();
+            if(telaAtual === 'admin-produtos') carregarAdminProdutos();
+            if(telaAtual === 'admin-pedidos') carregarAdminPedidos();
         }
 
         function carregarProdutos(filtro) {
@@ -365,14 +342,12 @@
             let filtrados = db.products || [];
             if(filtro !== 'todos') filtrados = filtrados.filter(p => p.categoria === filtro);
             
-            if(filtrados.length === 0) return grid.innerHTML = "<p>Vazio.</p>";
-
             filtrados.forEach(p => {
                 grid.innerHTML += `
                     <div class="product-card fade-in" onclick="navegar('detalhes', ${p.id})">
                         <img src="${p.img}" class="product-img">
                         <div class="product-title">${p.nome}</div>
-                        <div class="product-price">R$ ${Number(p.preco).toFixed(2)}</div>
+                        <div class="product-price">R$ ${parseFloat(p.preco).toFixed(2)}</div>
                     </div>
                 `;
             });
@@ -380,62 +355,54 @@
 
         function abrirDetalhes(id) {
             const p = db.products.find(x => x.id === id);
+            if(!p) return;
             document.getElementById('det-img').src = p.img;
             document.getElementById('det-titulo').innerText = p.nome;
-            document.getElementById('det-preco').innerText = `R$ ${Number(p.preco).toFixed(2)}`;
+            document.getElementById('det-preco').innerText = `R$ ${parseFloat(p.preco).toFixed(2)}`;
             document.getElementById('det-desc').innerText = p.desc;
             document.getElementById('btn-comprar').onclick = () => fazerPedido(p.id);
             const boxAv = document.getElementById('lista-avaliacoes');
-            boxAv.innerHTML = p.avaliacoes ? p.avaliacoes.map(a => `<div style="background:#0f172a; padding:10px; margin-bottom:5px; border-radius:8px; font-size:13px;">⭐ ${a}</div>`).join('') : 'Sem avaliações.';
+            boxAv.innerHTML = p.avaliacoes ? p.avaliacoes.map(a => `<div style="background:#0f172a; padding:10px; border-radius:8px; margin-bottom:5px; font-size:12px;">⭐ ${a}</div>`).join('') : 'Ainda sem avaliações.';
             
             document.getElementById('btn-avaliar').onclick = () => {
                 const txt = document.getElementById('input-avaliacao').value;
-                if(txt) {
-                    if(!p.avaliacoes) p.avaliacoes = [];
-                    p.avaliacoes.push(txt);
-                    salvarBD();
-                    document.getElementById('input-avaliacao').value = "";
-                }
+                if(!txt) return;
+                if(!p.avaliacoes) p.avaliacoes = [];
+                p.avaliacoes.push(txt);
+                salvarBD();
+                document.getElementById('input-avaliacao').value = "";
             };
         }
 
         function fazerPedido(produtoId) {
-            const novoPedido = { id: Date.now(), user: currentUser.username, produtoId: produtoId, status: 'esperando_chave' };
+            const novo = { id: Date.now(), user: currentUser.username, produtoId: produtoId, status: 'esperando_chave' };
             if(!db.orders) db.orders = [];
-            db.orders.push(novoPedido);
+            db.orders.push(novo);
             salvarBD();
-            toast("Pedido criado!", "var(--warning)");
+            toast("Pedido criado! Verifique 'Meus Pedidos'", "var(--warning)");
             navegar('minhas-compras');
         }
 
         function carregarMinhasCompras() {
             const lista = document.getElementById('lista-minhas-compras');
             lista.innerHTML = "";
-            const meus = (db.orders || []).filter(o => o.user === currentUser.username);
-            
+            const meus = db.orders.filter(o => o.user === currentUser.username);
             meus.reverse().forEach(o => {
-                const p = db.products.find(x => x.id === o.produtoId) || {nome:"Removido"};
+                const p = db.products.find(x => x.id === o.produtoId) || {nome:"Produto Removido"};
                 let btn = "";
-                if(o.status === 'esperando_chave') btn = "<small>Aguardando PIX...</small>";
-                if(o.status === 'esperando_comprovante') btn = `<div style="font-size:12px; margin-bottom:5px;">PIX: ${o.chavePix}</div><button onclick="abrirGaleriaComprovante(${o.id})" class="btn btn-primary" style="padding:8px; font-size:10px;">Enviar Comprovante</button>`;
-                if(o.status === 'verificando') btn = "<small>Analisando...</small>";
-                if(o.status === 'liberado') btn = `<a href="${p.arquivo}" download class="btn btn-success" style="padding:8px; font-size:10px; text-decoration:none;">BAIXAR AGORA</a>`;
+                if(o.status === 'esperando_chave') btn = "<small>Aguardando Admin...</small>";
+                if(o.status === 'esperando_comprovante') btn = `<button onclick="abrirGaleriaComprovante(${o.id})" class="btn btn-primary" style="padding:5px; font-size:10px;">Enviar Comprovante (PIX: ${o.chavePix})</button>`;
+                if(o.status === 'verificando') btn = "<small>Em análise...</small>";
+                if(o.status === 'liberado') btn = `<a href="${p.arquivo}" download class="btn btn-success" style="padding:5px; font-size:10px; text-decoration:none;">DOWNLOAD</a>`;
 
-                lista.innerHTML += `
-                    <div style="background:var(--bg-card); padding:15px; border-radius:12px; margin-bottom:10px; border-left: 4px solid var(--primary);">
-                        <div style="font-weight:bold; margin-bottom:5px;">${p.nome}</div>
-                        <div style="display:flex; justify-content:space-between; align-items:center;">
-                             <span class="status-badge" style="font-size:10px;">${o.status.replace('_', ' ')}</span>
-                             <div>${btn}</div>
-                        </div>
-                    </div>`;
+                lista.innerHTML += `<div class="list-card">
+                    <div><b>${p.nome}</b><br><small>${o.status.toUpperCase()}</small></div>
+                    <div>${btn}</div>
+                </div>`;
             });
         }
 
-        function abrirGaleriaComprovante(orderId) {
-            pedidoAtualParaComprovante = orderId;
-            document.getElementById('input-comprovante-file').click();
-        }
+        function abrirGaleriaComprovante(id) { pedidoAtualParaComprovante = id; document.getElementById('input-comprovante-file').click(); }
 
         function processarUploadComprovante(e) {
             const reader = new FileReader();
@@ -444,109 +411,68 @@
                 pedido.status = 'verificando';
                 pedido.comprovante = event.target.result;
                 salvarBD();
-                toast("Enviado!");
+                toast("Comprovante enviado!");
             };
             reader.readAsDataURL(e.target.files[0]);
         }
 
-        function abrirModalAddProduto() { document.getElementById('form-novo-produto').classList.remove('hidden'); }
-        
         async function salvarNovoProduto() {
-            const toBase64 = file => new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = () => resolve(reader.result);
-                reader.onerror = error => reject(error);
+            const toBase64 = file => new Promise((res) => {
+                const r = new FileReader(); r.readAsDataURL(file); r.onload = () => res(r.result);
             });
-
-            const imgFile = document.getElementById('add-img-file').files[0];
-            const arqFile = document.getElementById('add-arquivo-file').files[0];
-
+            const img = document.getElementById('add-img-file').files[0];
+            const arq = document.getElementById('add-arquivo-file').files[0];
             const p = {
                 id: Date.now(),
                 nome: document.getElementById('add-nome').value,
                 desc: document.getElementById('add-desc').value,
                 preco: document.getElementById('add-preco').value,
                 categoria: document.getElementById('add-categoria').value,
-                img: imgFile ? await toBase64(imgFile) : "",
-                arquivo: arqFile ? await toBase64(arqFile) : ""
+                img: img ? await toBase64(img) : "",
+                arquivo: arq ? await toBase64(arq) : ""
             };
-
             db.products.push(p);
             salvarBD();
             document.getElementById('form-novo-produto').classList.add('hidden');
-            toast("Salvo!");
+            toast("Produto Criado!");
         }
 
         function carregarAdminProdutos() {
-            const lista = document.getElementById('lista-admin-produtos');
-            lista.innerHTML = "";
+            const l = document.getElementById('lista-admin-produtos'); l.innerHTML = "";
             db.products.forEach(p => {
-                lista.innerHTML += `
-                <div style="background:var(--bg-card); padding:10px; margin-bottom:10px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
-                    <span>${p.nome}</span>
-                    <button onclick="deletarProduto(${p.id})" class="btn-danger" style="padding:5px 10px; border-radius:5px; border:none; font-size:10px;">Apagar</button>
-                </div>`;
+                l.innerHTML += `<div class="list-card"><span>${p.nome}</span> <button onclick="deletarProduto(${p.id})" class="btn-danger" style="padding:5px 10px; border-radius:5px;">Apagar</button></div>`;
             });
         }
 
-        function deletarProduto(id) {
-            db.products = db.products.filter(p => p.id !== id);
-            salvarBD();
-        }
+        function deletarProduto(id) { db.products = db.products.filter(p => p.id !== id); salvarBD(); }
 
         function carregarAdminPedidos() {
-            const lista = document.getElementById('lista-admin-pedidos');
-            lista.innerHTML = "";
+            const l = document.getElementById('lista-admin-pedidos'); l.innerHTML = "";
             db.orders.slice().reverse().forEach(o => {
                 const p = db.products.find(x => x.id === o.produtoId) || {nome:"?"};
                 let acao = "";
-                if(o.status === 'esperando_chave') acao = `<input type="text" id="pix-v-${o.id}" placeholder="Chave PIX" style="margin:0; padding:5px; width:100px; font-size:12px;"> <button onclick="adminEnviarPix(${o.id})" class="btn-primary" style="padding:5px 10px; border-radius:5px; border:none;">OK</button>`;
-                if(o.status === 'verificando') acao = `<button onclick="window.open('${o.comprovante}')" style="background:#444; color:white; border:none; padding:5px; border-radius:4px; margin-right:5px;">Ver Foto</button> <button onclick="adminAprovar(${o.id})" class="btn-success" style="padding:5px 10px; border-radius:5px; border:none;">Liberar</button>`;
-                
-                lista.innerHTML += `<div style="background:var(--bg-card); padding:10px; margin-bottom:10px; border-radius:8px; font-size:12px;">
-                    <b>${o.user}</b> comprou <b>${p.nome}</b> <br> <div style="margin-top:10px;">${acao || o.status}</div>
-                </div>`;
+                if(o.status === 'esperando_chave') acao = `<input type="text" id="pix-i-${o.id}" placeholder="Chave PIX"> <button onclick="adminEnviarPix(${o.id})" class="btn-primary" style="padding:5px;">Enviar</button>`;
+                if(o.status === 'verificando') acao = `<button onclick="window.open('${o.comprovante}')" class="btn-outline" style="padding:5px;">Ver Foto</button> <button onclick="adminAprovar(${o.id})" class="btn-success" style="padding:5px;">Liberar</button>`;
+                l.innerHTML += `<div class="list-card"><div><b>${o.user}</b><br>${p.nome}</div><div>${acao || o.status}</div></div>`;
             });
         }
 
         function adminEnviarPix(id) {
-            const v = document.getElementById('pix-v-'+id).value;
+            const pix = document.getElementById('pix-i-'+id).value;
             const pedido = db.orders.find(o => o.id === id);
-            pedido.chavePix = v;
-            pedido.status = 'esperando_comprovante';
-            salvarBD();
+            pedido.chavePix = pix; pedido.status = 'esperando_comprovante'; salvarBD();
         }
 
-        function adminAprovar(id) {
-            db.orders.find(o => o.id === id).status = 'liberado';
-            salvarBD();
-        }
-
-        function carregarAdminTickets() {
-            const lista = document.getElementById('lista-admin-tickets');
-            lista.innerHTML = "";
-            (db.tickets || []).forEach(t => {
-                lista.innerHTML += `<div style="background:var(--bg-card); padding:10px; margin-bottom:10px; border-radius:8px; font-size:13px;">
-                    <b>${t.user}</b> (${t.data}): <br> ${t.txt}
-                </div>`;
-            });
-        }
+        function adminAprovar(id) { db.orders.find(o => o.id === id).status = 'liberado'; salvarBD(); }
 
         function enviarSuporte() {
             const txt = document.getElementById('texto-suporte').value;
-            if(!txt) return;
             if(!db.tickets) db.tickets = [];
             db.tickets.push({ user: currentUser.username, txt: txt, data: new Date().toLocaleString() });
-            salvarBD();
-            document.getElementById('texto-suporte').value = "";
-            toast("Ticket Enviado!");
+            salvarBD(); toast("Enviado!"); document.getElementById('texto-suporte').value = "";
         }
 
-        function deslogar() {
-            localStorage.clear();
-            location.reload();
-        }
+        function deslogar() { localStorage.clear(); location.reload(); }
     </script>
 </body>
 </html>

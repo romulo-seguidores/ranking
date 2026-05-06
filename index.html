@@ -1,348 +1,674 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <title>Batalha da Casa Branca - V2</title>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store PRO - E-commerce Digital</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700;900&display=swap');
 
         :root {
-            --primary: #ff2a5f;
-            --bg: #0a0a0c;
-            --glass: rgba(255, 255, 255, 0.05);
-            --border: rgba(255, 255, 255, 0.1);
-            --success: #00ff88;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --success: #10b981;
+            --warning: #f59e0b;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
-        body { background: var(--bg); color: white; overflow-x: hidden; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
-
-        #app { width: 100%; max-width: 400px; padding: 20px; }
-
-        /* ANIMAÇÕES FLUIDAS */
-        section { animation: fadeIn 0.4s ease-out forwards; }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px) scale(0.98); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-
-        .glass-panel {
-            background: var(--glass);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid var(--border);
-            border-radius: 24px;
-            padding: 30px 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-        }
-
-        /* MURAL DE AVISOS */
-        #mural-avisos {
-            background: rgba(255, 42, 95, 0.15);
-            border: 1px solid var(--primary);
-            border-radius: 12px;
-            padding: 12px;
-            margin-bottom: 20px;
-            font-size: 12px;
-            text-align: center;
-            color: white;
-            display: none;
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse { 0% { opacity: 0.8; } 50% { opacity: 1; } 100% { opacity: 0.8; } }
-
-        h1 { text-align: center; font-weight: 900; font-size: 28px; text-transform: uppercase; margin-bottom: 5px; letter-spacing: -1px; }
-        h1 span { color: var(--primary); }
-        .subtitle { text-align: center; font-size: 10px; color: #666; margin-bottom: 30px; letter-spacing: 2px; font-weight: 700; }
-
-        input {
-            width: 100%; padding: 16px; margin-bottom: 15px; border-radius: 14px;
-            border: 1px solid #222; background: #111; color: white; font-size: 14px; outline: none;
-            transition: 0.3s; text-align: center;
-        }
-        input:focus { border-color: var(--primary); background: #161616; }
-
-        .btn-glow {
-            width: 100%; padding: 18px; border-radius: 14px; border: none;
-            background: var(--primary); color: white;
-            font-weight: 900; font-size: 15px; text-transform: uppercase;
-            cursor: pointer; transition: 0.3s; box-shadow: 0 8px 20px rgba(255, 42, 95, 0.3);
-            margin-bottom: 10px;
-        }
-        .btn-glow:active { transform: scale(0.96); }
-        
-        .btn-outline {
-            width: 100%; padding: 16px; border-radius: 14px; border: 1px solid #333;
-            background: transparent; color: white; font-weight: 700;
-            cursor: pointer; transition: 0.3s; text-transform: uppercase;
-        }
-
-        .code-display {
-            background: #000; border: 1px solid var(--primary);
-            padding: 12px; text-align: center; border-radius: 14px;
-            margin-bottom: 25px; color: var(--primary); font-weight: 900; font-size: 28px;
-            text-shadow: 0 0 10px rgba(255, 42, 95, 0.5);
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background: var(--bg-dark); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
 
         .hidden { display: none !important; }
+        .fade-in { animation: fadeIn 0.3s ease-in-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* TOAST */
-        #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; width: 90%; max-width: 350px; }
-        .toast {
-            background: #1a1a1a; border-left: 4px solid var(--primary);
-            padding: 15px; border-radius: 12px; color: white; font-size: 12px; font-weight: 700;
-            margin-bottom: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
 
-        /* ADMIN CARDS */
-        .admin-card { 
-            background: #141414; padding: 18px; border-radius: 16px; margin-bottom: 12px; 
-            border: 1px solid #222; position: relative; transition: 0.3s;
-        }
-        .admin-card:hover { border-color: var(--primary); }
-        .btn-del-mini { 
-            background: #ff4444; color: white; border: none; padding: 6px 12px; 
-            border-radius: 8px; font-size: 10px; font-weight: 900; cursor: pointer;
-        }
-        .btn-zap-mini {
-            background: #25d366; color: white; border: none; padding: 6px 12px; 
-            border-radius: 8px; font-size: 10px; font-weight: 900; cursor: pointer;
-            text-decoration: none; display: inline-block;
-        }
+        #toast-container { position: fixed; top: 20px; right: 20px; z-index: 10000; display: flex; flex-direction: column; gap: 10px; }
+        .toast { background: var(--primary); color: white; padding: 12px 20px; border-radius: 8px; font-weight: 500; box-shadow: 0 4px 12px rgba(0,0,0,0.3); animation: slideInRight 0.3s forwards; }
+        @keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
+
+        input, textarea, select { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: white; outline: none; transition: 0.3s; }
+        input[type="file"] { background: var(--bg-card); padding: 8px; font-size: 12px; color: var(--text-muted); cursor: pointer; }
+        input:focus, textarea:focus { border-color: var(--primary); }
+        .btn { width: 100%; padding: 12px; border-radius: 8px; border: none; font-weight: 700; cursor: pointer; transition: 0.2s; text-transform: uppercase; font-size: 13px; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-hover); transform: translateY(-2px); }
+        .btn-success { background: var(--success); color: white; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-outline { background: transparent; border: 1px solid #334155; color: var(--text-muted); }
+        .btn-outline:hover { background: #1e293b; color: white; }
+
+        #login-view { width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #0f172a, #1e1b4b); }
+        .login-box { background: var(--bg-card); padding: 40px; border-radius: 16px; width: 100%; max-width: 380px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05); }
+        .login-box h1 { margin-bottom: 5px; text-align: center; }
+        .login-box p { color: var(--text-muted); text-align: center; margin-bottom: 25px; font-size: 14px; }
+
+        #app-layout { display: flex; width: 100vw; height: 100vh; }
+        
+        .sidebar { width: 260px; background: var(--bg-card); padding: 20px; display: flex; flex-direction: column; border-right: 1px solid #334155; }
+        .sidebar-logo { font-size: 24px; font-weight: 900; color: var(--primary); margin-bottom: 30px; text-align: center; }
+        .menu-item { padding: 12px 15px; margin-bottom: 8px; border-radius: 8px; cursor: pointer; color: var(--text-muted); font-weight: 500; transition: 0.2s; display: flex; align-items: center; gap: 10px; }
+        .menu-item:hover, .menu-item.active { background: var(--primary); color: white; }
+        .sidebar-footer { margin-top: auto; }
+
+        .main-content { flex: 1; padding: 30px; overflow-y: auto; background: var(--bg-dark); }
+        .section-title { font-size: 24px; font-weight: 700; margin-bottom: 20px; border-bottom: 1px solid #334155; padding-bottom: 10px; }
+
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
+        .product-card { background: var(--bg-card); border-radius: 12px; padding: 15px; border: 1px solid #334155; transition: 0.3s; cursor: pointer; }
+        .product-card:hover { transform: translateY(-5px); border-color: var(--primary); box-shadow: 0 10px 20px rgba(0,0,0,0.4); }
+        .product-img { width: 100%; height: 140px; background: #0f172a; border-radius: 8px; margin-bottom: 10px; object-fit: cover; }
+        .product-title { font-size: 16px; font-weight: 700; margin-bottom: 5px; }
+        .product-price { color: var(--success); font-weight: 900; font-size: 18px; }
+
+        .product-detail-layout { display: flex; gap: 30px; background: var(--bg-card); padding: 30px; border-radius: 16px; }
+        .product-detail-img { width: 300px; height: 300px; border-radius: 12px; object-fit: cover; background: #0f172a; }
+        .product-info { flex: 1; }
+        .reviews-section { margin-top: 30px; background: var(--bg-card); padding: 20px; border-radius: 12px; }
+        .review-card { background: #0f172a; padding: 12px; border-radius: 8px; margin-bottom: 10px; font-size: 13px; }
+
+        .list-card { background: var(--bg-card); padding: 20px; border-radius: 12px; margin-bottom: 15px; border-left: 4px solid var(--primary); display: flex; justify-content: space-between; align-items: center; }
+        .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+        .bg-warning { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
+        .bg-success { background: rgba(16, 185, 129, 0.2); color: var(--success); }
+        .bg-primary { background: rgba(99, 102, 241, 0.2); color: var(--primary); }
     </style>
 </head>
 <body>
 
     <div id="toast-container"></div>
+    
+    <input type="file" id="input-comprovante-file" accept="image/*" class="hidden" onchange="processarUploadComprovante(event)">
 
-    <div id="app">
-        <section id="login-view" class="glass-panel">
-            <div id="mural-avisos"></div>
-            <h1>CASA <span>BRANCA</span></h1>
-            <p class="subtitle">SISTEMA DE ACESSO</p>
-            
-            <input type="text" id="login-nome" placeholder="Digite seu Vulgo">
-            
-            <div style="text-align: center;">
-                <p style="font-size: 9px; color: #555; margin-bottom: 8px; font-weight: 700;">SEU CÓDIGO DE HOJE:</p>
-                <div class="code-display" id="main-code-display">---</div>
-            </div>
-
-            <button onclick="fazerLogin()" class="btn-glow">ENTRAR NO PORTAL</button>
-            <p onclick="abrirAdmin()" style="text-align: center; font-size: 10px; margin-top: 30px; color: #222; cursor: pointer; font-weight: 700;">ÁREA DA ORGANIZAÇÃO</p>
-        </section>
-
-        <section id="choice-view" class="glass-panel hidden">
-            <h1 style="font-size: 20px;">SALVE, <span id="user-greeting" style="color:var(--primary)">MC</span></h1>
-            <p class="subtitle" style="margin-bottom: 20px;">ESCOLHA O FORMATO</p>
-            
-            <button onclick="mudarTela('form-1x1-view')" class="btn-glow">BATALHAR 1x1 (SANGUE)</button>
-            <button onclick="mudarTela('form-2x2-view')" class="btn-outline" style="margin-top: 10px;">BATALHAR 2x2 (DUPLA)</button>
-            
-            <button onclick="location.reload()" style="background:none; border:none; color:#444; width:100%; margin-top:25px; font-size:10px; font-weight:700;">TROCAR NOME OU VOLTAR</button>
-        </section>
-
-        <section id="form-1x1-view" class="glass-panel hidden">
-            <h1>MODO <span>1x1</span></h1>
-            <p class="subtitle">CONFIRME SEUS DADOS</p>
-
-            <input type="tel" id="tel-1x1" placeholder="Seu WhatsApp (Ex: 119...)">
-            <p style="font-size: 9px; color: var(--primary); text-align: center; margin-bottom: 5px; font-weight: 700;">REPETIR CÓDIGO DO LOGIN:</p>
-            <input type="number" id="confirm-code-1x1" placeholder="3 dígitos">
-
-            <button onclick="finalizar(1)" class="btn-glow">ENVIAR INSCRIÇÃO</button>
-            <button onclick="mudarTela('choice-view')" class="btn-outline" style="border:none; color:#555">VOLTAR</button>
-        </section>
-
-        <section id="form-2x2-view" class="glass-panel hidden">
-            <h1>MODO <span>2x2</span></h1>
-            <p class="subtitle">DADOS DA DUPLA</p>
-
-            <input type="text" id="vulgo2-2x2" placeholder="Vulgo do Parceiro">
-            <input type="tel" id="tel-2x2" placeholder="WhatsApp Contato">
-            <p style="font-size: 9px; color: var(--primary); text-align: center; margin-bottom: 5px; font-weight: 700;">REPETIR CÓDIGO DO LOGIN:</p>
-            <input type="number" id="confirm-code-2x2" placeholder="3 dígitos">
-
-            <button onclick="finalizar(2)" class="btn-glow">FINALIZAR DUPLA</button>
-            <button onclick="mudarTela('choice-view')" class="btn-outline" style="border:none; color:#555">VOLTAR</button>
-        </section>
-
-        <section id="success-view" class="glass-panel hidden" style="text-align: center;">
-            <div style="font-size: 60px; margin-bottom: 10px;">🔥</div>
-            <h1 style="color: var(--success);">CONFIRMADO!</h1>
-            <p style="margin: 20px 0; color: #888; font-size: 13px; line-height: 1.6;">Sua inscrição caiu no sistema da Casa Branca. Aguarde o sorteio!</p>
-            <button onclick="location.reload()" class="btn-glow">SAIR</button>
-        </section>
-
-        <section id="admin-view" class="glass-panel hidden">
-            <h1 style="font-size: 22px;">CONTROLE <span>ADMIN</span></h1>
-            
-            <div style="margin-bottom: 20px;">
-                <input type="text" id="input-aviso" placeholder="Escreva um aviso geral..." style="margin-bottom: 5px; padding: 10px; font-size: 12px;">
-                <button onclick="postarAviso()" class="btn-glow" style="padding: 10px; font-size: 11px;">POSTAR AVISO</button>
-                <button onclick="limparAviso()" style="background:none; border:none; color:red; font-size:10px; width:100%;">LIMPAR MURAL</button>
-            </div>
-
-            <div style="display: flex; gap: 8px; margin-bottom: 15px;">
-                <button onclick="filtrarAdmin('1x1')" class="btn-glow" style="padding: 12px; font-size: 11px;">1x1</button>
-                <button onclick="filtrarAdmin('2x2')" class="btn-outline" style="padding: 12px; font-size: 11px;">2x2</button>
-            </div>
-            
-            <div id="lista-admin" style="max-height: 300px; overflow-y: auto; padding-right: 5px;"></div>
-            
-            <button onclick="limparLista()" style="background:rgba(255,0,0,0.1); border:1px solid red; color:red; width:100%; padding:10px; border-radius:10px; margin-top:20px; font-size:10px; font-weight:700;">ZERAR LISTA ATUAL</button>
-            <button onclick="location.reload()" style="background:none; border:none; color:#555; width:100%; margin-top:10px; font-size:12px;">FECHAR PAINEL</button>
-        </section>
+    <div id="login-view" class="fade-in">
+        <div class="login-box">
+            <h1>Store<span>PRO</span></h1>
+            <p>Entre ou crie sua conta para acessar</p>
+            <input type="text" id="auth-user" placeholder="Seu Usuário (ex: joao123)">
+            <input type="password" id="auth-pass" placeholder="Sua Senha">
+            <button onclick="autenticar()" class="btn btn-primary" style="margin-bottom: 10px;">ENTRAR / CADASTRAR</button>
+            <button onclick="loginAdmin()" class="btn btn-outline" style="font-size: 10px;">SOU ADMINISTRADOR</button>
+        </div>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <div id="app-layout" class="hidden fade-in">
+        
+        <div class="sidebar">
+            <div class="sidebar-logo">Store<span style="color:white">PRO</span></div>
+            
+            <div id="menu-cliente">
+                <div class="menu-item active" onclick="navegar('loja')">🛒 Loja Principal</div>
+                <div class="menu-item" onclick="navegar('presets')">🎹 Presets BandLab</div>
+                <div class="menu-item" onclick="navegar('cursos')">💻 Cursos Programação</div>
+                <div class="menu-item" onclick="navegar('minhas-compras')">📦 Minhas Compras</div>
+                <div class="menu-item" onclick="navegar('suporte')">🎧 Suporte / Ajuda</div>
+            </div>
+
+            <div id="menu-admin" class="hidden">
+                <div style="font-size: 11px; color: var(--warning); margin-bottom: 10px; font-weight: bold;">PAINEL ADMIN</div>
+                <div class="menu-item active" onclick="navegar('admin-produtos')">📝 Gerenciar Produtos</div>
+                <div class="menu-item" onclick="navegar('admin-pedidos')">💰 Pedidos & PIX</div>
+                <div class="menu-item" onclick="navegar('admin-suporte')">📩 Tickets de Ajuda</div>
+            </div>
+
+            <div class="sidebar-footer">
+                <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">Logado como: <b id="display-username" style="color:white">...</b></div>
+                <button onclick="deslogar()" class="btn btn-outline">SAIR</button>
+            </div>
+        </div>
+
+        <div class="main-content">
+            
+            <div id="view-loja" class="view-section">
+                <h2 class="section-title" id="titulo-loja">Catálogo de Produtos</h2>
+                <div class="product-grid" id="grid-produtos"></div>
+            </div>
+
+            <div id="view-detalhes" class="view-section hidden">
+                <button onclick="navegar('loja')" class="btn btn-outline" style="width: auto; margin-bottom: 20px;">⬅ Voltar</button>
+                <div class="product-detail-layout">
+                    <img id="det-img" class="product-detail-img" src="" alt="Produto">
+                    <div class="product-info">
+                        <h2 id="det-titulo" style="font-size: 28px; margin-bottom: 10px;">---</h2>
+                        <div id="det-preco" class="product-price" style="font-size: 24px; margin-bottom: 20px;">R$ 0,00</div>
+                        <p id="det-desc" style="color: var(--text-muted); line-height: 1.6; margin-bottom: 30px;">---</p>
+                        <button id="btn-comprar" class="btn btn-primary" style="font-size: 16px; padding: 15px;">🛒 COMPRAR AGORA</button>
+                    </div>
+                </div>
+                <div class="reviews-section">
+                    <h3>Avaliações de Clientes</h3>
+                    <div id="lista-avaliacoes" style="margin-top: 15px;"></div>
+                    <div style="display: flex; gap: 10px; margin-top: 15px;">
+                        <input type="text" id="input-avaliacao" placeholder="Deixe sua avaliação sobre o produto..." style="margin-bottom: 0;">
+                        <button id="btn-avaliar" class="btn btn-primary" style="width: 150px;">Enviar</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-minhas-compras" class="view-section hidden">
+                <h2 class="section-title">Meus Pedidos</h2>
+                <div id="lista-minhas-compras"></div>
+            </div>
+
+            <div id="view-suporte" class="view-section hidden">
+                <h2 class="section-title">Central de Ajuda</h2>
+                <div style="background: var(--bg-card); padding: 20px; border-radius: 12px; max-width: 500px;">
+                    <p style="margin-bottom: 15px; color: var(--text-muted);">Relate seu problema. Nossa equipe (Admin) vai resolver o mais rápido possível.</p>
+                    <textarea id="texto-suporte" rows="4" placeholder="Descreva seu problema ou dúvida aqui..."></textarea>
+                    <button onclick="enviarSuporte()" class="btn btn-primary">ENVIAR TICKET</button>
+                </div>
+            </div>
+
+            <div id="view-admin-produtos" class="view-section hidden">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 class="section-title" style="margin: 0; border: none;">Gerenciar Produtos</h2>
+                    <button onclick="abrirModalAddProduto()" class="btn btn-success" style="width: auto;">+ NOVO PRODUTO</button>
+                </div>
+                
+                <div id="form-novo-produto" class="hidden" style="background: var(--bg-card); padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--success);">
+                    <h3>Adicionar Novo Produto</h3><br>
+                    <input type="text" id="add-nome" placeholder="Nome do Produto">
+                    <input type="text" id="add-desc" placeholder="Descrição completa">
+                    <input type="number" id="add-preco" placeholder="Preço (Ex: 29.90)">
+                    <select id="add-categoria">
+                        <option value="presets">Preset BandLab</option>
+                        <option value="cursos">Curso Programação</option>
+                        <option value="outros">Outros Arquivos/Vídeos</option>
+                    </select>
+                    
+                    <label style="color:var(--text-muted); font-size: 12px;">Selecione a Capa (Imagem):</label>
+                    <input type="file" id="add-img-file" accept="image/*">
+                    
+                    <label style="color:var(--text-muted); font-size: 12px;">Selecione o Arquivo do Produto:</label>
+                    <input type="file" id="add-arquivo-file">
+                    
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <button onclick="salvarNovoProduto()" class="btn btn-success">Salvar Produto</button>
+                        <button onclick="document.getElementById('form-novo-produto').classList.add('hidden')" class="btn btn-outline">Cancelar</button>
+                    </div>
+                </div>
+
+                <div id="lista-admin-produtos"></div>
+            </div>
+
+            <div id="view-admin-pedidos" class="view-section hidden">
+                <h2 class="section-title">Gestão de Pedidos (Vendas)</h2>
+                <div id="lista-admin-pedidos"></div>
+            </div>
+
+        </div>
+    </div>
 
     <script>
-        // CONFIGURAÇÃO
-        const config = { databaseURL: "https://gincanaescola-d4f8c-default-rtdb.firebaseio.com/" };
-        if (!firebase.apps.length) firebase.initializeApp(config);
-        const database = firebase.database();
-
-        let codigoGerado = "";
-        let mcPrincipal = "";
-        let modoAtualAdmin = "1x1";
-
-        // GERAR CÓDIGO
-        window.onload = () => {
-            codigoGerado = String(Math.floor(Math.random() * 899) + 100);
-            document.getElementById('main-code-display').innerText = codigoGerado;
-            ouvirAvisos();
+        // ==========================================
+        // CONFIGURAÇÃO DO FIREBASE (ONLINE TEMPO REAL)
+        // ==========================================
+        const firebaseConfig = {
+            // 👇 COLOQUE SUAS CHAVES DO FIREBASE AQUI PARA FICAR ONLINE 👇
+            // apiKey: "SUA_API_KEY",
+            // authDomain: "SEU_DOMINIO.firebaseapp.com",
+            // databaseURL: "SUA_URL_DO_DATABASE",
+            // projectId: "SEU_PROJECT_ID",
+            // storageBucket: "SEU_STORAGE_BUCKET",
+            // messagingSenderId: "SEU_SENDER_ID",
+            // appId: "SEU_APP_ID"
         };
 
-        // NOTIFICAÇÕES
-        function showNotify(msg) {
+        // Inicializa o Firebase APENAS se as chaves forem colocadas
+        let database;
+        let isOnline = false;
+        if(firebaseConfig.apiKey) {
+            firebase.initializeApp(firebaseConfig);
+            database = firebase.database();
+            isOnline = true;
+            toast("Conectado ao Servidor Global!", "var(--success)");
+        } else {
+            // Fallback para testes sem chave
+            toast("Modo Offline (Sem Firebase Configurado). Usando LocalStorage.", "#ef4444");
+        }
+
+        // === BANCO DE DADOS GLOBAL ===
+        let db = { users: {}, products: [], orders: [], tickets: [] };
+        
+        // Dados Padrão (Caso o Firebase/Local esteja vazio)
+        const defaultData = {
+            users: {},
+            products: [
+                { id: 1, nome: "Vocal Trap Pro - BandLab", desc: "O melhor preset para voz de Trap no celular. Pronto para usar.", preco: 25.00, categoria: "presets", img: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=500&q=80", arquivo: "", avaliacoes: ["Muito brabo, mudou minha mix!"] }
+            ],
+            orders: [],
+            tickets: []
+        };
+
+        let currentUser = JSON.parse(localStorage.getItem('store_current_user')) || null;
+        let isAdmin = false;
+        let telaAtual = 'loja';
+        let pedidoAtualParaComprovante = null;
+
+        // === INICIALIZAÇÃO & SINCRONIZAÇÃO EM TEMPO REAL ===
+        window.onload = () => {
+            if(isOnline) {
+                // Escuta o banco do mundo todo em tempo real
+                database.ref('store_db').on('value', (snapshot) => {
+                    const data = snapshot.val();
+                    if(data) {
+                        db = data;
+                        if(!db.users) db.users = {};
+                        if(!db.products) db.products = [];
+                        if(!db.orders) db.orders = [];
+                        if(!db.tickets) db.tickets = [];
+                        
+                        // Atualiza as telas abertas em tempo real
+                        if(currentUser) atualizarTelasEmTempoReal();
+                    } else {
+                        // Se o banco estiver vazio, cria o primeiro registro
+                        db = defaultData;
+                        salvarBD();
+                    }
+                });
+            } else {
+                // Modo offline (para não quebrar enquanto não põe a chave)
+                db = JSON.parse(localStorage.getItem('store_db_local')) || defaultData;
+                if(currentUser) entrarNoSistema();
+            }
+        };
+
+        function salvarBD() {
+            if(isOnline) {
+                database.ref('store_db').set(db); // Salva no Firebase
+            } else {
+                localStorage.setItem('store_db_local', JSON.stringify(db)); // Salva local
+            }
+        }
+
+        function atualizarTelasEmTempoReal() {
+            // Recarrega apenas a tela que o usuário está olhando
+            if(telaAtual === 'loja' || telaAtual === 'presets' || telaAtual === 'cursos') carregarProdutos(telaAtual === 'loja' ? 'todos' : telaAtual);
+            if(telaAtual === 'minhas-compras') carregarMinhasCompras();
+            if(telaAtual === 'admin-produtos') carregarAdminProdutos();
+            if(telaAtual === 'admin-pedidos') carregarAdminPedidos();
+        }
+
+        // === NOTIFICAÇÕES ===
+        function toast(msg, cor = "var(--primary)") {
             const t = document.createElement('div');
-            t.className = 'toast'; t.innerHTML = msg;
+            t.className = 'toast'; t.style.backgroundColor = cor; t.innerText = msg;
             document.getElementById('toast-container').appendChild(t);
             setTimeout(() => t.remove(), 3000);
         }
 
-        // MUDAR TELAS
-        function mudarTela(id) {
-            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
-            document.getElementById(id).classList.remove('hidden');
+        // === AUTENTICAÇÃO ===
+        function autenticar() {
+            const user = document.getElementById('auth-user').value.trim();
+            const pass = document.getElementById('auth-pass').value.trim();
+            if(!user || !pass) return toast("Preencha usuário e senha!", "#ef4444");
+
+            if (db.users[user]) {
+                if (db.users[user].pass === pass) {
+                    currentUser = { username: user, role: 'client' };
+                    entrarNoSistema();
+                } else { toast("Senha incorreta!", "#ef4444"); }
+            } else {
+                db.users[user] = { pass: pass, role: 'client' };
+                salvarBD();
+                currentUser = { username: user, role: 'client' };
+                toast("Conta criada com sucesso!", "var(--success)");
+                entrarNoSistema();
+            }
         }
 
-        // LOGIN MC
-        function fazerLogin() {
-            mcPrincipal = document.getElementById('login-nome').value.trim();
-            if(!mcPrincipal) return showNotify("⚠️ Qual o seu Vulgo?");
-            document.getElementById('user-greeting').innerText = mcPrincipal.toUpperCase();
-            mudarTela('choice-view');
+        function loginAdmin() {
+            const pass = prompt("Senha Administrativa:");
+            if(pass === "admin123") {
+                currentUser = { username: 'ADMIN', role: 'admin' };
+                isAdmin = true;
+                entrarNoSistema();
+            } else { toast("Senha admin incorreta!", "#ef4444"); }
         }
 
-        // FINALIZAR INSCRIÇÃO
-        function finalizar(modo) {
-            const inputCod = document.getElementById('confirm-code-' + (modo === 1 ? '1x1' : '2x2')).value;
-            if(inputCod !== codigoGerado) return showNotify("⚠️ Use o código " + codigoGerado);
+        function deslogar() {
+            currentUser = null; isAdmin = false;
+            localStorage.removeItem('store_current_user');
+            document.getElementById('app-layout').classList.add('hidden');
+            document.getElementById('login-view').classList.remove('hidden');
+        }
 
-            let dados = {
-                mc: mcPrincipal,
-                id: codigoGerado,
-                timestamp: new Date().getTime(),
-                data_format: new Date().toLocaleString()
+        function entrarNoSistema() {
+            localStorage.setItem('store_current_user', JSON.stringify(currentUser));
+            document.getElementById('login-view').classList.add('hidden');
+            document.getElementById('app-layout').classList.remove('hidden');
+            document.getElementById('display-username').innerText = currentUser.username;
+            
+            if(currentUser.role === 'admin' || isAdmin) {
+                document.getElementById('menu-cliente').classList.add('hidden');
+                document.getElementById('menu-admin').classList.remove('hidden');
+                navegar('admin-produtos');
+            } else {
+                document.getElementById('menu-admin').classList.add('hidden');
+                document.getElementById('menu-cliente').classList.remove('hidden');
+                navegar('loja');
+            }
+        }
+
+        // === NAVEGAÇÃO ===
+        function navegar(viewId, param = null) {
+            telaAtual = viewId;
+            document.querySelectorAll('.view-section').forEach(v => v.classList.add('hidden'));
+            document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+            event && event.currentTarget && event.currentTarget.classList.add('active');
+
+            if(viewId === 'loja') { document.getElementById('view-loja').classList.remove('hidden'); document.getElementById('titulo-loja').innerText = "Todos os Produtos"; carregarProdutos('todos'); }
+            if(viewId === 'presets') { document.getElementById('view-loja').classList.remove('hidden'); document.getElementById('titulo-loja').innerText = "Presets BandLab"; carregarProdutos('presets'); }
+            if(viewId === 'cursos') { document.getElementById('view-loja').classList.remove('hidden'); document.getElementById('titulo-loja').innerText = "Cursos de Programação"; carregarProdutos('cursos'); }
+            if(viewId === 'detalhes') { document.getElementById('view-detalhes').classList.remove('hidden'); abrirDetalhes(param); }
+            if(viewId === 'minhas-compras') { document.getElementById('view-minhas-compras').classList.remove('hidden'); carregarMinhasCompras(); }
+            if(viewId === 'suporte') { document.getElementById('view-suporte').classList.remove('hidden'); }
+            
+            if(viewId === 'admin-produtos') { document.getElementById('view-admin-produtos').classList.remove('hidden'); carregarAdminProdutos(); }
+            if(viewId === 'admin-pedidos') { document.getElementById('view-admin-pedidos').classList.remove('hidden'); carregarAdminPedidos(); }
+        }
+
+        // === CLIENTE: PRODUTOS E COMPRAS ===
+        function carregarProdutos(filtro) {
+            const grid = document.getElementById('grid-produtos');
+            grid.innerHTML = "";
+            let filtrados = db.products || [];
+            if(filtro !== 'todos') filtrados = filtrados.filter(p => p.categoria === filtro);
+            
+            if(filtrados.length === 0) return grid.innerHTML = "<p>Nenhum produto encontrado.</p>";
+
+            filtrados.forEach(p => {
+                grid.innerHTML += `
+                    <div class="product-card" onclick="navegar('detalhes', ${p.id})">
+                        <img src="${p.img}" class="product-img">
+                        <div class="product-title">${p.nome}</div>
+                        <div class="product-price">R$ ${p.preco.toFixed(2)}</div>
+                    </div>
+                `;
+            });
+        }
+
+        function abrirDetalhes(id) {
+            const p = db.products.find(x => x.id === id);
+            document.getElementById('det-img').src = p.img;
+            document.getElementById('det-titulo').innerText = p.nome;
+            document.getElementById('det-preco').innerText = `R$ ${p.preco.toFixed(2)}`;
+            document.getElementById('det-desc').innerText = p.desc;
+            
+            document.getElementById('btn-comprar').onclick = () => fazerPedido(p.id);
+
+            const boxAv = document.getElementById('lista-avaliacoes');
+            boxAv.innerHTML = p.avaliacoes && p.avaliacoes.length > 0 ? p.avaliacoes.map(a => `<div class="review-card">⭐ "${a}"</div>`).join('') : '<p style="color:#666">Sem avaliações ainda.</p>';
+            
+            document.getElementById('btn-avaliar').onclick = () => {
+                const txt = document.getElementById('input-avaliacao').value;
+                if(txt) { 
+                    if(!p.avaliacoes) p.avaliacoes = [];
+                    p.avaliacoes.push(txt); 
+                    salvarBD(); 
+                    document.getElementById('input-avaliacao').value = "";
+                    navegar('detalhes', id); 
+                }
+            };
+        }
+
+        function fazerPedido(produtoId) {
+            const novoPedido = {
+                id: Date.now(),
+                user: currentUser.username,
+                produtoId: produtoId,
+                status: 'esperando_chave',
+                chavePix: null,
+                comprovante: null // Vai receber o base64 da imagem da galeria
+            };
+            if(!db.orders) db.orders = [];
+            db.orders.push(novoPedido);
+            salvarBD();
+            toast("Pedido criado! Aguarde a chave PIX.", "var(--warning)");
+            navegar('minhas-compras');
+        }
+
+        function carregarMinhasCompras() {
+            const lista = document.getElementById('lista-minhas-compras');
+            lista.innerHTML = "";
+            const meusPedidos = (db.orders || []).filter(o => o.user === currentUser.username);
+            
+            if(meusPedidos.length === 0) return lista.innerHTML = "<p>Você ainda não comprou nada.</p>";
+
+            meusPedidos.forEach(o => {
+                const p = (db.products || []).find(x => x.id === o.produtoId) || { nome: "Produto Indisponível" };
+                let acoes = "";
+                let corStatus = "bg-warning";
+                let textStatus = "";
+
+                if(o.status === 'esperando_chave') {
+                    textStatus = "⏳ AGUARDANDO ADMIN ENVIAR PIX";
+                    acoes = `<p style="font-size:12px; color:#888;">Admin gerando sua chave PIX...</p>`;
+                } 
+                else if (o.status === 'esperando_comprovante') {
+                    corStatus = "bg-primary"; textStatus = "💲 PAGAMENTO PENDENTE";
+                    acoes = `
+                        <p style="font-size:12px; color:var(--primary); margin-bottom:5px;"><b>Chave PIX:</b> ${o.chavePix}</p>
+                        <button onclick="abrirGaleriaComprovante(${o.id})" class="btn btn-primary" style="padding:8px; font-size:11px;">Mandei o PIX (Anexar Comprovante)</button>
+                    `;
+                }
+                else if (o.status === 'verificando') {
+                    textStatus = "🔍 VERIFICANDO COMPROVANTE";
+                    acoes = `<p style="font-size:12px; color:#888;">Admin está validando...</p>`;
+                }
+                else if (o.status === 'liberado') {
+                    corStatus = "bg-success"; textStatus = "✅ PRODUTO LIBERADO";
+                    // Se o produto tiver um arquivo base64 salvo, permite baixar. Senão, dá a mensagem de simulação.
+                    if(p.arquivo && p.arquivo.length > 100) {
+                        acoes = `<a href="${p.arquivo}" download="${p.nome}" class="btn btn-success" style="padding:8px; font-size:11px; display:block; text-align:center; text-decoration:none;">⬇️ BAIXAR ARQUIVO</a>`;
+                    } else {
+                        acoes = `<button onclick="alert('Download do conteúdo externo: ${p.nome}')" class="btn btn-success" style="padding:8px; font-size:11px;">⬇️ ACESSAR MATERIAL</button>`;
+                    }
+                }
+
+                lista.innerHTML += `
+                    <div class="list-card">
+                        <div>
+                            <strong style="display:block; margin-bottom:5px;">${p.nome}</strong>
+                            <span class="status-badge ${corStatus}">${textStatus}</span>
+                        </div>
+                        <div style="text-align: right; min-width: 200px;">
+                            ${acoes}
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // === INTEGRAÇÃO COM GALERIA (COMPROVANTE) ===
+        function abrirGaleriaComprovante(orderId) {
+            pedidoAtualParaComprovante = orderId;
+            document.getElementById('input-comprovante-file').click();
+        }
+
+        function processarUploadComprovante(event) {
+            const file = event.target.files[0];
+            if(!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const base64Image = e.target.result;
+                const pedido = db.orders.find(o => o.id === pedidoAtualParaComprovante);
+                
+                if(pedido) {
+                    pedido.status = 'verificando';
+                    pedido.comprovante = base64Image; // Salva a foto real da galeria no BD
+                    salvarBD();
+                    toast("Comprovante enviado para análise!", "var(--success)");
+                }
+            };
+            // Transforma a imagem da galeria em código para salvar no banco
+            reader.readAsDataURL(file);
+        }
+
+        // === ADMIN: CRIAR PRODUTO (GALERIA) ===
+        function abrirModalAddProduto() { document.getElementById('form-novo-produto').classList.remove('hidden'); }
+        
+        function salvarNovoProduto() {
+            const nome = document.getElementById('add-nome').value;
+            const desc = document.getElementById('add-desc').value;
+            const preco = parseFloat(document.getElementById('add-preco').value);
+            const cat = document.getElementById('add-categoria').value;
+            
+            const imgInput = document.getElementById('add-img-file').files[0];
+            const arqInput = document.getElementById('add-arquivo-file').files[0];
+            
+            if(!nome || !preco) return toast("Nome e Preço obrigatórios!", "#ef4444");
+            
+            toast("Processando arquivos... aguarde", "var(--warning)");
+
+            // Função para ler arquivo como Base64 (Promessa para esperar concluir)
+            const lerArquivo = (file) => {
+                return new Promise((resolve) => {
+                    if(!file) return resolve("");
+                    const reader = new FileReader();
+                    reader.onload = (e) => resolve(e.target.result);
+                    reader.readAsDataURL(file);
+                });
             };
 
-            if(modo === 1) {
-                dados.zap = document.getElementById('tel-1x1').value;
-                if(!dados.zap) return showNotify("⚠️ Falta o WhatsApp!");
-            } else {
-                dados.parceiro = document.getElementById('vulgo2-2x2').value;
-                dados.zap = document.getElementById('tel-2x2').value;
-                if(!dados.parceiro || !dados.zap) return showNotify("⚠️ Preencha os dados da dupla!");
-            }
+            // Lê as imagens/arquivos da galeria do Admin
+            Promise.all([lerArquivo(imgInput), lerArquivo(arqInput)]).then(resultados => {
+                const imagemBase64 = resultados[0] || "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=500&q=80";
+                const arquivoBase64 = resultados[1] || "";
 
-            const pasta = modo === 1 ? '1x1' : '2x2';
-            database.ref('casabranca_inscricoes/' + pasta + '/' + codigoGerado).set(dados)
-            .then(() => mudarTela('success-view'))
-            .catch(() => showNotify("❌ Erro de Permissão!"));
+                if(!db.products) db.products = [];
+                db.products.push({ 
+                    id: Date.now(), 
+                    nome, desc, preco, 
+                    categoria: cat, 
+                    img: imagemBase64, // Capa real do admin
+                    arquivo: arquivoBase64, // Arquivo real do admin
+                    avaliacoes: [] 
+                });
+                
+                salvarBD();
+                
+                // Limpa inputs
+                document.getElementById('add-nome').value = "";
+                document.getElementById('add-desc').value = "";
+                document.getElementById('add-preco').value = "";
+                document.getElementById('add-img-file').value = "";
+                document.getElementById('add-arquivo-file').value = "";
+
+                document.getElementById('form-novo-produto').classList.add('hidden');
+                toast("Produto adicionado com sucesso!", "var(--success)");
+            });
         }
 
-        // --- FUNÇÕES ADMIN (ESTILO RANKCLASE + MELHORIAS) ---
-
-        function abrirAdmin() {
-            const p = prompt("Senha da Organizadora:");
-            if(p === "casa123") {
-                mudarTela('admin-view');
-                filtrarAdmin('1x1');
-            }
-        }
-
-        function filtrarAdmin(pasta) {
-            modoAtualAdmin = pasta;
-            const box = document.getElementById('lista-admin');
-            box.innerHTML = "<p style='text-align:center; font-size:12px; color:#555;'>Buscando...</p>";
-
-            database.ref('casabranca_inscricoes/' + pasta).on('value', (snapshot) => {
-                box.innerHTML = "";
-                const lista = snapshot.val();
-                if(!lista) return box.innerHTML = "<p style='text-align:center; font-size:12px; color:#444;'>Ninguém inscrito ainda.</p>";
-
-                Object.keys(lista).forEach(key => {
-                    const item = lista[key];
-                    box.innerHTML += `
-                        <div class="admin-card">
-                            <div style="display:flex; justify-content:space-between; align-items:start;">
-                                <div>
-                                    <b style="color:var(--primary); font-size:14px;">#${item.id}</b> | <b>${item.mc}</b>
-                                    ${item.parceiro ? '<br><span style="font-size:12px; color:#888;">Dupla com: <b>'+item.parceiro+'</b></span>' : ''}
-                                    <div style="margin-top:8px; display:flex; gap:10px;">
-                                        <a href="https://wa.me/55${item.zap}" target="_blank" class="btn-zap-mini">ZAP</a>
-                                        <button onclick="excluirInscricao('${pasta}', '${key}')" class="btn-del-mini">EXCLUIR</button>
-                                    </div>
-                                </div>
+        function carregarAdminProdutos() {
+            const lista = document.getElementById('lista-admin-produtos');
+            lista.innerHTML = "";
+            (db.products || []).forEach(p => {
+                lista.innerHTML += `
+                    <div class="list-card">
+                        <div style="display:flex; align-items:center; gap:15px;">
+                            <img src="${p.img}" style="width:40px; height:40px; border-radius:4px; object-fit:cover;">
+                            <div>
+                                <strong>${p.nome}</strong><br>
+                                <span style="font-size:12px; color:#888;">${p.categoria.toUpperCase()} | R$ ${p.preco.toFixed(2)}</span>
                             </div>
                         </div>
+                        <button onclick="deletarProduto(${p.id})" class="btn btn-danger" style="width:auto; padding:8px 15px;">Apagar</button>
+                    </div>
+                `;
+            });
+        }
+
+        function deletarProduto(id) {
+            if(confirm("Apagar produto?")) {
+                db.products = db.products.filter(p => p.id !== id);
+                salvarBD(); 
+            }
+        }
+
+        // === ADMIN: PEDIDOS ===
+        function carregarAdminPedidos() {
+            const lista = document.getElementById('lista-admin-pedidos');
+            lista.innerHTML = "";
+            const pedidos = db.orders || [];
+            if(pedidos.length === 0) return lista.innerHTML = "<p>Nenhum pedido recebido ainda.</p>";
+
+            [...pedidos].reverse().forEach(o => {
+                const p = (db.products || []).find(x => x.id === o.produtoId) || { nome: "Produto Apagado" };
+                let acoes = "";
+
+                if(o.status === 'esperando_chave') {
+                    acoes = `
+                        <input type="text" id="pix-${o.id}" placeholder="Cole a chave PIX aqui..." style="padding:8px; margin-bottom:5px;">
+                        <button onclick="adminEnviarPix(${o.id})" class="btn btn-primary" style="padding:8px; font-size:11px;">Enviar PIX ao Cliente</button>
                     `;
-                });
-            });
-        }
-
-        function excluirInscricao(pasta, key) {
-            if(confirm("Deseja apagar esta inscrição?")) {
-                database.ref('casabranca_inscricoes/' + pasta + '/' + key).remove();
-            }
-        }
-
-        function limparLista() {
-            if(confirm("⚠️ ATENÇÃO: Isso vai apagar TODOS os inscritos da lista de " + modoAtualAdmin + ". Confirma?")) {
-                database.ref('casabranca_inscricoes/' + modoAtualAdmin).remove();
-            }
-        }
-
-        // --- SISTEMA DE AVISOS ---
-
-        function postarAviso() {
-            const msg = document.getElementById('input-aviso').value;
-            if(!msg) return;
-            database.ref('casabranca_avisos').set(msg).then(() => {
-                document.getElementById('input-aviso').value = "";
-                showNotify("📢 Aviso postado!");
-            });
-        }
-
-        function limparAviso() {
-            database.ref('casabranca_avisos').remove();
-        }
-
-        function ouvirAvisos() {
-            database.ref('casabranca_avisos').on('value', snap => {
-                const mural = document.getElementById('mural-avisos');
-                if(snap.exists()) {
-                    mural.style.display = 'block';
-                    mural.innerHTML = "<b>AVISO:</b> " + snap.val();
+                } else if(o.status === 'verificando') {
+                    acoes = `
+                        <button onclick="visualizarComprovanteReal('${o.comprovante}')" class="btn btn-outline" style="padding:8px; font-size:11px; margin-bottom:5px;">Ver Comprovante Real</button>
+                        <button onclick="adminAprovar(${o.id})" class="btn btn-success" style="padding:8px; font-size:11px;">Liberar Arquivo</button>
+                    `;
+                } else if(o.status === 'liberado') {
+                    acoes = `<span style="color:var(--success); font-size:12px; font-weight:bold;">✅ Arquivo Liberado</span>`;
                 } else {
-                    mural.style.display = 'none';
+                    acoes = `<span style="color:#888; font-size:12px;">Aguardando cliente pagar...</span>`;
                 }
+
+                lista.innerHTML += `
+                    <div class="list-card" style="align-items: start;">
+                        <div>
+                            <span class="status-badge bg-warning">Pedido #${String(o.id).slice(-4)}</span>
+                            <strong style="display:block; margin:8px 0;">Usuário: ${o.user}</strong>
+                            <span style="font-size:12px; color:#888;">Produto: ${p.nome}</span>
+                        </div>
+                        <div style="text-align: right; min-width: 220px;">
+                            ${acoes}
+                        </div>
+                    </div>
+                `;
             });
+        }
+
+        function adminEnviarPix(orderId) {
+            const pix = document.getElementById(`pix-${orderId}`).value;
+            if(!pix) return toast("Digite a chave PIX!", "#ef4444");
+            const pedido = db.orders.find(o => o.id === orderId);
+            pedido.status = 'esperando_comprovante';
+            pedido.chavePix = pix;
+            salvarBD(); 
+            toast("PIX Enviado!", "var(--success)"); 
+        }
+
+        function adminAprovar(orderId) {
+            const pedido = db.orders.find(o => o.id === orderId);
+            pedido.status = 'liberado';
+            salvarBD(); 
+            toast("Acesso liberado ao cliente!", "var(--success)"); 
+        }
+
+        function visualizarComprovanteReal(base64Data) {
+            // Abre a imagem enviada pela galeria do cliente em uma nova janela
+            const w = window.open("");
+            w.document.write(`<img src="${base64Data}" style="max-width: 100%;">`);
+        }
+
+        // === SUPORTE ===
+        function enviarSuporte() {
+            const txt = document.getElementById('texto-suporte').value;
+            if(!txt) return toast("Escreva o problema!", "#ef4444");
+            if(!db.tickets) db.tickets = [];
+            db.tickets.push({ user: currentUser.username, txt: txt, data: new Date().toLocaleString() });
+            salvarBD();
+            document.getElementById('texto-suporte').value = "";
+            toast("Ticket enviado para o Admin!", "var(--success)");
         }
     </script>
 </body>

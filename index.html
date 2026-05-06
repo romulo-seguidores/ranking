@@ -8,204 +8,194 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&display=swap');
 
         :root {
             --primary: #6366f1;
             --primary-hover: #4f46e5;
             --bg-dark: #0f172a;
-            --bg-card: #1e293b;
+            --bg-card: rgba(30, 41, 59, 0.7);
+            --bg-card-solid: #1e293b;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --success: #10b981;
             --warning: #f59e0b;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.1);
         }
 
-        /* REGRAS GERAIS - MANTIDAS */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background: var(--bg-dark); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
+        /* RESET E SCROLL */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--bg-dark); color: var(--text-main); height: 100vh; overflow: hidden; }
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
 
-        .hidden { display: none !important; }
-        .fade-in { animation: fadeIn 0.3s ease-in-out forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* TOAST E SCROLL */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
-        #toast-container { position: fixed; top: 20px; right: 20px; z-index: 10000; display: flex; flex-direction: column; gap: 10px; }
-        .toast { background: var(--primary); color: white; padding: 12px 20px; border-radius: 8px; font-weight: 500; box-shadow: 0 4px 12px rgba(0,0,0,0.3); animation: slideInRight 0.3s forwards; }
-        @keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
-
-        /* INPUTS E BOTÕES */
-        input, textarea, select { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: white; outline: none; transition: 0.3s; }
-        .btn { width: 100%; padding: 12px; border-radius: 8px; border: none; font-weight: 700; cursor: pointer; transition: 0.2s; text-transform: uppercase; font-size: 13px; }
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-success { background: var(--success); color: white; }
-        .btn-danger { background: #ef4444; color: white; }
-        .btn-outline { background: transparent; border: 1px solid #334155; color: var(--text-muted); }
-
-        /* ESTRUTURA PRINCIPAL */
-        #login-view { width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #0f172a, #1e1b4b); position: fixed; top: 0; z-index: 2000; }
-        .login-box { background: var(--bg-card); padding: 40px; border-radius: 16px; width: 90%; max-width: 380px; }
+        /* ANIMAÇÕES */
+        .fade-in { animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         
+        .btn-press:active { transform: scale(0.96); }
+        .hover-lift { transition: all 0.3s ease; }
+        .hover-lift:hover { transform: translateY(-5px); border-color: var(--primary); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3); }
+
+        /* TOASTS */
+        #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 10000; display: flex; flex-direction: column; gap: 10px; }
+        .toast { background: var(--bg-card-solid); border-left: 4px solid var(--primary); color: white; padding: 15px 25px; border-radius: 12px; font-weight: 500; box-shadow: 0 10px 15px rgba(0,0,0,0.3); animation: slideIn 0.3s forwards; backdrop-filter: blur(10px); }
+        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+
+        /* INPUTS & BOTÕES */
+        input, textarea, select { width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 12px; border: 1px solid var(--border); background: rgba(15, 23, 42, 0.6); color: white; outline: none; transition: 0.3s; }
+        input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2); }
+        .btn { width: 100%; padding: 14px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-primary { background: linear-gradient(135deg, var(--primary), #818cf8); color: white; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3); }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-success { background: linear-gradient(135deg, #10b981, #34d399); color: white; }
+        .btn-outline { background: var(--glass); border: 1px solid var(--border); color: var(--text-muted); }
+        .btn-outline:hover { color: white; background: var(--border); }
+
+        /* LOGIN */
+        #login-view { position: fixed; inset: 0; z-index: 2000; background: radial-gradient(circle at top left, #1e1b4b, #0f172a); display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .login-box { background: var(--bg-card); backdrop-filter: blur(20px); padding: 40px; border-radius: 24px; width: 100%; max-width: 400px; border: 1px solid var(--border); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
+        .login-box h1 { font-size: 32px; font-weight: 900; letter-spacing: -1px; margin-bottom: 8px; text-align: center; }
+        .login-box h1 span { color: var(--primary); }
+
+        /* LAYOUT PRINCIPAL */
         #app-layout { display: flex; width: 100vw; height: 100vh; }
-        .sidebar { width: 260px; background: var(--bg-card); padding: 20px; display: flex; flex-direction: column; border-right: 1px solid #334155; transition: 0.3s ease; }
-        .sidebar-logo { font-size: 24px; font-weight: 900; color: var(--primary); margin-bottom: 30px; text-align: center; }
-        .menu-item { padding: 12px 15px; margin-bottom: 8px; border-radius: 8px; cursor: pointer; color: var(--text-muted); font-weight: 500; display: flex; align-items: center; gap: 10px; }
-        .menu-item:hover, .menu-item.active { background: var(--primary); color: white; }
-        .sidebar-footer { margin-top: auto; }
+        
+        .sidebar { width: 280px; background: #111827; padding: 30px 20px; display: flex; flex-direction: column; border-right: 1px solid var(--border); z-index: 1000; }
+        .sidebar-logo { font-size: 26px; font-weight: 900; color: var(--primary); margin-bottom: 40px; text-align: center; }
+        .menu-item { padding: 14px 18px; margin-bottom: 10px; border-radius: 14px; cursor: pointer; color: var(--text-muted); font-weight: 600; transition: 0.3s; display: flex; align-items: center; gap: 12px; }
+        .menu-item:hover { background: var(--glass); color: white; }
+        .menu-item.active { background: var(--primary); color: white; box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.4); }
 
-        .main-content { flex: 1; padding: 30px; overflow-y: auto; background: var(--bg-dark); }
-        .section-title { font-size: 24px; font-weight: 700; margin-bottom: 20px; border-bottom: 1px solid #334155; padding-bottom: 10px; }
+        .main-content { flex: 1; padding: 40px; overflow-y: auto; background: linear-gradient(to bottom right, #0f172a, #111827); position: relative; }
+        .section-title { font-size: 28px; font-weight: 800; margin-bottom: 30px; display: flex; align-items: center; gap: 15px; }
+        .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-        /* GRID E CARDS */
-        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
-        .product-card { background: var(--bg-card); border-radius: 12px; padding: 15px; border: 1px solid #334155; }
-        .product-img { width: 100%; height: 140px; background: #0f172a; border-radius: 8px; object-fit: cover; }
-        .product-price { color: var(--success); font-weight: 900; font-size: 18px; }
+        /* CARDS DE PRODUTO */
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 25px; }
+        .product-card { background: var(--bg-card); backdrop-filter: blur(10px); border-radius: 20px; padding: 18px; border: 1px solid var(--border); }
+        .product-img { width: 100%; height: 160px; background: #020617; border-radius: 16px; margin-bottom: 15px; object-fit: cover; }
+        .product-title { font-size: 17px; font-weight: 700; margin-bottom: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .product-price { color: var(--success); font-weight: 900; font-size: 20px; display: flex; align-items: center; gap: 5px; }
 
-        /* COMPONENTES DE LISTA */
-        .list-card { background: var(--bg-card); padding: 15px; border-radius: 12px; margin-bottom: 15px; border-left: 4px solid var(--primary); display: flex; justify-content: space-between; align-items: center; }
-        .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; }
-        .bg-warning { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
-        .bg-success { background: rgba(16, 185, 129, 0.2); color: var(--success); }
-        .bg-primary { background: rgba(99, 102, 241, 0.2); color: var(--primary); }
-
-        /* ==========================================
-           CORREÇÃO MOBILE (AQUI O BUG MORRE)
-        ========================================== */
-        #mobile-header { display: none; background: var(--bg-card); padding: 15px; border-bottom: 1px solid #334155; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+        /* MOBILE FIXES */
+        .mobile-toggle { display: none; position: fixed; top: 15px; left: 15px; z-index: 1500; background: var(--primary); width: 45px; height: 45px; border-radius: 12px; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
 
         @media (max-width: 768px) {
-            body { flex-direction: column; overflow: auto; }
-            #mobile-header { display: flex; }
-            #app-layout { flex-direction: column; height: auto; }
-            
-            .sidebar { 
-                position: fixed; 
-                left: -100%; 
-                top: 0; 
-                height: 100vh; 
-                z-index: 1000; 
-                width: 280px; 
-                box-shadow: 10px 0 30px rgba(0,0,0,0.5); 
-            }
-            .sidebar.open { left: 0; }
-            
-            .main-content { padding: 15px; overflow-y: visible; height: auto; }
-            .product-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
-            .product-card { padding: 10px; }
+            .mobile-toggle { display: flex; }
+            .sidebar { position: fixed; left: -100%; top: 0; bottom: 0; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); width: 80%; }
+            .sidebar.active { left: 0; }
+            .main-content { padding: 80px 20px 40px 20px; }
+            .product-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+            .product-card { padding: 12px; }
             .product-title { font-size: 14px; }
-            
-            .product-detail-layout { flex-direction: column; padding: 15px; }
-            .product-detail-img { width: 100%; height: auto; }
-            .list-card { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .product-price { font-size: 16px; }
+            .product-img { height: 120px; }
+            .section-title { font-size: 20px; }
         }
+
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-    <div id="toast-container"></div>
-    
-    <div id="mobile-header">
-        <div class="sidebar-logo" style="margin:0; font-size: 18px;">StorePRO</div>
-        <div onclick="toggleSidebar()" style="font-size: 24px; cursor: pointer;">☰</div>
+    <div class="mobile-toggle btn-press" onclick="document.querySelector('.sidebar').classList.toggle('active')">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
     </div>
 
+    <div id="toast-container"></div>
     <input type="file" id="input-comprovante-file" accept="image/*" class="hidden" onchange="processarUploadComprovante(event)">
 
     <div id="login-view">
-        <div class="login-box">
+        <div class="login-box fade-in">
             <h1>Store<span>PRO</span></h1>
-            <p>Entre ou crie sua conta para acessar</p>
-            <input type="text" id="auth-user" placeholder="Usuário">
-            <input type="password" id="auth-pass" placeholder="Senha">
-            <button onclick="autenticar()" class="btn btn-primary">ENTRAR / CADASTRAR</button>
-            <button onclick="loginAdmin()" class="btn btn-outline" style="font-size: 10px; margin-top: 10px;">ADMINISTRADOR</button>
+            <p style="text-align: center; color: var(--text-muted); margin-bottom: 30px;">Premium Digital Assets Store</p>
+            <input type="text" id="auth-user" placeholder="Nome de usuário">
+            <input type="password" id="auth-pass" placeholder="Sua senha secreta">
+            <button onclick="autenticar()" class="btn btn-primary btn-press">ENTRAR NA MINHA CONTA</button>
+            <button onclick="loginAdmin()" class="btn btn-outline btn-press" style="margin-top: 15px; border: none;">Modo Administrador</button>
         </div>
     </div>
 
     <div id="app-layout" class="hidden">
-        
-        <div class="sidebar" id="sidebar">
+        <div class="sidebar">
             <div class="sidebar-logo">Store<span style="color:white">PRO</span></div>
             
             <div id="menu-cliente">
-                <div class="menu-item active" onclick="navegar('loja')">🛒 Loja</div>
-                <div class="menu-item" onclick="navegar('presets')">🎹 Presets</div>
-                <div class="menu-item" onclick="navegar('cursos')">💻 Cursos</div>
-                <div class="menu-item" onclick="navegar('minhas-compras')">📦 Pedidos</div>
-                <div class="menu-item" onclick="navegar('suporte')">🎧 Suporte</div>
+                <div class="menu-item active" onclick="navegar('loja', null, this)">🛒 Loja Principal</div>
+                <div class="menu-item" onclick="navegar('presets', null, this)">🎹 Presets Premium</div>
+                <div class="menu-item" onclick="navegar('cursos', null, this)">💻 Cursos Online</div>
+                <div class="menu-item" onclick="navegar('minhas-compras', null, this)">📦 Meus Arquivos</div>
+                <div class="menu-item" onclick="navegar('suporte', null, this)">🎧 Ajuda & Suporte</div>
             </div>
 
             <div id="menu-admin" class="hidden">
-                <div style="font-size: 11px; color: var(--warning); margin: 10px 0; font-weight: bold;">ADMIN</div>
-                <div class="menu-item active" onclick="navegar('admin-produtos')">📝 Produtos</div>
-                <div class="menu-item" onclick="navegar('admin-pedidos')">💰 Vendas</div>
+                <p style="color: var(--warning); font-size: 11px; font-weight: 800; margin: 20px 0 10px 15px; letter-spacing: 1px;">PAINEL DE CONTROLE</p>
+                <div class="menu-item" onclick="navegar('admin-produtos', null, this)">📝 Editar Loja</div>
+                <div class="menu-item" onclick="navegar('admin-pedidos', null, this)">💰 Vendas & PIX</div>
             </div>
 
-            <div class="sidebar-footer">
-                <div style="font-size: 12px; margin-bottom: 10px;">User: <b id="display-username">...</b></div>
-                <button onclick="deslogar()" class="btn btn-outline">SAIR</button>
+            <div class="sidebar-footer" style="margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border);">
+                <p style="font-size: 11px; color: var(--text-muted);">Logado como:</p>
+                <p id="display-username" style="font-weight: 700; color: white; margin-bottom: 15px;">---</p>
+                <button onclick="deslogar()" class="btn btn-outline btn-press" style="padding: 10px;">SAIR DA CONTA</button>
             </div>
         </div>
 
-        <div class="main-content" onclick="closeSidebar()">
-            
-            <div id="view-loja" class="view-section">
-                <h2 class="section-title" id="titulo-loja">Produtos</h2>
+        <div class="main-content" onclick="document.querySelector('.sidebar').classList.remove('active')">
+            <div id="view-loja" class="view-section fade-in">
+                <h2 class="section-title" id="titulo-loja">Catálogo Digital</h2>
                 <div class="product-grid" id="grid-produtos"></div>
             </div>
 
-            <div id="view-detalhes" class="view-section hidden">
-                <button onclick="navegar('loja')" class="btn btn-outline" style="width: auto; margin-bottom: 20px;">⬅ Voltar</button>
-                <div class="product-detail-layout">
-                    <img id="det-img" class="product-detail-img" src="">
+            <div id="view-detalhes" class="view-section hidden fade-in">
+                <button onclick="navegar('loja')" class="btn btn-outline btn-press" style="width: auto; margin-bottom: 30px;">⬅ VOLTAR PARA LOJA</button>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; background: var(--bg-card); padding: 30px; border-radius: 24px; border: 1px solid var(--border);">
+                    <img id="det-img" style="width: 100%; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.4);" src="">
                     <div class="product-info">
-                        <h2 id="det-titulo">---</h2>
-                        <div id="det-preco" class="product-price">R$ 0,00</div>
-                        <p id="det-desc" style="margin-bottom: 20px;">---</p>
-                        <button id="btn-comprar" class="btn btn-primary">🛒 COMPRAR</button>
+                        <h2 id="det-titulo" style="font-size: 32px; margin-bottom: 15px;">---</h2>
+                        <div id="det-preco" class="product-price" style="font-size: 28px; margin-bottom: 25px;">R$ 0,00</div>
+                        <p id="det-desc" style="color: var(--text-muted); line-height: 1.8; margin-bottom: 35px; font-size: 15px;">---</p>
+                        <button id="btn-comprar" class="btn btn-primary btn-press" style="height: 60px; font-size: 16px;">OBTER ESTE PRODUTO AGORA</button>
                     </div>
                 </div>
             </div>
 
-            <div id="view-minhas-compras" class="view-section hidden">
-                <h2 class="section-title">Meus Pedidos</h2>
+            <div id="view-minhas-compras" class="view-section hidden fade-in">
+                <h2 class="section-title">Meus Arquivos Comprados</h2>
                 <div id="lista-minhas-compras"></div>
             </div>
 
-            <div id="view-admin-produtos" class="view-section hidden">
-                <button onclick="abrirModalAddProduto()" class="btn btn-success" style="width: auto; margin-bottom: 15px;">+ NOVO PRODUTO</button>
-                <div id="form-novo-produto" class="hidden" style="background: var(--bg-card); padding: 15px; border-radius: 12px; margin-bottom: 20px;">
-                    <input type="text" id="add-nome" placeholder="Nome">
-                    <input type="number" id="add-preco" placeholder="Preço">
+            <div id="view-admin-produtos" class="view-section hidden fade-in">
+                <h2 class="section-title">Gerenciar Loja</h2>
+                <button onclick="document.getElementById('form-novo-produto').classList.toggle('hidden')" class="btn btn-success btn-press" style="width: auto; margin-bottom: 25px;">+ ADICIONAR NOVO ITEM</button>
+                <div id="form-novo-produto" class="hidden" style="background: var(--bg-card); padding: 25px; border-radius: 20px; margin-bottom: 30px; border: 1px solid var(--success);">
+                    <input type="text" id="add-nome" placeholder="Nome do Produto">
+                    <input type="text" id="add-desc" placeholder="Descrição">
+                    <input type="number" id="add-preco" placeholder="Preço (Ex: 49.90)">
                     <select id="add-categoria">
-                        <option value="presets">Presets</option>
-                        <option value="cursos">Cursos</option>
+                        <option value="presets">Presets BandLab</option>
+                        <option value="cursos">Cursos de Programação</option>
                     </select>
-                    <label>Imagem Capa:</label> <input type="file" id="add-img-file">
-                    <label>Arquivo Produto:</label> <input type="file" id="add-arquivo-file">
-                    <button onclick="salvarNovoProduto()" class="btn btn-success">SALVAR</button>
+                    <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 5px;">Imagem de Capa:</p>
+                    <input type="file" id="add-img-file" accept="image/*">
+                    <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 5px;">Arquivo para Download:</p>
+                    <input type="file" id="add-arquivo-file">
+                    <button onclick="salvarNovoProduto()" class="btn btn-success btn-press">PUBLICAR NA LOJA</button>
                 </div>
                 <div id="lista-admin-produtos"></div>
             </div>
 
-            <div id="view-admin-pedidos" class="view-section hidden">
-                <h2 class="section-title">Gestão de Vendas</h2>
+            <div id="view-admin-pedidos" class="view-section hidden fade-in">
+                <h2 class="section-title">Fluxo de Caixa / Pedidos</h2>
                 <div id="lista-admin-pedidos"></div>
-            </div>
-
-            <div id="view-suporte" class="view-section hidden">
-                <h2 class="section-title">Suporte</h2>
-                <textarea id="texto-suporte" placeholder="Diga o erro..."></textarea>
-                <button onclick="enviarSuporte()" class="btn btn-primary">ENVIAR</button>
             </div>
         </div>
     </div>
 
     <script>
-        // CONFIGURAÇÃO DO FIREBASE (RANKX)
+        // CONFIGURAÇÃO FIREBASE (REALTIME)
         const firebaseConfig = {
             apiKey: "AIzaSyCWw0TPhKAjPeL3bvd-BzaQYG5SJNtxsL4",
             authDomain: "gincanaescola-d4f8c.firebaseapp.com",
@@ -223,39 +213,230 @@
         let db = { users: {}, products: [], orders: [] };
         let currentUser = JSON.parse(localStorage.getItem('store_current_user')) || null;
         let telaAtual = 'loja';
+        let filtroAtual = 'todos';
 
-        // SINCRONIZAÇÃO REALTIME
+        // SINCRONIZAÇÃO EM TEMPO REAL (MÁGICA AQUI)
         database.ref('store_db').on('value', (snapshot) => {
             const data = snapshot.val();
-            if(data) {
+            if (data) {
                 db = data;
-                renderizarAtual();
+                // Re-renderiza a tela atual automaticamente quando o banco muda
+                atualizarInterfaceGlobal();
             }
         });
 
         function salvarBD() { database.ref('store_db').set(db); }
 
-        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
-        function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); }
-
         function toast(msg, cor = "var(--primary)") {
             const t = document.createElement('div');
-            t.className = 'toast'; t.style.backgroundColor = cor; t.innerText = msg;
+            t.className = 'toast'; t.style.borderLeftColor = cor; t.innerText = msg;
             document.getElementById('toast-container').appendChild(t);
-            setTimeout(() => t.remove(), 3000);
+            setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 500); }, 3000);
         }
 
+        // NAVEGAÇÃO MELHORADA
+        function navegar(viewId, param = null, elemento = null) {
+            telaAtual = viewId;
+            if (elemento) {
+                document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+                elemento.classList.add('active');
+            }
+            
+            document.querySelectorAll('.view-section').forEach(v => v.classList.add('hidden'));
+            
+            if (['loja', 'presets', 'cursos'].includes(viewId)) {
+                filtroAtual = viewId === 'loja' ? 'todos' : viewId;
+                document.getElementById('view-loja').classList.remove('hidden');
+                document.getElementById('titulo-loja').innerText = filtroAtual === 'todos' ? 'Catálogo Digital' : (filtroAtual.charAt(0).toUpperCase() + filtroAtual.slice(1));
+                carregarProdutos();
+            } else {
+                const target = document.getElementById('view-' + viewId);
+                if (target) target.classList.remove('hidden');
+            }
+
+            if (viewId === 'detalhes') abrirDetalhes(param);
+            if (viewId === 'minhas-compras') carregarMinhasCompras();
+            if (viewId === 'admin-produtos') carregarAdminProdutos();
+            if (viewId === 'admin-pedidos') carregarAdminPedidos();
+            
+            if(window.innerWidth <= 768) document.querySelector('.sidebar').classList.remove('active');
+        }
+
+        function atualizarInterfaceGlobal() {
+            if (!currentUser) return;
+            if (['loja', 'presets', 'cursos'].includes(telaAtual)) carregarProdutos();
+            if (telaAtual === 'minhas-compras') carregarMinhasCompras();
+            if (telaAtual === 'admin-produtos') carregarAdminProdutos();
+            if (telaAtual === 'admin-pedidos') carregarAdminPedidos();
+        }
+
+        // CLIENTE: LOJA
+        function carregarProdutos() {
+            const grid = document.getElementById('grid-produtos');
+            grid.innerHTML = "";
+            let filtrados = db.products || [];
+            if (filtroAtual !== 'todos') filtrados = filtrados.filter(p => p.categoria === filtroAtual);
+            
+            if (filtrados.length === 0) {
+                grid.innerHTML = `<p style="color: var(--text-muted); grid-column: 1/-1; text-align: center; padding: 50px;">Nenhum item disponível nesta categoria ainda.</p>`;
+                return;
+            }
+
+            filtrados.forEach(p => {
+                grid.innerHTML += `
+                    <div class="product-card hover-lift btn-press" onclick="navegar('detalhes', ${p.id})">
+                        <img src="${p.img}" class="product-img">
+                        <div class="product-title">${p.nome}</div>
+                        <div class="product-price">R$ ${p.preco.toFixed(2)}</div>
+                    </div>`;
+            });
+        }
+
+        function abrirDetalhes(id) {
+            const p = db.products.find(x => x.id === id);
+            if(!p) return;
+            document.getElementById('det-img').src = p.img;
+            document.getElementById('det-titulo').innerText = p.nome;
+            document.getElementById('det-preco').innerText = `R$ ${p.preco.toFixed(2)}`;
+            document.getElementById('det-desc').innerText = p.desc || "Sem descrição disponível.";
+            document.getElementById('btn-comprar').onclick = () => fazerPedido(p.id);
+        }
+
+        function fazerPedido(produtoId) {
+            const novo = { id: Date.now(), user: currentUser.username, produtoId, status: 'esperando_chave', chavePix: null, comprovante: null };
+            if (!db.orders) db.orders = [];
+            db.orders.push(novo);
+            salvarBD();
+            toast("Pedido iniciado! Verifique 'Meus Arquivos'", var(--warning));
+            navegar('minhas-compras');
+        }
+
+        function carregarMinhasCompras() {
+            const lista = document.getElementById('lista-minhas-compras');
+            lista.innerHTML = "";
+            const meus = (db.orders || []).filter(o => o.user === currentUser.username);
+            
+            meus.reverse().forEach(o => {
+                const p = db.products.find(x => x.id === o.produtoId) || { nome: "Produto Excluído" };
+                let statusHtml = `<span class="status-badge bg-warning">Processando...</span>`;
+                let acaoHtml = "";
+
+                if(o.status === 'esperando_comprovante') {
+                    statusHtml = `<span class="status-badge bg-primary">Aguardando Pagamento</span>`;
+                    acaoHtml = `<button onclick="abrirGaleriaComprovante(${o.id})" class="btn btn-primary btn-press" style="padding: 8px; font-size: 11px;">ENVIAR COMPROVANTE PIX</button>`;
+                } else if(o.status === 'liberado') {
+                    statusHtml = `<span class="status-badge bg-success">Disponível para Download</span>`;
+                    acaoHtml = `<a href="${p.arquivo || '#'}" download class="btn btn-success btn-press" style="padding: 8px; font-size: 11px; text-decoration: none;">BAIXAR AGORA</a>`;
+                }
+
+                lista.innerHTML += `
+                    <div class="list-card" style="background: var(--bg-card); padding: 20px; border-radius: 16px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border);">
+                        <div>
+                            <p style="font-weight: 700; margin-bottom: 5px;">${p.nome}</p>
+                            ${statusHtml}
+                        </div>
+                        ${acaoHtml}
+                    </div>`;
+            });
+        }
+
+        // ADMIN: GERENCIAMENTO
+        async function salvarNovoProduto() {
+            const nome = document.getElementById('add-nome').value;
+            const desc = document.getElementById('add-desc').value;
+            const preco = parseFloat(document.getElementById('add-preco').value);
+            const cat = document.getElementById('add-categoria').value;
+            const imgFile = document.getElementById('add-img-file').files[0];
+            const arqFile = document.getElementById('add-arquivo-file').files[0];
+
+            if (!nome || !preco || !imgFile) return toast("Preencha os campos obrigatórios!", "#ef4444");
+
+            toast("Fazendo upload...", "var(--primary)");
+
+            const toBase64 = file => new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+
+            const imgBase64 = await toBase64(imgFile);
+            const arqBase64 = arqFile ? await toBase64(arqFile) : "";
+
+            if (!db.products) db.products = [];
+            db.products.push({ id: Date.now(), nome, desc, preco, categoria: cat, img: imgBase64, arquivo: arqBase64 });
+            salvarBD();
+            document.getElementById('form-novo-produto').classList.add('hidden');
+            toast("Produto adicionado com sucesso!", "var(--success)");
+        }
+
+        function carregarAdminProdutos() {
+            const lista = document.getElementById('lista-admin-produtos');
+            lista.innerHTML = "";
+            (db.products || []).forEach(p => {
+                lista.innerHTML += `
+                    <div style="display: flex; justify-content: space-between; background: var(--bg-card); padding: 15px; border-radius: 12px; margin-bottom: 10px; border: 1px solid var(--border);">
+                        <span>${p.nome}</span>
+                        <button onclick="deletarProduto(${p.id})" class="btn-danger btn btn-press" style="width: auto; padding: 5px 15px;">EXCLUIR</button>
+                    </div>`;
+            });
+        }
+
+        function deletarProduto(id) {
+            if(confirm("Deseja realmente excluir este produto?")) {
+                db.products = db.products.filter(p => p.id !== id);
+                salvarBD();
+                toast("Produto removido.");
+            }
+        }
+
+        function carregarAdminPedidos() {
+            const lista = document.getElementById('lista-admin-pedidos');
+            lista.innerHTML = "";
+            (db.orders || []).slice().reverse().forEach(o => {
+                const p = db.products.find(x => x.id === o.produtoId) || { nome: "???" };
+                let btn = `<button onclick="solicitarPix(${o.id})" class="btn btn-primary btn-press" style="padding: 5px 10px;">SOLICITAR PIX</button>`;
+                
+                if(o.status === 'verificando') btn = `<button onclick="liberarPedido(${o.id})" class="btn btn-success btn-press" style="padding: 5px 10px;">LIBERAR ACESSO</button>`;
+                if(o.status === 'liberado') btn = `<span style="color: var(--success); font-weight: 800;">CONCLUÍDO</span>`;
+
+                lista.innerHTML += `
+                    <div style="background: var(--bg-card); padding: 15px; border-radius: 12px; margin-bottom: 10px; border: 1px solid var(--border);">
+                        <p><strong>Usuário:</strong> ${o.user} | <strong>Produto:</strong> ${p.nome}</p>
+                        <div style="margin-top: 10px; display: flex; justify-content: flex-end;">${btn}</div>
+                    </div>`;
+            });
+        }
+
+        function solicitarPix(id) {
+            const pix = prompt("Digite sua Chave PIX para o cliente pagar:");
+            if(!pix) return;
+            const pedido = db.orders.find(o => o.id === id);
+            pedido.status = 'esperando_comprovante';
+            pedido.chavePix = pix;
+            salvarBD();
+            toast("Chave enviada ao cliente!");
+        }
+
+        function liberarPedido(id) {
+            const pedido = db.orders.find(o => o.id === id);
+            pedido.status = 'liberado';
+            salvarBD();
+            toast("Produto liberado!");
+        }
+
+        // AUTH
         function autenticar() {
             const user = document.getElementById('auth-user').value.trim();
             const pass = document.getElementById('auth-pass').value.trim();
-            if(!user || !pass) return toast("Campos vazios!", "#ef4444");
+            if(!user || !pass) return toast("Preencha tudo!", "#ef4444");
 
             if(!db.users) db.users = {};
-            if (db.users[user]) {
-                if (db.users[user].pass === pass) {
+            if(db.users[user]) {
+                if(db.users[user].pass === pass) {
                     currentUser = { username: user, role: db.users[user].role || 'client' };
                     entrarNoSistema();
-                } else { toast("Senha errada!", "#ef4444"); }
+                } else { toast("Senha incorreta!", "#ef4444"); }
             } else {
                 db.users[user] = { pass: pass, role: 'client' };
                 salvarBD();
@@ -265,7 +446,7 @@
         }
 
         function loginAdmin() {
-            const pass = prompt("Senha:");
+            const pass = prompt("Senha Mestra:");
             if(pass === "admin123") {
                 currentUser = { username: 'ADMIN', role: 'admin' };
                 entrarNoSistema();
@@ -277,133 +458,10 @@
             document.getElementById('login-view').classList.add('hidden');
             document.getElementById('app-layout').classList.remove('hidden');
             document.getElementById('display-username').innerText = currentUser.username;
-            
             if(currentUser.role === 'admin') {
-                document.getElementById('menu-cliente').classList.add('hidden');
                 document.getElementById('menu-admin').classList.remove('hidden');
-                navegar('admin-produtos');
-            } else {
-                navegar('loja');
             }
-        }
-
-        function navegar(viewId, param = null) {
-            telaAtual = viewId;
-            closeSidebar();
-            document.querySelectorAll('.view-section').forEach(v => v.classList.add('hidden'));
-            document.getElementById('view-' + (viewId === 'presets' || viewId === 'cursos' ? 'loja' : viewId)).classList.remove('hidden');
-            
-            if(viewId === 'loja') carregarProdutos('todos');
-            if(viewId === 'presets') carregarProdutos('presets');
-            if(viewId === 'cursos') carregarProdutos('cursos');
-            if(viewId === 'detalhes') abrirDetalhes(param);
-            if(viewId === 'minhas-compras') carregarMinhasCompras();
-            if(viewId === 'admin-produtos') carregarAdminProdutos();
-            if(viewId === 'admin-pedidos') carregarAdminPedidos();
-        }
-
-        function renderizarAtual() { navegar(telaAtual); }
-
-        function carregarProdutos(filtro) {
-            const grid = document.getElementById('grid-produtos');
-            grid.innerHTML = "";
-            let filtrados = db.products || [];
-            if(filtro !== 'todos') filtrados = filtrados.filter(p => p.categoria === filtro);
-            
-            filtrados.forEach(p => {
-                grid.innerHTML += `
-                    <div class="product-card" onclick="navegar('detalhes', ${p.id})">
-                        <img src="${p.img}" class="product-img">
-                        <div style="font-weight:700; margin:5px 0;">${p.nome}</div>
-                        <div class="product-price">R$ ${p.preco.toFixed(2)}</div>
-                    </div>`;
-            });
-        }
-
-        function abrirDetalhes(id) {
-            const p = db.products.find(x => x.id === id);
-            document.getElementById('det-img').src = p.img;
-            document.getElementById('det-titulo').innerText = p.nome;
-            document.getElementById('det-preco').innerText = `R$ ${p.preco.toFixed(2)}`;
-            document.getElementById('btn-comprar').onclick = () => fazerPedido(p.id);
-        }
-
-        function fazerPedido(produtoId) {
-            const novo = { id: Date.now(), user: currentUser.username, produtoId, status: 'esperando_chave' };
-            if(!db.orders) db.orders = [];
-            db.orders.push(novo);
-            salvarBD();
-            toast("Pedido feito!", "var(--warning)");
-            navegar('minhas-compras');
-        }
-
-        function carregarMinhasCompras() {
-            const lista = document.getElementById('lista-minhas-compras');
-            lista.innerHTML = "";
-            const meus = (db.orders || []).filter(o => o.user === currentUser.username);
-            meus.forEach(o => {
-                const p = db.products.find(x => x.id === o.produtoId);
-                lista.innerHTML += `<div class="list-card">
-                    <span>${p.nome}</span>
-                    <span class="status-badge bg-warning">${o.status.replace('_', ' ')}</span>
-                </div>`;
-            });
-        }
-
-        // FUNÇÕES DE ADMIN MANTIDAS E ADAPTADAS PARA REALTIME
-        function abrirModalAddProduto() { document.getElementById('form-novo-produto').classList.toggle('hidden'); }
-
-        async function salvarNovoProduto() {
-            const nome = document.getElementById('add-nome').value;
-            const preco = parseFloat(document.getElementById('add-preco').value);
-            const cat = document.getElementById('add-categoria').value;
-            const imgFile = document.getElementById('add-img-file').files[0];
-
-            if(!nome || !imgFile) return toast("Preencha tudo!");
-
-            const reader = new FileReader();
-            reader.readAsDataURL(imgFile);
-            reader.onload = () => {
-                if(!db.products) db.products = [];
-                db.products.push({ id: Date.now(), nome, preco, categoria: cat, img: reader.result });
-                salvarBD();
-                toast("Salvo!", "var(--success)");
-                abrirModalAddProduto();
-            };
-        }
-
-        function carregarAdminProdutos() {
-            const lista = document.getElementById('lista-admin-produtos');
-            lista.innerHTML = "";
-            (db.products || []).forEach(p => {
-                lista.innerHTML += `<div class="list-card">
-                    <span>${p.nome}</span>
-                    <button onclick="deletarP(${p.id})" class="btn-danger btn" style="width:auto">X</button>
-                </div>`;
-            });
-        }
-
-        function deletarP(id) { 
-            db.products = db.products.filter(p => p.id !== id); 
-            salvarBD(); 
-        }
-
-        function carregarAdminPedidos() {
-            const lista = document.getElementById('lista-admin-pedidos');
-            lista.innerHTML = "";
-            (db.orders || []).forEach(o => {
-                lista.innerHTML += `<div class="list-card">
-                    <span>${o.user} - ID:${o.id}</span>
-                    <button onclick="liberar(${o.id})" class="btn-success btn" style="width:auto">LIBERAR</button>
-                </div>`;
-            });
-        }
-
-        function liberar(id) {
-            const pedido = db.orders.find(o => o.id === id);
-            pedido.status = 'liberado';
-            salvarBD();
-            toast("Liberado!");
+            navegar('loja');
         }
 
         function deslogar() {
@@ -411,7 +469,9 @@
             location.reload();
         }
 
+        // Inicialização
         if(currentUser) entrarNoSistema();
+
     </script>
 </body>
 </html>

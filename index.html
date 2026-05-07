@@ -148,6 +148,36 @@
             }
         }
         /* =============================================================== */
+
+        /* ======== NOVAS ADIÇÕES (RESOLVE O PROBLEMA DAS LETRAS MISTURADAS) ======== */
+        * {
+            line-height: 1.6; /* Evita que uma linha de texto engula a outra */
+            word-wrap: break-word; /* Força palavras grandes a quebrarem no celular */
+            overflow-wrap: break-word;
+        }
+        .list-card div {
+            max-width: 100%;
+            white-space: normal;
+        }
+        @media (max-width: 768px) {
+            .list-card {
+                padding: 15px;
+                gap: 15px;
+            }
+            .list-card > div {
+                min-width: 100% !important; /* Impede que os textos fiquem apertados no canto */
+                text-align: left !important;
+            }
+            .product-title {
+                font-size: 15px;
+                line-height: 1.4;
+            }
+            .status-badge {
+                display: inline-block;
+                margin-top: 8px;
+            }
+        }
+        /* ========================================================================= */
     </style>
 </head>
 <body>
@@ -768,6 +798,22 @@
             }
         };
         /* ========================================================== */
+
+        /* ======== NOVAS ADIÇÕES JS (EVITA BUGS DE TELA E CLIQUES) ======== */
+        
+        // 1. Resolve o bug de ficar preso na tela de login caso o Firebase conecte e já exista uma sessão ativa
+        const verificadorDeLoginTravado = setInterval(() => {
+            if (currentUser && isOnline && !document.getElementById('login-view').classList.contains('hidden')) {
+                entrarNoSistema();
+                clearInterval(verificadorDeLoginTravado);
+            }
+        }, 500); // Checa a cada meio segundo e destrava se precisar
+
+        // 2. Previne erro 'event is undefined' em alguns celulares/navegadores que impedia os botões de funcionarem
+        if (typeof window.event === 'undefined') {
+            window.event = { currentTarget: null };
+        }
+        /* ================================================================= */
     </script>
 </body>
 </html>

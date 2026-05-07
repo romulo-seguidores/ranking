@@ -306,6 +306,11 @@
                 <div id="lista-admin-pedidos"></div>
             </div>
 
+            <div id="view-admin-suporte" class="view-section hidden">
+                <h2 class="section-title">Tickets de Ajuda (Suporte)</h2>
+                <div id="lista-admin-tickets"></div>
+            </div>
+
         </div>
     </div>
 
@@ -397,6 +402,8 @@
             if(telaAtual === 'minhas-compras') carregarMinhasCompras();
             if(telaAtual === 'admin-produtos') carregarAdminProdutos();
             if(telaAtual === 'admin-pedidos') carregarAdminPedidos();
+            // ADICIONADO: Atualiza em tempo real a tela de suporte do admin
+            if(telaAtual === 'admin-suporte') carregarAdminTickets();
         }
 
         // === NOTIFICAÇÕES ===
@@ -476,6 +483,9 @@
             
             if(viewId === 'admin-produtos') { document.getElementById('view-admin-produtos').classList.remove('hidden'); carregarAdminProdutos(); }
             if(viewId === 'admin-pedidos') { document.getElementById('view-admin-pedidos').classList.remove('hidden'); carregarAdminPedidos(); }
+            
+            // ADICIONADO: Navegação para a tela de suporte do admin
+            if(viewId === 'admin-suporte') { document.getElementById('view-admin-suporte').classList.remove('hidden'); carregarAdminTickets(); }
         }
 
         // === CLIENTE: PRODUTOS E COMPRAS ===
@@ -772,6 +782,30 @@
             salvarBD();
             document.getElementById('texto-suporte').value = "";
             toast("Ticket enviado para o Admin!", "var(--success)");
+        }
+        
+        // === ADMIN: TICKETS DE SUPORTE (ADICIONADO) ===
+        function carregarAdminTickets() {
+            const lista = document.getElementById('lista-admin-tickets');
+            lista.innerHTML = "";
+            const tickets = db.tickets || [];
+            
+            if(tickets.length === 0) return lista.innerHTML = "<p style='color: var(--text-muted);'>Nenhum ticket de ajuda no momento.</p>";
+
+            [...tickets].reverse().forEach((t) => {
+                lista.innerHTML += `
+                    <div class="list-card" style="align-items: start; flex-direction: column;">
+                        <div>
+                            <span class="status-badge bg-warning">TICKET DE SUPORTE</span>
+                            <strong style="display:block; margin:8px 0;">Usuário: ${t.user}</strong>
+                            <span style="font-size:12px; color:#888;">Data: ${t.data}</span>
+                        </div>
+                        <div style="background: #0f172a; padding: 15px; border-radius: 8px; width: 100%; margin-top: 10px; border: 1px solid #334155;">
+                            ${t.txt}
+                        </div>
+                    </div>
+                `;
+            });
         }
         
         /* ======== ADIÇÕES DE FUNÇÕES PARA MOBILE (ANDROID) ======== */

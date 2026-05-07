@@ -80,9 +80,78 @@
         .bg-warning { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
         .bg-success { background: rgba(16, 185, 129, 0.2); color: var(--success); }
         .bg-primary { background: rgba(99, 102, 241, 0.2); color: var(--primary); }
+
+        /* ======== ADIÇÕES PARA MOBILE (ANDROID) A PARTIR DAQUI ======== */
+        .mobile-toggle-btn { display: none; }
+        #overlay-mobile { display: none; }
+
+        @media (max-width: 768px) {
+            .mobile-toggle-btn {
+                display: block;
+                background: var(--primary);
+                color: white;
+                border: none;
+                padding: 10px 15px;
+                border-radius: 8px;
+                margin-bottom: 20px;
+                cursor: pointer;
+                font-weight: bold;
+                width: max-content;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            }
+            .sidebar {
+                position: fixed;
+                left: -300px; /* Esconde fora da tela */
+                top: 0;
+                height: 100vh;
+                z-index: 9999;
+                transition: left 0.3s ease;
+                box-shadow: 5px 0 15px rgba(0,0,0,0.6);
+            }
+            .sidebar.open-mobile {
+                left: 0; /* Mostra na tela */
+            }
+            .main-content {
+                padding: 15px;
+                width: 100vw;
+            }
+            .product-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+            .product-detail-layout {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+            .product-detail-img {
+                width: 100%;
+                height: auto;
+            }
+            .list-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            #overlay-mobile.active {
+                display: block;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                background: rgba(0,0,0,0.6);
+                z-index: 9998;
+            }
+            #login-view {
+                padding: 20px;
+            }
+        }
+        /* =============================================================== */
     </style>
 </head>
 <body>
+
+    <div id="overlay-mobile" onclick="toggleMenuMobile()"></div>
 
     <div id="toast-container"></div>
     
@@ -127,6 +196,8 @@
 
         <div class="main-content">
             
+            <button class="mobile-toggle-btn" onclick="toggleMenuMobile()">☰ MENU</button>
+
             <div id="view-loja" class="view-section">
                 <h2 class="section-title" id="titulo-loja">Catálogo de Produtos</h2>
                 <div class="product-grid" id="grid-produtos"></div>
@@ -672,6 +743,30 @@
             toast("Ticket enviado para o Admin!", "var(--success)");
         }
         
+        /* ======== ADIÇÕES DE FUNÇÕES PARA MOBILE (ANDROID) ======== */
+        
+        // Abre ou fecha o menu lateral no celular
+        function toggleMenuMobile() {
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.getElementById('overlay-mobile');
+            sidebar.classList.toggle('open-mobile');
+            overlay.classList.toggle('active');
+        }
+
+        // Intercepta a função navegar() que já existe para fechar o menu no mobile sempre que clicar num item
+        const navegarOriginal = navegar; // Guarda a original
+        navegar = function(viewId, param = null) {
+            navegarOriginal(viewId, param); // Executa a original que você escreveu
+            
+            // Lógica adicionada para o celular (fecha o menu)
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.getElementById('overlay-mobile');
+            if (sidebar.classList.contains('open-mobile')) {
+                sidebar.classList.remove('open-mobile');
+                overlay.classList.remove('active');
+            }
+        };
+        /* ========================================================== */
     </script>
 </body>
 </html>

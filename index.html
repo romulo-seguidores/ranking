@@ -316,9 +316,12 @@
                     if(data) {
                         db = data;
                         if(!db.users) db.users = {};
-                        if(!db.products) db.products = [];
-                        if(!db.orders) db.orders = [];
-                        if(!db.tickets) db.tickets = [];
+                        
+                        // CORREÇÃO CRÍTICA: Se o Firebase estruturar a lista como Objeto, converte de volta para Array
+                        db.products = db.products ? (Array.isArray(db.products) ? db.products : Object.values(db.products)) : [];
+                        db.orders = db.orders ? (Array.isArray(db.orders) ? db.orders : Object.values(db.orders)) : [];
+                        db.tickets = db.tickets ? (Array.isArray(db.tickets) ? db.tickets : Object.values(db.tickets)) : [];
+
                         if(currentUser) atualizarTelasEmTempoReal();
                     } else {
                         db = defaultData;
@@ -466,17 +469,21 @@
             };
         }
 
-        // Lógica de "Bot" automatizada: Gera o pedido com a sua chave PIX fixa direto
+        // CORREÇÃO CRÍTICA: Força a validação e resguarda o funcionamento do botão "Comprar"
         function fazerPedido(produtoId) {
             const novoPedido = {
                 id: Date.now(),
                 user: currentUser.username,
                 produtoId: produtoId,
-                status: 'esperando_comprovante', // Vai direto para o envio do comprovante
+                status: 'esperando_comprovante',
                 chavePix: CHAVE_PIX_FIXA,
                 comprovante: null
             };
-            if(!db.orders) db.orders = [];
+            
+            if(!db.orders || !Array.isArray(db.orders)) {
+                db.orders = [];
+            }
+            
             db.orders.push(novoPedido);
             salvarBD();
             toast("Chave PIX gerada com sucesso! Prossiga com o pagamento.", "var(--warning)");
@@ -562,7 +569,6 @@
             reader.readAsDataURL(file);
         }
 
-        // ALTERAÇÃO DO PAINEL ADMIN: Permite editar tudo
         function abrirModalAddProduto() { 
             document.getElementById('form-novo-produto').classList.remove('hidden'); 
             document.getElementById('form-admin-title').innerText = "Adicionar Novo Produto";
@@ -623,7 +629,6 @@
                 if(!db.products) db.products = [];
 
                 if(editId) {
-                    // MODO EDIÇÃO TOTAL
                     const pIndex = db.products.findIndex(x => x.id == editId);
                     if(pIndex !== -1) {
                         db.products[pIndex].nome = nome;
@@ -635,7 +640,6 @@
                         toast("Produto atualizado com completo sucesso!", "var(--success)");
                     }
                 } else {
-                    // MODO NOVO PRODUTO
                     db.products.push({ 
                         id: Date.now(), 
                         nome, desc, preco, 
@@ -731,7 +735,7 @@
 
         function enviarSuporte() {
             const txt = document.getElementById('texto-suporte').value.trim();
-            if(!txt) return toast("Descreva o teor do seu problema.", "#ef4444");
+            if(!txt) return toast("Descreva o teor do seu problem.", "#ef4444");
             if(!db.tickets) db.tickets = [];
             db.tickets.push({ user: currentUser.username, txt: txt, data: new Date().toLocaleString() });
             salvarBD();

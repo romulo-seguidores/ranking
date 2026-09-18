@@ -1971,6 +1971,7 @@
     let telaAtual = "loja";
 
     let pedidoAtualParaComprovante = null;
+    let statusPedidosAnterior = {};
 
 
     /* =====================================================
@@ -2020,6 +2021,26 @@
                                     : Object.values(db.tickets)
                                 )
                                 : [];
+
+                        if (currentUser && currentUser.role === "client") {
+                            (db.orders || []).forEach(order => {
+                                const anterior = statusPedidosAnterior[order.id];
+                                if (anterior && anterior !== order.status && order.user === currentUser.username) {
+                                    if (order.status === "aguardando_pagamento") {
+                                        toast(
+                                            "Seu pedido foi liberado! A chave PIX já está disponível em Meus produtos.",
+                                            "var(--green)"
+                                        );
+                                    } else if (order.status === "liberado") {
+                                        toast(
+                                            "Pagamento confirmado! Seu produto já está liberado para download.",
+                                            "var(--green)"
+                                        );
+                                    }
+                                }
+                                statusPedidosAnterior[order.id] = order.status;
+                            });
+                        }
 
 
                         if (currentUser) {
@@ -2989,10 +3010,10 @@
                 produtoId,
 
             status:
-                "esperando_comprovante",
+                "aguardando_admin",
 
             chavePix:
-                CHAVE_PIX_FIXA,
+                null,
 
             comprovante:
                 null
@@ -3019,7 +3040,7 @@
 
 
         toast(
-            "Pedido criado! Faça o PIX para continuar.",
+            "Pedido enviado! Aguarde o administrador liberar o pagamento.",
             "var(--orange)"
         );
 
@@ -3104,17 +3125,57 @@
 
             if (
                 o.status ===
-                "esperando_comprovante"
+                "aguardando_admin"
+            ) {
+
+                corStatus =
+                    "bg-warning";
+
+                textStatus =
+                    "AGUARDANDO LIBERAÇÃO";
+
+                acoes = `
+
+                    <p style="
+                        font-size:11px;
+                        color:#888;
+                        line-height:1.6;
+                    ">
+                        Seu pedido foi enviado para o administrador.
+                        Assim que for aceito, você receberá a chave PIX
+                        para realizar o pagamento.
+                    </p>
+
+                `;
+
+            }
+
+            else if (
+                o.status ===
+                "aguardando_pagamento"
             ) {
 
                 corStatus =
                     "bg-primary";
 
                 textStatus =
-                    "PAGAMENTO PENDENTE";
-
+                    "PIX LIBERADO — AGUARDANDO PAGAMENTO";
 
                 acoes = `
+
+                    <div style="
+                        background:#fff7f8;
+                        border:1px solid #ffd1db;
+                        padding:11px;
+                        border-radius:9px;
+                        margin-bottom:9px;
+                        font-size:11px;
+                        color:#555;
+                        line-height:1.6;
+                    ">
+                        ✓ Seu pedido foi liberado pelo administrador.
+                        <br>Faça o PIX usando a chave abaixo e envie a foto do comprovante.
+                    </div>
 
                     <div class="pix-box">
 
@@ -3128,11 +3189,11 @@
                         </span>
 
                         <code>
-                            ${o.chavePix}
+                            ${o.chavePix || CHAVE_PIX_FIXA}
                         </code>
 
                         <button
-                            onclick="copiarPix('${o.chavePix}')"
+                            onclick="copiarPix('${o.chavePix || CHAVE_PIX_FIXA}')"
                             class="btn btn-outline"
                             style="
                             padding:7px 10px;
@@ -3143,7 +3204,6 @@
                         </button>
 
                     </div>
-
 
                     <button
                         onclick="abrirGaleriaComprovante(${o.id})"
@@ -3349,6 +3409,14 @@
 
 
             if (pedido) {
+
+                if (pedido.status !== "aguardando_pagamento") {
+                    toast(
+                        "O administrador ainda não liberou o pagamento.",
+                        "#ef4444"
+                    );
+                    return;
+                }
 
                 pedido.status =
                     "verificando";
@@ -3983,6 +4051,48 @@
 
                 if (
                     o.status ===
+                    "aguardando_admin"
+                ) {
+
+                    acoes = `
+
+                        <button
+                            onclick="adminLiberarPagamento(${o.id})"
+                            class="btn btn-primary"
+                            style="
+                            width:100%;
+                            padding:9px;
+                            font-size:10px;
+                            "
+                        >
+                            💳 Aceitar pedido e enviar PIX
+                        </button>
+
+                    `;
+
+                }
+
+                else if (
+                    o.status ===
+                    "aguardando_pagamento"
+                ) {
+
+                    acoes = `
+
+                        <span style="
+                            color:#b4002e;
+                            font-size:11px;
+                            font-weight:800;
+                        ">
+                            💳 PIX enviado — aguardando comprovante
+                        </span>
+
+                    `;
+
+                }
+
+                else if (
+                    o.status ===
                     "verificando"
                 ) {
 
@@ -4011,7 +4121,7 @@
                             font-size:10px;
                             "
                         >
-                            ✓ Aprovar pedido
+                            ✓ Confirmar pagamento e liberar
                         </button>
 
                     `;
@@ -4107,7 +4217,45 @@
 
 
     /* =====================================================
-       ADMIN — APROVAR
+       ADMIN — LIBERAR PAGAMENTO
+    ===================================================== */
+
+    function adminLiberarPagamento(
+        orderId
+    ) {
+
+        const pedido =
+            db.orders.find(
+                o =>
+                    o.id === orderId
+            );
+
+        if (!pedido)
+            return;
+
+        pedido.status =
+            "aguardando_pagamento";
+
+        pedido.chavePix =
+            CHAVE_PIX_FIXA;
+
+        pedido.comprovante =
+            null;
+
+        salvarBD();
+
+        toast(
+            "Pedido aceito! A chave PIX foi enviada ao cliente.",
+            "var(--green)"
+        );
+
+        carregarAdminPedidos();
+
+    }
+
+
+    /* =====================================================
+       ADMIN — CONFIRMAR PAGAMENTO
     ===================================================== */
 
     function adminAprovar(
@@ -4120,23 +4268,26 @@
                     o.id === orderId
             );
 
-
         if (!pedido)
             return;
 
+        if (pedido.status !== "verificando") {
+            toast(
+                "Este pedido ainda não possui comprovante para validar.",
+                "#ef4444"
+            );
+            return;
+        }
 
         pedido.status =
             "liberado";
 
-
         salvarBD();
 
-
         toast(
-            "Pedido aprovado e liberado!",
+            "Pagamento confirmado e produto liberado!",
             "var(--green)"
         );
-
 
         carregarAdminPedidos();
 
